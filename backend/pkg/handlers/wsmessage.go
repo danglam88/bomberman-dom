@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -11,13 +12,7 @@ import (
 )
 
 const (
-	MESSAGE_TYPE             = "message"
-	LOGOUT_TYPE              = "logout"
-	LOGIN_TYPE               = "login"
-	FOLLOWNOTIFICATION_TYPE  = "follownotification"
-	INVITENOTIFICATION_TYPE  = "invitenotification"
-	JOINREQNOTIFICATION_TYPE = "joinreqnotification"
-	EVENTNOTIFICATION_TYPE   = "eventnotification"
+	MESSAGE_TYPE = "message"
 )
 
 var (
@@ -28,27 +23,33 @@ var (
 	}
 )
 
-type Manager struct {
-	clients ClientList
-	sync.RWMutex
-}
-
-func NewManager() *Manager {
-	return &Manager{
-		clients: make(ClientList),
-	}
-}
-
 var Mgr *Manager
 
 func SetManager(m *Manager) {
 	Mgr = m
 }
 
+type Manager struct {
+	clients ClientList
+	nextID  int
+	sync.RWMutex
+}
+
+func NewManager() *Manager {
+	return &Manager{
+		clients: make(ClientList),
+		nextID:  1, // Initialize the nextID to 1
+	}
+}
+
 func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 	SetManager(m)
 
-	id := 1 //set ID HERE :D
+	// Obtain a unique ID and increment the counter
+	m.Lock()
+	id := m.nextID
+	m.nextID++
+	m.Unlock()
 
 	conn, err := websocketUpgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -62,7 +63,6 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 	//Start client
 	go client.readMessages()
 	go client.writeMessages()
-
 }
 
 func (m *Manager) addClient(client *Client) {
@@ -135,7 +135,7 @@ func (c *Client) readMessages() {
 
 		res.From = c.userId
 
-		res.Username = "hello"
+		res.Username = "User " + strconv.Itoa(c.userId)
 		if err != nil {
 			log.Println(err)
 		}
@@ -147,15 +147,11 @@ func (c *Client) readMessages() {
 				log.Println(err)
 				return
 			}
-			chatUsers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
-			if res.Type == MESSAGE_TYPE {
-				for _, chatUser := range chatUsers {
-					for wsclient := range c.manager.clients {
-						if wsclient.userId == chatUser {
-							wsclient.egress <- message
-						}
-					}
-				}
+
+			for wsclient := range c.manager.clients {
+
+				wsclient.egress <- message //broadcast to all available clients
+
 			}
 		}
 	}
