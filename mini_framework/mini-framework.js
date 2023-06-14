@@ -1,6 +1,6 @@
 import { setState, getState } from "./state-manager.js";
 import { funcs, defineFunc } from "./func-manager.js";
-import * as appFunctions from "../todomvc/app.js";
+import * as appFunctions from "../bomberman_app/js/main.js";
 
 const findTags = /<\/(\w+)>[^<]*?<(\w+)/g;
 const biggerSmallerRegex = />(.*?)</g;
@@ -473,7 +473,7 @@ function generateMFErrorMessage(errors) {
   return `
     <div style="${style}">
       OOPS!
-      The template in todomvc/apps.js is not formatted correctly.
+      The template in bomberman_app/js/main.js is not formatted correctly.
       You don't have the &lt;MF&gt; wrapper for all your html elements.
       
     ${

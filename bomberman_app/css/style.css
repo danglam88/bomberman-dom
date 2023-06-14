@@ -1,0 +1,569 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #000;
+    margin: 30px;
+    align-items: center;
+    min-width: 1125px;
+    display:flex;
+    flex-direction: column;
+}
+
+h1 {
+    color: rgb(165, 224, 15);
+    margin-bottom: 0px;
+    margin-top: 0px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 6em;
+    text-align: center;
+    text-shadow: 0.2em 0.2em 0.1em rgb(46, 84, 4);
+    max-width: 1125px;
+}
+
+h2 {
+    color: Black;
+    margin-bottom: 0px;
+    margin-top: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 3em;
+    text-align: center;
+    max-width: 1125px;
+}
+
+h3 {
+    color: black;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+h5 {
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+p {
+    color: black; 
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    margin-top: 10px;
+}
+
+.seachHidden {
+    display: none;
+}
+
+.pageHidden {
+    display: none;
+}
+
+form {
+    width: 900px;
+    height: 95px;
+}
+
+.stats{
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.userinfo {
+    width: 1090px;
+    color:rgb(152, 183, 14);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    font-weight: 600;
+    position: absolute;
+    text-align-last: right;
+    margin-top: 480px;
+    opacity: 0.5;
+}
+
+.levelinfo {
+    width: 1125px;
+    color:rgb(152, 183, 14);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    font-weight: 600;
+    position: absolute;
+    text-align-last: center;
+    margin-top: 5px;
+    opacity: 0.5;
+}
+
+.scoreinfo {
+    margin-top: 490px !important;
+    width: 1125px;
+    color:rgb(152, 183, 14);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    font-weight: 600;
+    position: absolute;
+    text-align-last: center;
+    opacity: 0.5;
+}
+
+.map {
+    left: auto;
+    right: auto;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    position: absolute;
+}
+
+.start {
+    left: auto;
+    right: auto;
+    height: 100vh;
+    width: 100vw;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+}
+
+.jamesbomb {
+    position:absolute;
+    left: 120px;
+    bottom: 10px;
+}
+
+.ghostpicl2 {
+    position:absolute;
+    right: 80px;
+    bottom: 30px;
+}
+
+.brickpicl3 {
+    position:absolute;
+    left: 484px;
+    top: 5px;
+}
+
+.midlevel {
+    left: auto;
+    right: auto;
+    height: 100vh;
+    width: 100vw;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+}
+
+.naming {
+    left: auto;
+    right: auto;
+    height: 100vh;
+    width: 100vw;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+}
+
+.pause {
+    left: auto;
+    right: auto;
+    height: 100vh;
+    width: 100vw;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;   
+    position: absolute;
+}
+
+.alert {
+    left: auto;
+    right:auto;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.victory {
+    left: auto;
+    right:auto;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameover{
+    left: auto;
+    right:auto;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameovertext{
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 6em;
+    font-weight: 600;
+}
+
+.pitytext{
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 3.5em;
+    font-weight: 600;
+    margin-bottom: 40px;
+}
+
+.gameoverinfo{
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    font-weight: 600;
+    margin-top: 30px;
+}
+
+.storytext {
+    top: 25%;
+    left: 25%;
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    text-align: center;
+    margin: 20px;
+    z-index: 1;
+}
+
+.textfield {
+    top: 25%;
+    left: 25%;
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.lifePopup {
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    background-color: black;
+    margin-top: 200px;
+    margin-left: 160px;
+    padding: 10px;
+    border-radius: 10px;
+    width: 805px;
+    height: 70px;
+    text-align: center;
+    line-height: 35px;
+    z-index: 3;
+}
+
+.invalidnotice{
+    top: 25%;
+    left: 25%;
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.5em;
+    margin-top: 20px;
+}
+
+.playername{
+    margin-top: 0px;
+    color:rgb(180, 217, 16);
+    font-family: 'Roboto', sans-serif;
+    font-size: 2em;
+    background-color: rgb(37, 79, 4);
+    height: 40px;
+    width: 515px;
+    text-align: center;
+}
+
+.howtoplay {
+    color:rgb(160, 192, 16);
+    font-family: 'Roboto', sans-serif;
+    font-size: 20px;
+    font-weight: 200;
+    max-width: 1125px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.gamelinks{
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    font-weight: 200;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: absolute;
+    width: 1030px;
+    height: 40px;
+    margin-top: 10px;
+}
+
+.popup {
+    color:rgb(184, 221, 20);
+    position: center;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-align: center;
+    z-index: 3;
+}
+
+.popuptext {
+    visibility: hidden;
+    background-color: rgb(184, 221, 20);
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    position: absolute;
+}
+
+.popuptext::after {
+    content: "";
+    position: absolute;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+.show {
+    height: 620px;
+    width: 900px;
+    text-align: auto;
+    margin-left: 55px;
+    margin-top: 90px;
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s;
+    padding: 10px;
+}
+
+@-webkit-keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+}
+  
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.scoreboard {
+    color:rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    display: flex;
+    position: absolute;
+    top: 780px;
+    left: auto;
+    right: auto;
+    width: 700px;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.scoreboardtitle {
+    color: black;
+    background-color:rgb(130, 173, 12);
+    font-size: 4em;
+    font-weight: 600;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.scoreboardheader {
+    margin-top: 10px;
+    color:rgb(184, 221, 20);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: sticky;
+    width: 100%;
+    height: 40px;
+}
+
+.scoreboardrow {
+    margin-top: 0px;
+    color:rgb(184, 221, 20);
+    font-size: 2em;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    height: 40px;
+}
+
+#scorehistorytable {
+    margin-top: 0px;
+    width: 900px;
+    max-height: 400px !important;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    max-lines: 10;
+    margin-bottom: 20px;
+}
+
+.historyhead {
+    width: 900px;
+    font-size: 1.5em;
+}
+
+.historybody {
+    background-color: black;
+    width: 900px;
+    font-size: 1.5em;
+    color: rgb(184, 221, 20);
+    font-weight: bold;
+}
+
+.col1 {
+    width: 80px;
+    text-align: center;
+    align-items: center;
+}
+
+.col2 {
+    width: 120px;
+    text-align: center;
+    align-items: center;
+}
+
+.col3 {
+    width: 150px;
+    text-align: center;
+    align-items: center;
+}
+
+.col4 {
+    width: 200px;
+    text-align: center;
+    align-items: center;
+}
+
+.col5 {
+    width: 320px;
+    text-align: right;
+    align-items: right;
+}
+
+.btn-page {
+    color: black;
+    background-color: rgb(184, 221, 20);
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
+    font-weight: 600;
+    height: 25px;
+}
+
+#arrowpage{
+    position: absolute;
+    top: 88%;
+    left: 23%;
+}
+
+#thispage {
+    font-size: 1.5em;
+    position: absolute;
+    top: 93%;
+    left: 48%;
+}
+
+.position {
+    margin-left: 0px;
+    width: 10%;
+    text-align: left;
+    align-items: left;
+}
+
+.hiscore {
+    width: 14%;
+    text-align: left;
+    align-items: left;
+}
+
+.timeused {
+    width: 16%;
+    text-align: left;
+    align-items: left;
+}
+
+.name {
+    width: 60%;
+    text-align: right;
+    align-items: right;
+}
+
+.wall {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+}
+
+.brick {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+}
+
+.player {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+}
+
+.bomb {
+    margin-left: 6px;
+    margin-top: 6px;
+    width: 33px;
+    height: 33px;
+    position: absolute;
+}
+
+.ghost {
+    width: 62px;
+    height: 65px;
+    position: absolute;
+}
+
+.moving {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.superGhost {
+    width: 50px;
+    height: 65px;
+    position: absolute;
+}
+
+.visible {
+    margin-top: 6px;
+    margin-left: 6px;
+}
