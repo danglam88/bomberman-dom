@@ -15,6 +15,7 @@ const player4StartLeft = 5;
 const multipleBombsGift = 2;
 const bombRangeGift = 2;
 const speedGift = 2;
+const lifeGift = 2;
 const bricksNo = 100;
 const probability = 0.9;
 const allDirections = ["Up", "Down", "Left", "Right"];
@@ -107,22 +108,23 @@ function fillMap() {
       remainingBricks--;
     }
 
-    let multipleBombsGiftNo = multipleBombsGift; //2
-    let bombRangeGiftNo = bombRangeGift; //2
-    let speedGiftNo = speedGift; //2
     let bricks = document.querySelectorAll(".brick");
     let gifts = [];
 
-    for (let i = 0; i < multipleBombsGiftNo; i++) {
+    for (let i = 0; i < multipleBombsGift; i++) {
       gifts.push("multiple-bombs-gift");
     }
 
-    for (let i = 0; i < bombRangeGiftNo; i++) {
+    for (let i = 0; i < bombRangeGift; i++) {
       gifts.push("bomb-range-gift");
     }
 
-    for (let i = 0; i < speedGiftNo; i++) {
+    for (let i = 0; i < speedGift; i++) {
       gifts.push("speed-gift");
+    }
+
+    for (let i = 0; i < lifeGift; i++) {
+      gifts.push("life-gift");
     }
 
     for (let i = gifts.length - 1; i > 0; i--) {
