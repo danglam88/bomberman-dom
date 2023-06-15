@@ -12,6 +12,9 @@ const player3StartLeft = mapWidth - 50;
 const player4StartTop = mapHeight - 55;
 const player4StartLeft = 5;
 
+const multipleBombsGift = 2;
+const bombRangeGift = 2;
+const speedGift = 2;
 const bricksNo = 100;
 const probability = 0.9;
 const allDirections = ["Up", "Down", "Left", "Right"];
@@ -95,7 +98,7 @@ function fillMap() {
 
     const totalCase2Positions = case2Positions.length;
     const bricksToPlace = Math.min(remainingBricks, totalCase2Positions);
-    
+
     for (let i = 0; i < bricksToPlace; i++) {
       const randomIndex = Math.floor(Math.random() * case2Positions.length);
       const { y, x } = case2Positions[randomIndex];
@@ -104,24 +107,34 @@ function fillMap() {
       remainingBricks--;
     }
 
-    let giftPosition;
+    let multipleBombsGiftNo = multipleBombsGift; //2
+    let bombRangeGiftNo = bombRangeGift; //2
+    let speedGiftNo = speedGift; //2
     let bricks = document.querySelectorAll(".brick");
-    let doorPosition = Math.floor(Math.random() * bricks.length);
+    let gifts = [];
 
-    if (gift) {
-        giftPosition = Math.floor(Math.random() * bricks.length);
+    for (let i = 0; i < multipleBombsGiftNo; i++) {
+      gifts.push("multiple-bombs-gift");
     }
 
-    while (gift && doorPosition === giftPosition) {
-        doorPosition = Math.floor(Math.random() * bricks.length);
-        giftPosition = Math.floor(Math.random() * bricks.length);
+    for (let i = 0; i < bombRangeGiftNo; i++) {
+      gifts.push("bomb-range-gift");
     }
 
-    bricks[doorPosition].classList.add("door");
-
-    if (gift) {
-        bricks[giftPosition].classList.add("gift");
+    for (let i = 0; i < speedGiftNo; i++) {
+      gifts.push("speed-gift");
     }
+
+    for (let i = gifts.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [gifts[i], gifts[j]] = [gifts[j], gifts[i]];
+    }
+
+    bricks.forEach((brick, index) => {
+        if (index < gifts.length) {
+          brick.classList.add(gifts[index]);
+        }
+    });
 }
 
 function createTile(fileName, y, x, promotedLayer = "") {
