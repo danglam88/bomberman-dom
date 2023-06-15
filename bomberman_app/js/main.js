@@ -1,4 +1,5 @@
 import MiniFramework from "../../mini_framework/mini-framework.js";
+import createMap from "./game_map.js";
 
 const Start = () => {
     return `
@@ -26,6 +27,7 @@ const Start = () => {
 const container = document.getElementById("root");
 container.innerHTML = "";
 MiniFramework.render(Start, container);
+createMap();
 
 // Set focus on the input textfield when the page is loaded
 window.onload = () => {

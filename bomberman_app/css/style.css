@@ -104,7 +104,7 @@ form {
     opacity: 0.5;
 }
 
-.map {
+.map, .naming {
     display: flex;
     position: absolute;
 }
