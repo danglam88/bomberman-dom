@@ -2,65 +2,101 @@ import MiniFramework from "../mini_framework/mini-framework.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
+let nickname = "";
 
-export const Header = () => {
+export const PlayerName = () => {
+  return `
+  <MF>
+    ${nickname}
+  </MF>
+  `;
+}
+
+export const Title = () => {
+  return `
+  <MF>
+    <h1>BOMBERMAN • DOM</h1>
+  </MF>
+  `;
+}
+
+export const Chat = () => {
+  return `
+  <MF>
+    <div class="player-chat">
+      <h2>CHAT</h2>
+      <p>Wait for other players...</p>
+    </div>
+  </MF>
+  `;
+}
+
+export const Info = () => {
     return `
     <MF>
-    <header>
-      <h1>BOMBERMAN • DOM</h1>
       <div class="howtoplay" style="text-align: center;">Use arrows to move, shift to place bombs</div>
-      <div class="stats" style="height: 45px; width: 1125px; top: 130px;">
+      <div class="stats" style="height: 45px; width: 900px; top: 130px;">
         <div class="lives">Lives: 3</div>
         <div class="timer">Time: 3:00</div>
         <div class="score">Score: 0</div>
       </div>
-    </header>
     </MF>
     `;
 }
 
-export const Start = () => {
-    const validateInput = (event) => {
-      if (!regex.test(event.key) && event.key !== "Enter") {
-        event.preventDefault();
-      } else if (event.key === "Enter" && event.target.value !== "") {
-        let options = {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ "nickname": event.target.value })
-        };
+export const Naming = () => {
+  const validateInput = (event) => {
+    if (!regex.test(event.key) && event.key !== "Enter") {
+      event.preventDefault();
+    } else if (event.key === "Enter" && event.target.value !== "") {
+      let options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ "nickname": event.target.value })
+      };
 
-        fetch("/validate", options)
-          .then(response => {
-            if (response.status === 200) {
-              window.location.hash = "#/counter";
-            } else if (response.status === 409) {
-              validateError = "Nickname already taken, please choose another one";
-              MiniFramework.updateState();
-            }
-          })
-          .catch(error => {
-            console.error(error)
-          })
-      }
+      fetch("/validate", options)
+        .then(response => {
+          if (response.status === 200) {
+            nickname = event.target.value;
+            window.location.hash = "#/counter";
+          } else if (response.status === 409) {
+            validateError = "Nickname already taken, please choose another one";
+            MiniFramework.updateState();
+          }
+        })
+        .catch(error => {
+          console.error(error)
+        })
     }
+  }
 
-    MiniFramework.defineFunc(validateInput)
+  MiniFramework.defineFunc(validateInput)
 
+  return `
+  <MF>
+    <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
+      <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
+      <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
+      <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
+      ${validateError !== "" ? `<div class="invalidnotice" style="align-self: center;">${validateError}</div>` : ""}
+    </div>
+  </MF>
+  `;
+}
+
+export const Start = () => {
     return `
     <MF>
+    ${Title()}
     <div class="core-part">
       <div id="game" class="game">
-        ${Header()}
-        <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 540px; width: 1125px;">
-          <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
-          <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
-          <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
-          ${validateError !== "" ? `<div class="invalidnotice" style="align-self: center;">${validateError}</div>` : ""}
-        </div>
+        ${Info()}
+        ${Naming()}
       </div>
+      ${Chat()}
     </div>
     </MF>
     `;
