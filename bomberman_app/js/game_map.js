@@ -2,6 +2,7 @@ const mapWidth = 900;
 const mapHeight = 900;
 const tileSize = 45;
 const startGhostsNo = 4;
+
 const player1StartTop = 10;
 const player1StartLeft = 5;
 const player2StartTop = mapHeight - 55;
@@ -10,6 +11,8 @@ const player3StartTop = 10;
 const player3StartLeft = mapWidth - 50;
 const player4StartTop = mapHeight - 55;
 const player4StartLeft = 5;
+
+const bricksNo = 100;
 const probability = 0.9;
 const allDirections = ["Up", "Down", "Left", "Right"];
 const ghostMaxStepsNo = 10;
@@ -55,6 +58,8 @@ const createMap = () => {
 
 function fillMap() {
     let remainingGhosts = ghostsNo;
+    let remainingBricks = bricksNo;
+    const case2Positions = [];
 
     for (let y = 0; y < level.length; y++) {
         for (let x = 0; x < level[y].length; x++) {
@@ -69,7 +74,7 @@ function fillMap() {
                     createTile("wall.png", y, x);
                     break;
                 case 2:
-                    createTile("brick.png", y, x);
+                    case2Positions.push({ y, x });
                     break;
                 case 3:
                     createTile("blue-front0.png", player1StartTop, player1StartLeft, "moving");
@@ -86,6 +91,17 @@ function fillMap() {
                     break;
             }
         }
+    }
+
+    const totalCase2Positions = case2Positions.length;
+    const bricksToPlace = Math.min(remainingBricks, totalCase2Positions);
+    
+    for (let i = 0; i < bricksToPlace; i++) {
+      const randomIndex = Math.floor(Math.random() * case2Positions.length);
+      const { y, x } = case2Positions[randomIndex];
+      createTile("brick.png", y, x);
+      case2Positions.splice(randomIndex, 1);
+      remainingBricks--;
     }
 
     let giftPosition;
@@ -141,6 +157,5 @@ function createTile(fileName, y, x, promotedLayer = "") {
         mapElement.appendChild(tileElement);
     }
 }
-console.log("test")
 
 export default createMap;
