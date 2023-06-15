@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"sync"
 	"time"
+	"fmt"
 
 	"github.com/gorilla/websocket"
 )
@@ -56,6 +57,10 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
+
+	username := r.Header.Get("playerName")
+	fmt.Println(username)
+	fmt.Println(r.Header)
 
 	client := NewClient(conn, m, id)
 	m.addClient(client)
@@ -126,6 +131,39 @@ func (c *Client) readMessages() {
 
 		var res Message
 
+		// Check the message type
+		var msgType struct {
+			Type string `json:"type"`
+		}
+
+		err = json.Unmarshal(payload, &msgType)
+
+		if err != nil {
+			log.Printf("error unmarshalling message type: %v", err)
+			continue
+		}
+
+		if msgType.Type == "playerName" {
+			// Handle the playerName payload
+			var playerNamePayload struct {
+				PlayerName string `json:"playerName"`
+			}
+
+			err = json.Unmarshal(payload, &playerNamePayload)
+
+			if err != nil {
+				log.Printf("error unmarshalling playerName payload: %v", err)
+				continue
+			}
+
+			// username := playerNamePayload.PlayerName
+
+			// Update the client's username
+			// c.username = username
+
+			continue
+		}
+
 		err = json.Unmarshal(payload, &res)
 
 		if err != nil {
@@ -135,7 +173,13 @@ func (c *Client) readMessages() {
 
 		res.From = c.userId
 
-		res.Username = "User " + strconv.Itoa(c.userId)
+		// if c.username != "" {
+		// 	res.Username = c.username
+		// } else {
+			username := "User " + strconv.Itoa(c.userId)
+			res.Username = username
+		// }
+
 		if err != nil {
 			log.Println(err)
 		}
@@ -156,6 +200,7 @@ func (c *Client) readMessages() {
 		}
 	}
 }
+
 
 func (c *Client) writeMessages() {
 	defer func() {
