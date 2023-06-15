@@ -1,8 +1,8 @@
-import MiniFramework from "../../mini_framework/mini-framework.js";
+import MiniFramework from "../../../mini_framework/mini-framework.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 
-const Header = () => {
+export const Header = () => {
     return `
     <MF>
     <header>
@@ -18,7 +18,7 @@ const Header = () => {
     `;
 }
 
-const Start = () => {
+export const Start = () => {
     const validateInput = (event) => {
       if (!regex.test(event.key) && event.key !== "Enter") {
         event.preventDefault();
@@ -34,7 +34,7 @@ const Start = () => {
     <div class="core-part">
       <div id="game" class="game">
         ${Header()}
-        <div class="naming" style="background: url(&quot;bomberman_app/img/story.png&quot;); height: 540px; width: 1125px;">
+        <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 540px; width: 1125px;">
           <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
           <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
           <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>

@@ -1,6 +1,6 @@
 import { setState, getState } from "./state-manager.js";
 import { funcs, defineFunc } from "./func-manager.js";
-import * as appFunctions from "../bomberman_app/js/main.js";
+//import * as appFunctions from "../bomberman_app/frontend/js/main.js";
 
 const findTags = /<\/(\w+)>[^<]*?<(\w+)/g;
 const biggerSmallerRegex = />(.*?)</g;
@@ -32,12 +32,12 @@ let appFunction;
  */
 const render = (appFunc, container) => {
   const template = createTemplate(appFunc);
-  const MFWrappingErrors = mfWrappingErrors(template);
+  // const MFWrappingErrors = mfWrappingErrors(template);
 
-  if (MFWrappingErrors.length > 0) {
-    container.innerHTML = generateMFErrorMessage(MFWrappingErrors);
-    return;
-  }
+  // if (MFWrappingErrors.length > 0) {
+  //   container.innerHTML = generateMFErrorMessage(MFWrappingErrors);
+  //   return;
+  // }
 
   virtualDom = Converter.htmlToJson(template);
   renderDom(virtualDom, container);
