@@ -8,7 +8,6 @@ import (
 	"sync"
 	"time"
 	"fmt"
-
 	"github.com/gorilla/websocket"
 )
 
@@ -94,6 +93,7 @@ type Client struct {
 	manager    *Manager
 	egress     chan []byte
 	userId     int
+	Username string
 }
 
 func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
@@ -156,10 +156,10 @@ func (c *Client) readMessages() {
 				continue
 			}
 
-			// username := playerNamePayload.PlayerName
+			username := playerNamePayload.PlayerName
 
 			// Update the client's username
-			// c.username = username
+			c.Username = username
 
 			continue
 		}
@@ -173,12 +173,12 @@ func (c *Client) readMessages() {
 
 		res.From = c.userId
 
-		// if c.username != "" {
-		// 	res.Username = c.username
-		// } else {
+		if c.Username != "" {
+			res.Username = c.Username
+		} else {
 			username := "User " + strconv.Itoa(c.userId)
 			res.Username = username
-		// }
+		}
 
 		if err != nil {
 			log.Println(err)
