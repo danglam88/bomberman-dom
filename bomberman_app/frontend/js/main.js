@@ -2,15 +2,10 @@ import MiniFramework from "../mini_framework/mini-framework.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
-let nickname = "";
-
-export const PlayerName = () => {
-  return `
-  <MF>
-    ${nickname}
-  </MF>
-  `;
-}
+let players = [];
+let playersFetched = false;
+let waitTime = undefined;
+let timer = undefined;
 
 export const Title = () => {
   return `
@@ -60,10 +55,13 @@ export const Naming = () => {
       fetch("/validate", options)
         .then(response => {
           if (response.status === 200) {
-            nickname = event.target.value;
-            window.location.hash = "#/counter";
+            localStorage.setItem("nickname", event.target.value);
+            window.location.hash = "#/waiting";
           } else if (response.status === 409) {
-            validateError = "Nickname already taken, please choose another one";
+            validateError = "Nickname was already taken, please choose another one";
+            MiniFramework.updateState();
+          } else if (response.status === 429) {
+            validateError = "There are already 4 players in the game, please try again later";
             MiniFramework.updateState();
           }
         })
@@ -80,16 +78,79 @@ export const Naming = () => {
     <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
       <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
       <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
-      <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
+      <div class="invalidnotice" style="align-self: center;">Only letters and numbers are allowed</div>
       ${validateError !== "" ? `<div class="invalidnotice" style="align-self: center;">${validateError}</div>` : ""}
     </div>
   </MF>
   `;
 }
 
+export const Counter = () => {
+  if (!playersFetched) {
+  fetch("/players")
+    .then(response => response.json())
+    .then(data => {
+      playersFetched = true;
+      players = data;
+
+      if (data.length > 1 && data.length <= 4) {
+        timer = 10;
+      }
+
+      if (data.length > 1 && data.length < 4) {
+        waitTime = 20;
+      }
+
+      MiniFramework.updateState();
+
+      if (waitTime !== undefined) {
+        const waitTimeId = setInterval(() => {
+          waitTime--;
+          MiniFramework.updateState();
+
+          if (waitTime === 0) {
+            clearInterval(waitTimeId);
+
+            if (timer !== undefined) {
+              const timerId = setInterval(() => {
+                timer--;
+                MiniFramework.updateState();
+
+                if (timer === 0) {
+                  clearInterval(timerId);
+                  window.location.hash = "#/gamestart";
+                }
+              }, 1000);
+            }
+          }
+        }, 1000);
+      }
+    })
+    .catch(error => {
+      console.error(error)
+    })
+  }
+
+  return `
+  <MF>
+    <div class="start" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
+      <div class="storytext" style="align-self: center;">
+        ${localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length === 1
+          ? `You (${localStorage.getItem("nickname")}) are the only one who joined the game. Let's wait for other players...`
+          : localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length < 4 && waitTime !== undefined && waitTime > 0
+            ? `There are totally ${players.length} players in the game: You (${localStorage.getItem("nickname")}), ${players.filter(player => player.name !== localStorage.getItem("nickname")).map(player => player.name).join(", ")}. Let's wait for ${waitTime} more seconds...`
+            : localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length <= 4 && timer !== undefined && timer > 0
+              ? `There are totally ${players.length} players in the game: You (${localStorage.getItem("nickname")}), ${players.filter(player => player.name !== localStorage.getItem("nickname")).map(player => player.name).join(", ")}. Game will start in ${timer} seconds...`
+              : "Please type in your nickname first"}
+      </div>
+    </div>
+  </MF>
+  `;
+}
+
 export const Start = () => {
-    return `
-    <MF>
+  return `
+  <MF>
     ${Title()}
     <div class="core-part">
       <div id="game" class="game">
@@ -98,18 +159,33 @@ export const Start = () => {
       </div>
       ${Chat()}
     </div>
-    </MF>
-    `;
+  </MF>
+  `;
+}
+
+export const Waiting = () => {
+  return `
+  <MF>
+    ${Title()}
+    <div class="core-part">
+      <div id="game" class="game">
+        ${Info()}
+        ${Counter()}
+      </div>
+      ${Chat()}
+    </div>
+  </MF>
+  `;
 }
 
 function Router() {
 	function routeChange() {
 		const container = document.getElementById("root");
 		container.innerHTML = "";
-    if (window.location.hash !== "#/counter" && window.location.hash !== "#/game" && window.location.hash !== "#/gameover") {
+    if (window.location.hash !== "#/waiting" && window.location.hash !== "#/gamestart" && window.location.hash !== "#/gameover") {
 		  MiniFramework.render(Start, container);
-    } else {
-      console.log("Game started");
+    } else if (window.location.hash === "#/waiting") {
+      MiniFramework.render(Waiting, container);
     }
 
 		// Set focus on the input textfield when the page is loaded

@@ -10,6 +10,10 @@ func main() {
 			Endpoint:     "/validate",
 			PostFunction: handlers.ValidateNickname,
 		},
+		{
+			Endpoint:    "/players",
+			GetFunction: handlers.GetPlayers,
+		},
 	}
 
 	handlers.Start(collection)
