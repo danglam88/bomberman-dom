@@ -4,17 +4,19 @@ const Start = () => {
     return `
     <MF>
     <h1>BOMBERMAN • DOM</h1>
-    <div id="game" class="game">
-      <div class="howtoplay" style="text-align: center;">Use arrows to move, shift to place bombs</div>
-      <div class="stats" style="height: 45px; width: 1125px; top: 130px;">
-        <div class="lives">Lives: 3</div>
-        <div class="timer">Time: 3:00</div>
-        <div class="score">Score: 0</div>
-      </div>
-      <div class="naming" style="background: url(&quot;bomberman_app/img/story.png&quot;); height: 540px; width: 1125px;">
-        <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
-        <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here...">
-        <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
+    <div class="core-part">
+      <div id="game" class="game">
+        <div class="howtoplay" style="text-align: center;">Use arrows to move, shift to place bombs</div>
+        <div class="stats" style="height: 45px; width: 1125px; top: 130px;">
+          <div class="lives">Lives: 3</div>
+          <div class="timer">Time: 3:00</div>
+          <div class="score">Score: 0</div>
+        </div>
+        <div class="naming" style="background: url(&quot;bomberman_app/img/story.png&quot;); height: 540px; width: 1125px;">
+          <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
+          <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here...">
+          <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
+        </div>
       </div>
     </div>
     </MF>

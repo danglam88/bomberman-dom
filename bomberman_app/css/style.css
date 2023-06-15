@@ -1,9 +1,9 @@
 body {
     font-family: 'Roboto', sans-serif;
     background-color: #000;
-    margin: 30px;
+    margin: 5px;
     align-items: center;
-    min-width: 1125px;
+    min-width: 1400px;
     display:flex;
     flex-direction: column;
 }
@@ -12,21 +12,17 @@ h1 {
     color: rgb(165, 224, 15);
     margin-bottom: 0px;
     margin-top: 0px;
-    font-family: 'Roboto', sans-serif;
     font-size: 6em;
     text-align: center;
     text-shadow: 0.2em 0.2em 0.1em rgb(46, 84, 4);
-    max-width: 1125px;
 }
 
 h2 {
     color: Black;
     margin-bottom: 0px;
     margin-top: 10px;
-    font-family: 'Roboto', sans-serif;
     font-size: 3em;
     text-align: center;
-    max-width: 1125px;
 }
 
 h3 {
@@ -37,15 +33,20 @@ h3 {
 
 h5 {
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 1.5em;
     text-align: center;
 }
 
 p {
     color: black; 
-    font-family: 'Roboto', sans-serif;
     font-size: 1.5em;
+    margin-top: 10px;
+}
+
+.core-part {
+    min-width: 1400px;
+    display: flex;
+    flex-direction: row;
     margin-top: 10px;
 }
 
@@ -64,7 +65,6 @@ form {
 
 .stats{
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     font-weight: 600;
     display: flex;
@@ -75,7 +75,6 @@ form {
 .userinfo {
     width: 1090px;
     color:rgb(152, 183, 14);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     font-weight: 600;
     position: absolute;
@@ -85,9 +84,8 @@ form {
 }
 
 .levelinfo {
-    width: 1125px;
+    width: 900px;
     color:rgb(152, 183, 14);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     font-weight: 600;
     position: absolute;
@@ -97,8 +95,6 @@ form {
 }
 
 .scoreinfo {
-    margin-top: 490px !important;
-    width: 1125px;
     color:rgb(152, 183, 14);
     font-family: 'Roboto', sans-serif;
     font-size: 2em;
@@ -109,10 +105,6 @@ form {
 }
 
 .map {
-    left: auto;
-    right: auto;
-    height: 100vh;
-    width: 100vw;
     display: flex;
     position: absolute;
 }
@@ -120,8 +112,6 @@ form {
 .start {
     left: auto;
     right: auto;
-    height: 100vh;
-    width: 100vw;
     display:flex;
     flex-direction: column;
     align-items: center;
@@ -218,14 +208,12 @@ form {
 
 .gameovertext{
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 6em;
     font-weight: 600;
 }
 
 .pitytext{
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 3.5em;
     font-weight: 600;
     margin-bottom: 40px;
@@ -233,7 +221,6 @@ form {
 
 .gameoverinfo{
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     font-weight: 600;
     margin-top: 30px;
@@ -243,7 +230,6 @@ form {
     top: 25%;
     left: 25%;
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     text-align: center;
     margin: 20px;
@@ -254,14 +240,12 @@ form {
     top: 25%;
     left: 25%;
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 3em;
     margin-bottom: 20px;
 }
 
 .lifePopup {
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 1.5em;
     background-color: black;
     margin-top: 200px;
@@ -279,7 +263,6 @@ form {
     top: 25%;
     left: 25%;
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 1.5em;
     margin-top: 20px;
 }
@@ -287,21 +270,16 @@ form {
 .playername{
     margin-top: 0px;
     color:rgb(180, 217, 16);
-    font-family: 'Roboto', sans-serif;
     font-size: 2em;
     background-color: rgb(37, 79, 4);
     height: 40px;
-    width: 515px;
     text-align: center;
 }
 
 .howtoplay {
     color:rgb(160, 192, 16);
-    font-family: 'Roboto', sans-serif;
     font-size: 20px;
     font-weight: 200;
-    max-width: 1125px;
-    margin-bottom: 20px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -309,16 +287,12 @@ form {
 }
 
 .gamelinks{
-    font-family: 'Roboto', sans-serif;
     font-size: 1em;
     font-weight: 200;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     position: absolute;
-    width: 1030px;
-    height: 40px;
-    margin-top: 10px;
 }
 
 .popup {
@@ -372,16 +346,10 @@ form {
 }
 
 .scoreboard {
+    margin: 10px;
     color:rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 1em;
     font-weight: 600;
-    display: flex;
-    position: absolute;
-    top: 780px;
-    left: auto;
-    right: auto;
-    width: 700px;
     background-color: rgba(0, 0, 0, 0.5);
 }
 
@@ -414,7 +382,6 @@ form {
     flex-direction: row;
     justify-content: space-between;
     position: absolute;
-    width: 100%;
     height: 40px;
 }
 
@@ -476,7 +443,6 @@ form {
 .btn-page {
     color: black;
     background-color: rgb(184, 221, 20);
-    font-family: 'Roboto', sans-serif;
     font-size: 1em;
     font-weight: 600;
     height: 25px;
