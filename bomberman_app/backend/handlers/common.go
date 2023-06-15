@@ -21,24 +21,17 @@ type Handler struct {
 }
 
 type Response struct {
-	Status   string `json:"status"`
-	Token    string `json:"token"`
-	UserId   int    `json:"user_id"`
-	Username string `json:"user_name"`
+	Status string `json:"status"`
+	Error  string `json:"error"`
 }
 
-type ResponseError struct {
-	Status string
-	Error  string
-}
-
-type Data struct {
-	Token string `json:"token"`
-}
-
-func Start() {
+func Start(collection []Handler) {
 
 	mux := http.NewServeMux()
+
+	for _, handler := range collection {
+		mux.Handle(handler.Endpoint, GetFunc(handler))
+	}
 
 	miniframework := http.FileServer(http.Dir("../frontend/mini_framework"))
 	mux.Handle("/mini_framework/", http.StripPrefix("/mini_framework", miniframework))
@@ -85,11 +78,6 @@ func GetFunc(handler Handler) http.HandlerFunc {
 			return
 		}
 
-		// if !IsOn(w, r) && handler.Endpoint != "/login" && handler.Endpoint != "/register" && handler.Endpoint != "/logout" && handler.Endpoint != "/loggedin" {
-		// 	http.Error(w, "User not logged in", http.StatusUnauthorized)
-		// 	return
-		// }
-
 		if r.Method == "GET" && handler.GetFunction != nil {
 			handler.GetFunction(w, r)
 		} else if r.Method == "POST" && handler.PostFunction != nil {
@@ -104,7 +92,7 @@ func GetFunc(handler Handler) http.HandlerFunc {
 func GetErrResponse(w http.ResponseWriter, errorMess string, statusCode int) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
-	response := ResponseError{Status: RESPONSE_ERR, Error: errorMess}
+	response := Response{Status: RESPONSE_ERR, Error: errorMess}
 	res, err := json.Marshal(response)
 	if err != nil {
 		log.Fatal(err)

@@ -1,6 +1,7 @@
-import MiniFramework from "../../../mini_framework/mini-framework.js";
+import MiniFramework from "../mini_framework/mini-framework.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
+let validateError = "";
 
 export const Header = () => {
     return `
@@ -22,8 +23,27 @@ export const Start = () => {
     const validateInput = (event) => {
       if (!regex.test(event.key) && event.key !== "Enter") {
         event.preventDefault();
-      } else if (!regex.test(event.key)) {
+      } else if (event.key === "Enter" && event.target.value !== "") {
+        let options = {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ "nickname": event.target.value })
+        };
 
+        fetch("/validate", options)
+          .then(response => {
+            if (response.status === 200) {
+              window.location.hash = "#/counter";
+            } else if (response.status === 409) {
+              validateError = "Nickname already taken, please choose another one";
+              MiniFramework.updateState();
+            }
+          })
+          .catch(error => {
+            console.error(error)
+          })
       }
     }
 
@@ -38,6 +58,7 @@ export const Start = () => {
           <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
           <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
           <div class="invalidnotice" style="align-self: center;">Only letters and numbers allowed</div>
+          ${validateError !== "" ? `<div class="invalidnotice" style="align-self: center;">${validateError}</div>` : ""}
         </div>
       </div>
     </div>
@@ -56,3 +77,29 @@ window.onload = () => {
 		input.focus();
 	}
 }
+
+function Router() {
+	function routeChange() {
+		const container = document.getElementById("root");
+		container.innerHTML = "";
+    if (window.location.hash !== "#/counter" && window.location.hash !== "#/game" && window.location.hash !== "#/gameover") {
+		  MiniFramework.render(Start, container);
+    } else {
+      console.log("Game started");
+    }
+
+		// Set focus on the input textfield when the page is loaded
+		window.onload = () => {
+		  const input = document.querySelector("#nameplayer");
+		  if (input !== null) {
+				input.focus();
+		  }
+		}
+	}
+
+	// Call routeChange every time the hash is changed in the url
+	window.onhashchange = routeChange;
+	routeChange(); // Call routeChange to handle initial page load
+}
+
+Router();

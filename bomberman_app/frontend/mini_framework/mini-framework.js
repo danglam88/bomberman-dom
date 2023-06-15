@@ -370,7 +370,7 @@ const defineApp = (func) => {
 const updateState = (newState) => {
   setState(newState);
 
-  const template = appFunction(getState());
+  const template = appFunction();
   newVirtualDom = Converter.htmlToJson(template);
 
   var diff = compareDOM(virtualDom, newVirtualDom);
