@@ -66,18 +66,6 @@ export const Start = () => {
     `;
 }
 
-const container = document.getElementById("root");
-container.innerHTML = "";
-MiniFramework.render(Start, container);
-
-// Set focus on the input textfield when the page is loaded
-window.onload = () => {
-	const input = document.getElementById("nameplayer");
-	if (input !== null) {
-		input.focus();
-	}
-}
-
 function Router() {
 	function routeChange() {
 		const container = document.getElementById("root");
