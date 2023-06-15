@@ -23,7 +23,6 @@ const ghostMaxStepsNo = 10;
 let ghostDirections = [];
 let ghostsNo = startGhostsNo;
 let ghostSteps = [];
-let gift = true;
 
 // 0 = empty/ghost, 1 = wall, 2 = brick, 3 = player1, 4 = safe-zone, 5 = player2, 6 = player3, 7 = player4
 const level = [
