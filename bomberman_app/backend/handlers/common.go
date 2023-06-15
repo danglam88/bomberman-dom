@@ -40,7 +40,7 @@ func Start() {
 
 	mux := http.NewServeMux()
 
-	miniframework := http.FileServer(http.Dir("../../mini_framework"))
+	miniframework := http.FileServer(http.Dir("../frontend/mini_framework"))
 	mux.Handle("/mini_framework/", http.StripPrefix("/mini_framework", miniframework))
 
 	htmlFs := http.FileServer(http.Dir("../frontend/html"))
