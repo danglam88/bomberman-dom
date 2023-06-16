@@ -202,6 +202,10 @@ form {
     margin: 10px;
 }
 
+.chat-messages {
+    color: white
+}
+
 .player-chat {
     margin: 10px;
     min-width: 400px;
