@@ -1,4 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
+import createMap from "./game_map.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -350,6 +351,7 @@ function Router() {
 	function routeChange() {
 		const container = document.getElementById("root");
 		container.innerHTML = "";
+    //Miniframework.render(GameStart, container);
     if (window.location.hash !== "#/waiting" && window.location.hash !== "#/gamestart" && window.location.hash !== "#/gameover") {
 		  MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
@@ -373,3 +375,4 @@ function Router() {
 }
 
 Router();
+createMap();
