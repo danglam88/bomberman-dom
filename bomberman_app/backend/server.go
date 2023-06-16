@@ -5,5 +5,16 @@ import (
 )
 
 func main() {
-	handlers.Start()
+	collection := []handlers.Handler{
+		{
+			Endpoint:     "/validate",
+			PostFunction: handlers.ValidateNickname,
+		},
+		{
+			Endpoint:    "/players",
+			GetFunction: handlers.GetPlayers,
+		},
+	}
+
+	handlers.Start(collection)
 }

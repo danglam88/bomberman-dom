@@ -246,29 +246,59 @@ function diffJSON(json1, json2) {
   }
 
   // Compares two arrays, if differences found, pushes them to the diffResult array
-  function compareArrays(arr1, arr2, path, parentDataMf) {
-    // If the length of the old array is greater than the new array, remove the old elements that are not in the new array
-    if (arr1.length > arr2.length) {
-      for (let i = arr1.length-1; i >= 0; i--) {
-        if (arr2[i] == null || arr1[i].props["data-id"] !== arr2[i].props["data-id"]) {
-          //remove from DOM
-          addToDiffResult(i, arr1[i], null, arr1[i]["data-mf"], parentDataMf);
-          arr1.splice(i, 1);
-        }
-      }
-    }
+  function compareArrays(arrOriginal1, arrOriginal2, path, parentDataMf) {
 
-    const length = Math.max(arr1.length, arr2.length);
-    for (let i = 0; i < length; i++) {
-      const obj1 = arr1[i];
-      const obj2 = arr2[i];
-      //if both exist and both are objects, compare them. Otherwise, push the difference to the diffResult array
-      if (obj1 && obj2 && typeof obj1 === "object" && typeof obj2 === "object") {
-        compareObjects(obj1, obj2, `${path}[${i}]`, parentDataMf);
-      } else if (obj1 !== obj2) {
-        addToDiffResult(i, obj1, obj2, obj2 ? obj2["data-mf"] : null, parentDataMf, arr2.length == 1);
-      }
+    //Cloning the new state array for manipulation
+    const arr1 = [...arrOriginal1];
+    const arr2 = [...arrOriginal2];
+
+    for (let i = 0; i < arr2.length; i++) {
+
+      //Case for the states data
+      if (arr2[i].props["data-id"]) {
+
+        const found = arr1.find(element => element.props["data-id"] == arr2[i].props["data-id"]);
+     
+        if (found) {
+
+          const obj1 = found;
+          const obj2 = arr2[i];
+
+          //if both exist and both are objects, compare them. Otherwise, push the difference to the diffResult array
+          if (obj1 && obj2 && typeof obj1 === "object" && typeof obj2 === "object") {
+            compareObjects(obj1, obj2, `${path}[${i}]`, parentDataMf);
+          } else if (obj1 !== obj2) {
+            addToDiffResult(i, obj1, obj2, obj2 ? obj2["data-mf"] : null, parentDataMf, arr2.length == 1);
+          }
+
+        } else {
+          //add to DOM
+          const siblingDataMf = (i > 0) ? arr2[i -1].props["data-mf"] : -1
+          addToDiffResult(i, null, arr2[i], null, parentDataMf, false, siblingDataMf);
+        }
+
+      } else {
+
+        const obj1 = arr1[i] ? arr1[i] : null;
+        const obj2 = arr2[i];
+        //if both exist and both are objects, compare them. Otherwise, push the difference to the diffResult array
+        if (obj1 && obj2 && typeof obj1 === "object" && typeof obj2 === "object") {
+          compareObjects(obj1, obj2, `${path}[${i}]`, parentDataMf);
+        } else if (obj1 !== obj2) {
+          addToDiffResult(i, obj1, obj2, obj2 ? obj2["data-mf"] : null, parentDataMf, arr2.length == 1);
+        } 
     }
+  }
+
+  for (let i = 0; i < arr1.length; i++) {
+    const found = arr2.find(element => element.props["data-id"] == arr1[i].props["data-id"]);
+
+    if (!found) {
+      //remove from DOM
+      addToDiffResult(i, arr1[i], null, arr1[i]["data-mf"], parentDataMf);
+    }
+  }
+
   }
 
   compareObjects(json1, json2, "root", "0");
@@ -370,7 +400,7 @@ const defineApp = (func) => {
 const updateState = (newState) => {
   setState(newState);
 
-  const template = appFunction(getState());
+  const template = appFunction();
   newVirtualDom = Converter.htmlToJson(template);
 
   var diff = compareDOM(virtualDom, newVirtualDom);
