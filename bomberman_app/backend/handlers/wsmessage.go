@@ -125,8 +125,10 @@ func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
 	if err != nil {
 		log.Println(err)
 	} else {
-		client.egress <- joinMsgJson
-		fmt.Println("Join message sent", joinMsgJson)
+		for c := range client.manager.clients {
+			c.egress <- joinMsgJson
+		}
+
 	}
 	return client
 }
@@ -202,39 +204,43 @@ func (c *Client) readMessages() {
 
 		}
 
-		err = json.Unmarshal(payload, &res)
+		if msgType.Type == "message" {
 
-		if err != nil {
-			log.Printf("error unmarshalling message: %v", err)
-			continue
-		}
+			err = json.Unmarshal(payload, &res)
 
-		res.From = c.userId
+			if err != nil {
+				log.Printf("error unmarshalling message: %v", err)
+				continue
+			}
 
-		if c.Nickname != "" {
-			res.Nickname = c.Nickname
-		} else {
-			nickname := "User " + strconv.Itoa(c.userId)
-			res.Nickname = nickname
-		}
+			res.From = c.userId
 
-		if err != nil {
-			log.Println(err)
-		}
+			if c.Nickname != "" {
+				res.Nickname = c.Nickname
+			} else {
+				nickname := "User " + strconv.Itoa(c.userId)
+				res.Nickname = nickname
+			}
 
-		if res.From > 0 {
-			res.Timestamp = time.Now().Format("2006-01-02 15:04:05")
-			message, err := json.Marshal(res)
 			if err != nil {
 				log.Println(err)
-				return
 			}
 
-			for wsclient := range c.manager.clients {
+			if res.From > 0 {
+				res.Timestamp = time.Now().Format("2006-01-02 15:04:05")
+				message, err := json.Marshal(res)
+				if err != nil {
+					log.Println(err)
+					return
+				}
 
-				wsclient.egress <- message //broadcast to all available clients
+				for wsclient := range c.manager.clients {
 
+					wsclient.egress <- message //broadcast to all available clients
+
+				}
 			}
+
 		}
 	}
 }

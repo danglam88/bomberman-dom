@@ -298,10 +298,13 @@ function openChat() {
   socket.onmessage = function (event) {
     var msg = JSON.parse(event.data);
     console.log(msg);
-    var node = document.createElement("div");
-    var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
-    node.appendChild(textnode);
-    document.getElementById("chat-messages").appendChild(node);
+    if (msg.type === "message") {
+
+      var node = document.createElement("div");
+      var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+      node.appendChild(textnode);
+      document.getElementById("chat-messages").appendChild(node);
+    }
   };
 
   document.getElementById("form").addEventListener("submit", function (e) {
