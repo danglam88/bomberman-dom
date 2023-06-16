@@ -36,6 +36,14 @@ type Manager struct {
 	sync.RWMutex
 }
 
+type Message struct {
+	From      int    `json:"from"`
+	Message   string `json:"message"`
+	Type      string `json:"type"`
+	Nickname  string `json:"nickname"`
+	Timestamp string `json:"timestamp"`
+}
+
 func NewManager() *Manager {
 	return &Manager{
 		clients: make(ClientList),
@@ -98,12 +106,29 @@ type Client struct {
 }
 
 func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
-	return &Client{
+	client := &Client{
 		connection: conn,
 		manager:    manager,
 		egress:     make(chan []byte),
 		userId:     id,
 	}
+
+	// not working yet. Broadcast joinmsg with countdowntimer and nickname
+	joinMsg := Message{
+		From:      client.userId,
+		Type:      "join",
+		Nickname:  "Player " + strconv.Itoa(client.userId),
+		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
+	}
+	joinMsgJson, err := json.Marshal(joinMsg)
+
+	if err != nil {
+		log.Println(err)
+	} else {
+		client.egress <- joinMsgJson
+		fmt.Println("Join message sent", joinMsgJson)
+	}
+	return client
 }
 
 func (c *Client) readMessages() {
@@ -119,14 +144,6 @@ func (c *Client) readMessages() {
 				log.Printf("error reading message: %v", err)
 			}
 			break
-		}
-
-		type Message struct {
-			From      int    `json:"from"`
-			Message   string `json:"message"`
-			Type      string `json:"type"`
-			Nickname  string `json:"nickname"`
-			Timestamp string `json:"timestamp"`
 		}
 
 		var res Message
@@ -162,6 +179,27 @@ func (c *Client) readMessages() {
 			c.Nickname = nickname
 
 			continue
+		}
+
+		if msgType.Type == "gamestate" {
+			var statePayload struct {
+				State json.RawMessage `json:"state"`
+			}
+
+			err = json.Unmarshal(payload, &statePayload)
+
+			if err != nil {
+				log.Printf("error unmarshalling gamestate payload: %v", err)
+				continue
+			}
+
+			// gameState = updateGameState(statePayload.State)
+			// broadcastGameState(gameState)
+			continue
+		}
+
+		if msgType.Type == "playerCounter" {
+
 		}
 
 		err = json.Unmarshal(payload, &res)
@@ -212,4 +250,24 @@ func (c *Client) writeMessages() {
 		}
 	}
 
+}
+
+type GameState struct {
+	Type  string      `json:"type"`
+	State interface{} `json:"state"`
+}
+
+func (m *Manager) broadcastGameState(gameState GameState) {
+	m.Lock()
+	defer m.Unlock()
+
+	message, err := json.Marshal(gameState)
+	if err != nil {
+		log.Printf("error marshalling game state: %v", err)
+		return
+	}
+
+	for client := range m.clients {
+		client.egress <- message
+	}
 }
