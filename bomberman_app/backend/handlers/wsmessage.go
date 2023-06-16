@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -57,6 +58,10 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	nickname := r.Header.Get("nickname")
+	fmt.Println(nickname)
+	fmt.Println(r.Header)
+
 	client := NewClient(conn, m, id)
 	m.addClient(client)
 
@@ -89,6 +94,7 @@ type Client struct {
 	manager    *Manager
 	egress     chan []byte
 	userId     int
+	Nickname   string
 }
 
 func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
@@ -117,14 +123,46 @@ func (c *Client) readMessages() {
 
 		type Message struct {
 			From      int    `json:"from"`
-			To        int    `json:"to"`
 			Message   string `json:"message"`
 			Type      string `json:"type"`
-			Username  string `json:"username"`
+			Nickname  string `json:"nickname"`
 			Timestamp string `json:"timestamp"`
 		}
 
 		var res Message
+
+		// Check the message type
+		var msgType struct {
+			Type string `json:"type"`
+		}
+
+		err = json.Unmarshal(payload, &msgType)
+
+		if err != nil {
+			log.Printf("error unmarshalling message type: %v", err)
+			continue
+		}
+
+		if msgType.Type == "nickname" {
+			// Handle the nickname payload
+			var nicknamePayload struct {
+				Nickname string `json:"nickname"`
+			}
+
+			err = json.Unmarshal(payload, &nicknamePayload)
+
+			if err != nil {
+				log.Printf("error unmarshalling nickname payload: %v", err)
+				continue
+			}
+
+			nickname := nicknamePayload.Nickname
+
+			// Update the client's username
+			c.Nickname = nickname
+
+			continue
+		}
 
 		err = json.Unmarshal(payload, &res)
 
@@ -135,7 +173,13 @@ func (c *Client) readMessages() {
 
 		res.From = c.userId
 
-		res.Username = "User " + strconv.Itoa(c.userId)
+		if c.Nickname != "" {
+			res.Nickname = c.Nickname
+		} else {
+			nickname := "User " + strconv.Itoa(c.userId)
+			res.Nickname = nickname
+		}
+
 		if err != nil {
 			log.Println(err)
 		}
@@ -162,19 +206,10 @@ func (c *Client) writeMessages() {
 		c.manager.removeClient(c)
 	}()
 
-	for {
-		select {
-		case message, ok := <-c.egress:
-			if !ok {
-				if err := c.connection.WriteMessage(websocket.CloseMessage, nil); err != nil {
-					log.Println("connection closed: ", err)
-				}
-				return
-			}
-
-			if err := c.connection.WriteMessage(websocket.TextMessage, message); err != nil {
-				log.Println(err)
-			}
+	for message := range c.egress {
+		if err := c.connection.WriteMessage(websocket.TextMessage, message); err != nil {
+			log.Println(err)
 		}
 	}
+
 }

@@ -37,7 +37,7 @@ export const Info = () => {
       </div>
     </MF>
     `;
-}
+};
 
 export const Naming = () => {
   const validateInput = (event) => {
@@ -57,6 +57,7 @@ export const Naming = () => {
           if (response.status === 200) {
             localStorage.setItem("nickname", event.target.value);
             window.location.hash = "#/waiting";
+            openChat()
           } else if (response.status === 409) {
             validateError = "Nickname was already taken, please choose another one";
             MiniFramework.updateState();
@@ -344,32 +345,78 @@ export const GameStart = () => {
     </div>
   </MF>
   `;
-}
+};
 
-function Router() {
-	function routeChange() {
-		const container = document.getElementById("root");
-		container.innerHTML = "";
-    if (window.location.hash !== "#/waiting" && window.location.hash !== "#/gamestart" && window.location.hash !== "#/gameover") {
-		  MiniFramework.render(Start, container);
-    } else if (window.location.hash === "#/waiting") {
-      MiniFramework.render(Waiting, container);
-    } else if (window.location.hash === "#/gamestart") {
-      MiniFramework.render(GameStart, container);
+  function Router() {
+    function routeChange() {
+      const container = document.getElementById("root");
+      container.innerHTML = "";
+      if (window.location.hash !== "#/waiting" && window.location.hash !== "#/gamestart" && window.location.hash !== "#/gameover") {
+        MiniFramework.render(Start, container);
+      } else if (window.location.hash === "#/waiting") {
+        MiniFramework.render(Waiting, container);
+      } else if (window.location.hash === "#/gamestart") {
+        MiniFramework.render(GameStart, container);
+      }
+
+  // Set focus on the input textfield when the page is loaded
+  window.onload = () => {
+    const input = document.getElementById("nameplayer");
+    if (input !== null) {
+      input.focus();
     }
+  };
 
-		// Set focus on the input textfield when the page is loaded
-		window.onload = () => {
-		  const input = document.querySelector("#nameplayer");
-		  if (input !== null) {
-				input.focus();
-		  }
-		}
-	}
+  function openChat() {
+    const chatDiv = document.createElement("div");
+    chatDiv.id = "chat2";
+    document.getElementById("chat").appendChild(chatDiv);
 
-	// Call routeChange every time the hash is changed in the url
-	window.onhashchange = routeChange;
-	routeChange(); // Call routeChange to handle initial page load
-}
+    const nickname = localStorage.getItem("nickname")
+
+    var socket = new WebSocket("ws://localhost:8080/ws");
+
+    socket.onopen = function () {
+      console.log("Connected!");
+
+      var payload = JSON.stringify({
+        type: "nickname",
+        nickname: nickname
+      })
+
+      socket.send(payload)
+    };
+
+    socket.onerror = function (error) {
+      console.log("WebSocket error: " + error);
+    };
+
+    socket.onmessage = function (event) {
+      var msg = JSON.parse(event.data);
+      console.log(msg)
+      var node = document.createElement("div");
+      var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+      node.appendChild(textnode);
+      document.getElementById("chat").appendChild(node);
+    };
+
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      var input = document.getElementById("input");
+      var message = input.value;
+      input.value = "";
+
+      var msg = {
+        Type: "message",
+        Message: message,
+      };
+
+      socket.send(JSON.stringify(msg));
+    });
+    window.onhashchange = routeChange;
+    routeChange(); // Call routeChange to handle initial page load
+  }
+    }
 
 Router();
