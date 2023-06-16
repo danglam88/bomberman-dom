@@ -2,12 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 	"sync"
 	"time"
-	"fmt"
+
 	"github.com/gorilla/websocket"
 )
 
@@ -57,8 +58,8 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	username := r.Header.Get("playerName")
-	fmt.Println(username)
+	nickname := r.Header.Get("nickname")
+	fmt.Println(nickname)
 	fmt.Println(r.Header)
 
 	client := NewClient(conn, m, id)
@@ -93,7 +94,7 @@ type Client struct {
 	manager    *Manager
 	egress     chan []byte
 	userId     int
-	Username string
+	Nickname   string
 }
 
 func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
@@ -122,10 +123,9 @@ func (c *Client) readMessages() {
 
 		type Message struct {
 			From      int    `json:"from"`
-			To        int    `json:"to"`
 			Message   string `json:"message"`
 			Type      string `json:"type"`
-			Username  string `json:"username"`
+			Nickname  string `json:"nickname"`
 			Timestamp string `json:"timestamp"`
 		}
 
@@ -143,23 +143,23 @@ func (c *Client) readMessages() {
 			continue
 		}
 
-		if msgType.Type == "playerName" {
-			// Handle the playerName payload
-			var playerNamePayload struct {
-				PlayerName string `json:"playerName"`
+		if msgType.Type == "nickname" {
+			// Handle the nickname payload
+			var nicknamePayload struct {
+				Nickname string `json:"nickname"`
 			}
 
-			err = json.Unmarshal(payload, &playerNamePayload)
+			err = json.Unmarshal(payload, &nicknamePayload)
 
 			if err != nil {
-				log.Printf("error unmarshalling playerName payload: %v", err)
+				log.Printf("error unmarshalling nickname payload: %v", err)
 				continue
 			}
 
-			username := playerNamePayload.PlayerName
+			nickname := nicknamePayload.Nickname
 
 			// Update the client's username
-			c.Username = username
+			c.Nickname = nickname
 
 			continue
 		}
@@ -173,11 +173,11 @@ func (c *Client) readMessages() {
 
 		res.From = c.userId
 
-		if c.Username != "" {
-			res.Username = c.Username
+		if c.Nickname != "" {
+			res.Nickname = c.Nickname
 		} else {
-			username := "User " + strconv.Itoa(c.userId)
-			res.Username = username
+			nickname := "User " + strconv.Itoa(c.userId)
+			res.Nickname = nickname
 		}
 
 		if err != nil {
@@ -201,25 +201,15 @@ func (c *Client) readMessages() {
 	}
 }
 
-
 func (c *Client) writeMessages() {
 	defer func() {
 		c.manager.removeClient(c)
 	}()
 
-	for {
-		select {
-		case message, ok := <-c.egress:
-			if !ok {
-				if err := c.connection.WriteMessage(websocket.CloseMessage, nil); err != nil {
-					log.Println("connection closed: ", err)
-				}
-				return
-			}
-
-			if err := c.connection.WriteMessage(websocket.TextMessage, message); err != nil {
-				log.Println(err)
-			}
+	for message := range c.egress {
+		if err := c.connection.WriteMessage(websocket.TextMessage, message); err != nil {
+			log.Println(err)
 		}
 	}
+
 }

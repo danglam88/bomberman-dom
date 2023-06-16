@@ -25,7 +25,7 @@ export const Start = () => {
     } else if (!regex.test(event.key)) {
       console.log("not validated?")
     } else if (event.key == "Enter"){
-      localStorage.setItem("playerName", event.target.value)
+      localStorage.setItem("nickname", event.target.value)
       openChat()
     }
   };
@@ -65,7 +65,7 @@ function openChat() {
   chatDiv.id = "chat2";
   document.getElementById("chat").appendChild(chatDiv);
 
-  const playerName = localStorage.getItem("playerName")
+  const nickname = localStorage.getItem("nickname")
 
   var socket = new WebSocket("ws://localhost:8080/ws");
 
@@ -73,8 +73,8 @@ function openChat() {
     console.log("Connected!");
 
     var payload = JSON.stringify({
-      type: "playerName",
-      playerName: playerName
+      type: "nickname",
+      nickname: nickname
     })
 
     socket.send(payload)
@@ -86,8 +86,9 @@ function openChat() {
 
   socket.onmessage = function (event) {
     var msg = JSON.parse(event.data);
+    console.log(msg)
     var node = document.createElement("div");
-    var textnode = document.createTextNode(msg.username + ": " + msg.message);
+    var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
     node.appendChild(textnode);
     document.getElementById("chat").appendChild(node);
   };
