@@ -1,7 +1,6 @@
 const mapWidth = 900;
 const mapHeight = 900;
 const tileSize = 45;
-const startGhostsNo = 4;
 
 const player1StartTop = 10;
 const player1StartLeft = 5;
@@ -17,11 +16,6 @@ const bombRangeGift = 2;
 const speedGift = 2;
 const lifeGift = 2;
 const bricksNo = 100;
-const allDirections = ["Up", "Down", "Left", "Right"];
-const ghostMaxStepsNo = 10;
-let ghostDirections = [];
-let ghostsNo = startGhostsNo;
-let ghostSteps = [];
 
 // 0 = empty/ghost, 1 = wall, 2 = brick, 3 = player1, 4 = safe-zone, 5 = player2, 6 = player3, 7 = player4
 const level = [
@@ -58,11 +52,11 @@ const createMap = () => {
     mapElement.style.width = mapWidth + "px";
     game.appendChild(mapElement);
     
-    finalHTMLstring.push("<div class='map' style='background: url('img/grass.png'); height: " + mapHeight + "px; width: " + mapWidth + "px;'>");
-    console.log(finalHTMLstring);
+    //finalHTMLstring.push("<div class='map' style='background: url('img/grass.png'); height: " + mapHeight + "px; width: " + mapWidth + "px;'>");
+    //console.log(finalHTMLstring);
     fillMap();
-    finalHTMLstring.push("</div>");
-    console.log(finalHTMLstring);
+    //finalHTMLstring.push("</div>");
+    //console.log(finalHTMLstring);
 }
 
 function fillMap() {
@@ -160,11 +154,6 @@ function createTile(fileName, y, x, promotedLayer = "") {
         if (promotedLayer !== "") {
             tileElement.classList.add(promotedLayer);
             tileElement.style.zIndex = 2;
-            if (tileElement.classList.contains("ghost")) {
-                tileElement.style.transform = "translate(" + cordX + "px, " + cordY + "px)";
-                ghostDirections.push(allDirections[Math.floor(Math.random() * allDirections.length)]);
-                ghostSteps.push(Math.floor(Math.random() * ghostMaxStepsNo) + 1);
-            }
         } else {
             tileElement.style.top = cordY + "px";
             tileElement.style.left = cordX + "px";
