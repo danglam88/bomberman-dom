@@ -14,6 +14,7 @@ import (
 
 const (
 	MESSAGE_TYPE = "message"
+	GAME_UPDATE  = "game-update"
 )
 
 var (
@@ -42,6 +43,12 @@ type Message struct {
 	Type      string `json:"type"`
 	Nickname  string `json:"nickname"`
 	Timestamp string `json:"timestamp"`
+}
+
+type GameUpdateMessage struct {
+	Type   string `json:"type"`
+	Player int    `json:"player"`
+	Key    int    `json:"key"`
 }
 
 func NewManager() *Manager {
@@ -204,7 +211,34 @@ func (c *Client) readMessages() {
 
 		}
 
-		if msgType.Type == "message" {
+		if msgType.Type == GAME_UPDATE {
+
+			var data GameUpdateMessage
+			err = json.Unmarshal(payload, &data)
+
+			if err != nil {
+				log.Printf("error unmarshalling message: %v", err)
+				continue
+			}
+
+			//todo remove
+			fmt.Println(data)
+
+			data.Player = c.userId
+
+			message, err := json.Marshal(data)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			//todo this part should be separate in the loop
+			for wsclient := range c.manager.clients {
+				wsclient.egress <- message //broadcast to all available clients
+			}
+		}
+
+		if msgType.Type == MESSAGE_TYPE {
 
 			err = json.Unmarshal(payload, &res)
 

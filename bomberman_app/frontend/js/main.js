@@ -179,10 +179,156 @@ export const Counter = () => {
 };
 
 export const GameMap = () => {
+
   return `
-  <MF>
-//...
-  </MF>
+    <MF>
+    <div class="map" style="background: url(&quot;img/grass.png&quot;); height: 900px; width: 900px;">
+      <div class="player moving" style="transform: translate(5px, 10px); z-index: 2; background-image: url(&quot;img/blue-front0.png&quot;);"></div>
+      <div class="player moving" style="transform: translate(850px, 10px); z-index: 2; background-image: url(&quot;img/dark-front0.png&quot;);">
+      </div><div class="ghost moving" style="z-index: 2; transform: translate(450px, 45px); background-image: url(&quot;img/ghost.gif&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 90px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 225px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="ghost moving" style="z-index: 2; transform: translate(810px, 270px); background-image: url(&quot;img/ghost.gif&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 360px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="ghost moving" style="z-index: 2; transform: translate(540px, 405px); background-image: url(&quot;img/ghost.gif&quot;);"></div>
+      <div class="ghost moving" style="z-index: 2; transform: translate(810px, 405px); background-image: url(&quot;img/ghost.gif&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 495px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 630px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 360px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="wall" style="top: 765px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
+      <div class="player moving" style="transform: translate(5px, 845px); z-index: 2; background-image: url(&quot;img/red-front0.png&quot;);"></div>
+      <div class="player moving" style="transform: translate(850px, 845px); z-index: 2; background-image: url(&quot;img/purple-front0.png&quot;);"></div>
+      <div class="brick multiple-bombs-gift" style="top: 225px; left: 720px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick bomb-range-gift" style="top: 135px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick life-gift" style="top: 225px; left: 270px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick multiple-bombs-gift" style="top: 540px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick bomb-range-gift" style="top: 315px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick speed-gift" style="top: 855px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick speed-gift" style="top: 585px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick life-gift" style="top: 495px; left: 405px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 0px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 135px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 540px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 45px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 180px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 315px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 180px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 135px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 675px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 0px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 675px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 585px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 675px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 855px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 270px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 405px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 135px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 585px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 540px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 720px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 0px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 450px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 270px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 180px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 810px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 450px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 585px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 855px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 720px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 135px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 540px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 405px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 45px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 0px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 585px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 540px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 675px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 540px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 450px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 675px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 450px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 270px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 270px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 855px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 450px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 675px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 675px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 45px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 315px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 720px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 675px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 855px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 720px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 810px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 450px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 45px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 405px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 585px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 180px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 855px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 585px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 405px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 180px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 540px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 270px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 450px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 180px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 405px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 630px; left: 810px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 405px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 585px; left: 495px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 810px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 270px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 135px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 315px; left: 360px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 0px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 405px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 315px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 720px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 450px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 225px; left: 135px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 720px; left: 90px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 810px; left: 630px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 720px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 0px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 45px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 765px; left: 675px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 90px; left: 450px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 360px; left: 585px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 270px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 495px; left: 450px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+      <div class="brick" style="top: 540px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
+    </div>
+    </MF>
   `;
 };
 
@@ -215,6 +361,7 @@ export const Waiting = () => {
 };
 
 export const GameStart = () => {
+
   return `
   <MF>
     ${Title()}
@@ -321,6 +468,24 @@ function openChat() {
 
     socket.send(JSON.stringify(msg));
   }) // Call routeChange to handle initial page load
+
+  //logic for a game (which needed a socket) 
+  //todo maybe export socket (export handleKeyInput func at least)? 
+  //todo set from onkeydown in MF template
+  document.addEventListener('keydown', (e) => {
+      handleKeyInput(e)
+  });
+
+  const handleKeyInput = (e) => {
+    if (e.keyCode >= 37 && e.keyCode <= 40) {
+      const msg = {
+          Type : "game-update",
+          Key : e.keyCode
+      };
+
+      socket.send(JSON.stringify(msg));
+    }
+  };
 }
 
 Router();
