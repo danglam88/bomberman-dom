@@ -1,4 +1,4 @@
-class Player {
+export class Player {
     constructor(name, x, y, color) {
         this.name = name;
         this.x = x;
@@ -8,6 +8,7 @@ class Player {
         this.lives = 3;
         this.bomb = 1;
         this.range = 1;
+        this.direction = null
     }
 
     moveUp() {
@@ -103,11 +104,11 @@ class Player {
     }
 
     isDead() {
-        this = null;
+        return this.lives == 0;
     }
 }
 
-class Bomb {
+export class Bomb {
     constructor(x, y, range, owner) {
         this.x = x;
         this.y = y;
@@ -134,6 +135,7 @@ class Bomb {
 
     explode() {
         this.owner.addBomb();
-        this = null;
+        //todo what is this for
+        //this = null;
     }
 }

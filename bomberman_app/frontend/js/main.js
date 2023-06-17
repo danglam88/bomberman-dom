@@ -1,8 +1,13 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
+import { Player } from "./class.js";
+
+const GLOBAL_SPEED = 10
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
 let players = [];
+const playersTemp = [];
+
 let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
@@ -88,6 +93,13 @@ export const Counter = () => {
       .then((data) => {
         playersFetched = true;
         players = data;
+
+        
+        data.forEach(player => {
+          playersTemp.push(new Player(player.name, player.x, player.y, player.color))
+        })
+
+        console.log(playersTemp)
 
         if (data.length > 1 && data.length <= 4) {
           timer = 10;
@@ -361,6 +373,43 @@ export const Waiting = () => {
 };
 
 export const GameStart = () => {
+
+  let isGameOver = false
+  let isGamePaused = false
+  let previousTimeStamp = 0
+
+  const gameLoop = (timestamp, players) => {
+
+  // Check if game over
+  if (isGameOver) {
+      return;
+  }
+
+    // Check that all characters moving with global speed and not moving while pause
+  if ((timestamp < previousTimeStamp + GLOBAL_SPEED) || isGamePaused) {
+      window.requestAnimationFrame(function(timestamp) {
+          gameLoop(timestamp, players);
+  });
+
+    return;
+  }
+
+  previousTimeStamp = timestamp;
+
+  // Move Player
+  players.forEach((player) => {
+      //moveCharacter(player);
+  });
+
+  window.requestAnimationFrame(function(timestamp) {
+      gameLoop(timestamp, players);
+  });
+}
+
+  //todo creating a players while generating map
+  const players = []
+
+  gameLoop(0, players)
 
   return `
   <MF>
