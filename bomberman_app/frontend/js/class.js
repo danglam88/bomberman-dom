@@ -1,5 +1,5 @@
 export class Player {
-    constructor(name, x, y, color) {
+    constructor(name, x, y, color, index) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -9,6 +9,11 @@ export class Player {
         this.bomb = 1;
         this.range = 1;
         this.direction = null
+        this.index = index
+    }
+
+    addDiv() {
+        this.div = document.querySelector(".player" + this.index)
     }
 
     moveUp() {
@@ -105,6 +110,31 @@ export class Player {
 
     isDead() {
         return this.lives == 0;
+    }
+
+    setDirection(dir) {
+        switch (dir) {
+            case 37 : 
+            {
+                this.direction = "ArrowLeft"
+                break
+            }
+            case 38 : 
+            {
+                this.direction = "ArrowUp"
+                break
+            }
+            case 39 : 
+            {
+                this.direction =  "ArrowRight"
+                break
+            }
+            case 40 : 
+            {
+                this.direction = "ArrowDown"
+                break
+            } 
+        }
     }
 }
 

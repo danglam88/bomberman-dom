@@ -47,7 +47,7 @@ type Message struct {
 
 type GameUpdateMessage struct {
 	Type   string `json:"type"`
-	Player int    `json:"player"`
+	Player string `json:"player"`
 	Key    int    `json:"key"`
 }
 
@@ -224,7 +224,7 @@ func (c *Client) readMessages() {
 			//todo remove
 			fmt.Println(data)
 
-			data.Player = c.userId
+			data.Player = c.Nickname
 
 			message, err := json.Marshal(data)
 			if err != nil {

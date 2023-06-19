@@ -11,6 +11,53 @@ let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
+
+//todo 
+const playerStartTop = 10;
+const playerStartLeft = 5;
+const playerSize = 45;
+const playerNameMaxLength = 15;
+const tileSize = 45;
+const brickSize = 45;
+const superBrickSize = 45;
+const wallSize = 45;
+const tileDuration = 500;
+const stopDuration = 500;
+const flashDuration = 500;
+const appearDuration = 500;
+const screamDuration = 500;
+const bombDuration = 3000;
+const invincibleDuration = 5000;
+const bombSize = 33;
+const doorSize = 33;
+const giftSize = 33;
+const startGhostsNo = 4;
+const superGhostWidth = 50;
+const superGhostHeight = 65;
+const ghostWidth = 62;
+const ghostHeight = 65;
+const ghostMaxStepsNo = 10;
+const ghostPoints = 100;
+const superGhostPoints = 200;
+const mapWidth = 900;
+const mapHeight = 900;
+const mapMarginTop = 15;
+const mapMarginBottom = 60;
+const mapMarginLeft = 5;
+const mapMarginRight = 55;
+const totalTime = 181000;
+const hintStart = 121000;
+const lifePoints = 200;
+const intervalDuration = 100;
+const oneStepSize = 10;
+const highScoresNo = 5;
+const probability = 0.9;
+const allDirections = ["Up", "Down", "Left", "Right"];
+const livesInfoGapTop = 70;
+const livesInfoGapLeft = 20;
+const popupDuration = 4000;
+const scoreGoal = 1000;
+
 export const Title = () => {
   return `
   <MF>
@@ -143,11 +190,12 @@ export const Counter = () => {
 
 export const GameMap = () => {
 
+  //todo add player1 - player4 classes to map generation
   return `
     <MF>
     <div class="map" style="background: url(&quot;img/grass.png&quot;); height: 900px; width: 900px;">
-      <div class="player moving" style="transform: translate(5px, 10px); z-index: 2; background-image: url(&quot;img/blue-front0.png&quot;);"></div>
-      <div class="player moving" style="transform: translate(850px, 10px); z-index: 2; background-image: url(&quot;img/dark-front0.png&quot;);">
+      <div class="player moving player1" style="transform: translate(5px, 10px); z-index: 2; background-image: url(&quot;img/blue-front0.png&quot;);"></div>
+      <div class="player moving player2" style="transform: translate(850px, 10px); z-index: 2; background-image: url(&quot;img/dark-front0.png&quot;);">
       </div><div class="ghost moving" style="z-index: 2; transform: translate(450px, 45px); background-image: url(&quot;img/ghost.gif&quot;);"></div>
       <div class="wall" style="top: 90px; left: 90px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
       <div class="wall" style="top: 90px; left: 225px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
@@ -188,8 +236,8 @@ export const GameMap = () => {
       <div class="wall" style="top: 765px; left: 495px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
       <div class="wall" style="top: 765px; left: 630px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
       <div class="wall" style="top: 765px; left: 765px; z-index: 1; background-image: url(&quot;img/wall.png&quot;);"></div>
-      <div class="player moving" style="transform: translate(5px, 845px); z-index: 2; background-image: url(&quot;img/red-front0.png&quot;);"></div>
-      <div class="player moving" style="transform: translate(850px, 845px); z-index: 2; background-image: url(&quot;img/purple-front0.png&quot;);"></div>
+      <div class="player moving player3" style="transform: translate(5px, 845px); z-index: 2; background-image: url(&quot;img/red-front0.png&quot;);"></div>
+      <div class="player moving player4" style="transform: translate(850px, 845px); z-index: 2; background-image: url(&quot;img/purple-front0.png&quot;);"></div>
       <div class="brick multiple-bombs-gift" style="top: 225px; left: 720px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
       <div class="brick bomb-range-gift" style="top: 135px; left: 765px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
       <div class="brick life-gift" style="top: 225px; left: 270px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
@@ -323,11 +371,15 @@ export const Waiting = () => {
   `;
 };
 
-export const GameStart = () => {
-
+const GameLogic = () => {
   let isGameOver = false
   let isGamePaused = false
   let previousTimeStamp = 0
+
+  
+  players.forEach((player) => {
+    player.addDiv()
+  });
 
   const gameLoop = (timestamp, players) => {
 
@@ -349,7 +401,7 @@ export const GameStart = () => {
 
   // Move Player
   players.forEach((player) => {
-      //moveCharacter(player);
+      movePlayer(player);
   });
 
   window.requestAnimationFrame(function(timestamp) {
@@ -357,10 +409,193 @@ export const GameStart = () => {
   });
 }
 
-  //todo creating a players while generating map
-  const players = []
+  const movePlayer = (player) => {
+
+        if (player.div !== null) {
+            let transValue = player.div.style.transform;
+
+            let currentTop = transValue.substring(transValue.indexOf(" ") + 1, transValue.indexOf(")"));
+            currentTop = currentTop.replace("px", "");
+            currentTop = parseInt(currentTop);
+
+            let currentLeft = transValue.substring(transValue.indexOf("(") + 1, transValue.indexOf(","));
+            currentLeft = currentLeft.replace("px", "");
+            currentLeft = parseInt(currentLeft);
+
+            let background = player.div.style.background;
+
+            let topBarrier;
+            let leftBarrier;
+
+            switch (player.direction) {
+                case "ArrowUp":
+                    if (currentTop > mapMarginTop) {
+                        currentTop -= oneStepSize;
+                    }
+
+                    topBarrier = barrierCheck(currentTop, currentLeft, "Up", "Player");
+
+                    if (topBarrier !== undefined) {
+                        currentTop = topBarrier;
+                    }
+
+                    player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
+
+                    if (background === 'url("./img/' + player.color + '-back1.png")') {
+                        player.div.style.background = 'url("./img/' + player.color + '-back2.png")';
+                    } else {
+                        player.div.style.background = 'url("./img/' + player.color + '-back1.png")';
+                    }
+
+                    break;
+                case "ArrowDown":
+                    if (currentTop < mapHeight - mapMarginBottom) {
+                        currentTop += oneStepSize;
+                    }
+
+                    topBarrier = barrierCheck(currentTop, currentLeft, "Down", "Player");
+
+                    if (topBarrier !== undefined) {
+                        currentTop = topBarrier;
+                    }
+
+                    player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
+
+                    if (background === 'url("./img/' + player.color + '-front1.png")') {
+                        player.div.style.background = 'url("./img/' + player.color + '-front2.png")';
+                    } else {
+                        player.div.style.background = 'url("./img/' + player.color + '-front1.png")';
+                    }
+
+                    break;
+                case "ArrowLeft":
+                    if (currentLeft > mapMarginLeft) {
+                        currentLeft -= oneStepSize;
+                    }
+
+                    leftBarrier = barrierCheck(currentTop, currentLeft, "Left", "Player");
+
+                    if (leftBarrier !== undefined) {
+                        currentLeft = leftBarrier;
+                    }
+
+                    player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
+
+                    if (background === 'url("./img/' + player.color + '-left1.png")') {
+                        player.div.style.background = 'url("./img/' + player.color + '-left2.png")';
+                    } else {
+                        player.div.style.background = 'url("./img/' + player.color + '-left1.png")';
+                    }
+
+                    break;
+                case "ArrowRight":
+                    if (currentLeft < mapWidth - mapMarginRight) {
+                        currentLeft += oneStepSize;
+                    }
+
+                    leftBarrier = barrierCheck(currentTop, currentLeft, "Right", "Player");
+
+                    if (leftBarrier !== undefined) {
+                        currentLeft = leftBarrier;
+                    }
+
+                    player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
+
+                    if (background === 'url("./img/' + player.color + '-right1.png")') {
+                        player.div.style.background = 'url("./img/' + player.color + '-right2.png")';
+                    } else {
+                        player.div.style.background = 'url("./img/' + player.color + '-right1.png")';
+                    }
+
+                    break;
+            }
+
+            if (player.direction === null) {
+                let background = player.div.style.background;
+
+                switch (true) {
+                    case background === 'url("./img/' + player.color + '-back0.png")' || background === 'url("./img/' + player.color + '-back1.png")' || background === 'url("./img/' + player.color + '-back2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-back0.png")';
+                        break;
+                    case background === 'url("./img/' + player.color + '-front0.png")' || background === 'url("./img/' + player.color + '-front1.png")' || background === 'url("./img/' + player.color + '-front2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-front0.png")';
+                        break;
+                    case background === 'url("./img/' + player.color + '-left0.png")' || background === 'url("./img/' + player.color + '-left1.png")' || background === 'url("./img/' + player.color + '-left2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-left0.png")';
+                        break;
+                    case background === 'url("./img/' + player.color + '-right0.png")' || background === 'url("./img/' + player.color + '-right1.png")' || background === 'url("./img/' + player.color + '-right2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-right0.png")';
+                        break;
+                }
+            }
+
+            //todo temp
+            player.direction = null
+        }
+  }
+
+    // function that checks if players and ghosts can move in the direction they want to,
+// and if they can, it moves them. Checks also if the player is killed by a ghost
+const barrierCheck = (currentTop, currentLeft, direction) => {
+ 
+  let walls = document.querySelectorAll(".wall");
+
+  for (let i = 0; i < walls.length; i++) {
+      let wallTop = walls[i].style.top;
+      wallTop = wallTop.replace("px", "");
+      wallTop = parseInt(wallTop);
+
+      let wallLeft = walls[i].style.left;
+      wallLeft = wallLeft.replace("px", "");
+      wallLeft = parseInt(wallLeft);
+
+      if (currentTop + playerSize > wallTop && currentTop < wallTop + wallSize && currentLeft + playerSize > wallLeft && currentLeft < wallLeft + wallSize) {
+          switch (direction) {
+              case "Up":
+                  return wallTop + wallSize;
+              case "Down":
+                  return wallTop - wallSize;
+              case "Left":
+                  return wallLeft + wallSize;
+              case "Right":
+                  return wallLeft - wallSize;
+          }
+      }
+  }
+
+  let bricks = document.querySelectorAll(".brick");
+
+  for (let i = 0; i < bricks.length; i++) {
+      let brickTop = bricks[i].style.top;
+      brickTop = brickTop.replace("px", "");
+      brickTop = parseInt(brickTop);
+
+      let brickLeft = bricks[i].style.left;
+      brickLeft = brickLeft.replace("px", "");
+      brickLeft = parseInt(brickLeft);
+
+      if (currentTop + playerSize > brickTop && currentTop < brickTop + brickSize && currentLeft + playerSize > brickLeft && currentLeft < brickLeft + brickSize) {
+          switch (direction) {
+              case "Up":
+                  return brickTop + brickSize;
+              case "Down":
+                  return brickTop - brickSize;
+              case "Left":
+                  return brickLeft + brickSize;
+              case "Right":
+                  return brickLeft - brickSize;
+          }
+      }
+  }
+
+  return undefined;
+}
+
 
   gameLoop(0, players)
+}
+
+export const GameStart = () => {
 
   return `
   <MF>
@@ -389,6 +624,7 @@ function Router() {
       MiniFramework.render(Waiting, container);
     } else if (window.location.hash === "#/gamestart") {
       MiniFramework.render(GameStart, container);
+      GameLogic()
     }
 
     // Set focus on the input textfield when the page is loaded
@@ -411,18 +647,16 @@ function fetchPlayersRenderWaitingTimer() {
 
     players = []
 
-    data.forEach(player => {
-      players.push(new Player(player.name, player.x, player.y, player.color))
+    data.forEach((player, i) => {
+      players.push(new Player(player.name, player.x, player.y, player.color, i+1))
     })
 
-    console.log(players)
-
     if (data.length > 1 && data.length <= 4) {
-      timer = 10;
+      timer = 1;
     }
 
     if (data.length > 1 && data.length < 4) {
-      waitTime = 20;
+      waitTime = 2;
     }
 
     MiniFramework.updateState();
@@ -496,7 +730,7 @@ function openChat() {
 
   socket.onmessage = function (event) {
     var msg = JSON.parse(event.data);
-    console.log(msg);
+    
     if (msg.type === "message") {
   
       var node = document.createElement("div");
@@ -519,7 +753,10 @@ function openChat() {
       timer = undefined;
     }
 
-
+    if (msg.type = "game-update") {
+      const player = players.find(player => player.name == msg.player)
+      player.setDirection(msg.key)
+    }
   };
 
   document.getElementById("form").addEventListener("submit", function (e) {
