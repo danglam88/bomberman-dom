@@ -88,55 +88,7 @@ export const Naming = () => {
 
 export const Counter = () => {
   if (!playersFetched) {
-    fetch("/players")
-      .then((response) => response.json())
-      .then((data) => {
-        playersFetched = true;
-        players = data;
-
-        
-        data.forEach(player => {
-          playersTemp.push(new Player(player.name, player.x, player.y, player.color))
-        })
-
-        console.log(playersTemp)
-
-        if (data.length > 1 && data.length <= 4) {
-          timer = 10;
-        }
-
-        if (data.length > 1 && data.length < 4) {
-          waitTime = 20;
-        }
-
-        MiniFramework.updateState();
-
-        if (waitTime !== undefined) {
-          const waitTimeId = setInterval(() => {
-            waitTime--;
-            MiniFramework.updateState();
-
-            if (waitTime === 0) {
-              clearInterval(waitTimeId);
-
-              if (timer !== undefined) {
-                const timerId = setInterval(() => {
-                  timer--;
-                  MiniFramework.updateState();
-
-                  if (timer === 0) {
-                    clearInterval(timerId);
-                    window.location.hash = "#/gamestart";
-                  }
-                }, 1000);
-              }
-            }
-          }, 1000);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchPlayersRenderWaitingTimer();
   }
 
   return `
@@ -452,6 +404,58 @@ function Router() {
   routeChange();
 }
 
+function fetchPlayersRenderWaitingTimer() {
+  fetch("/players")
+  .then((response) => response.json())
+  .then((data) => {
+    playersFetched = true;
+    players = data;
+
+    
+    data.forEach(player => {
+      playersTemp.push(new Player(player.name, player.x, player.y, player.color))
+    })
+
+    console.log(playersTemp)
+
+    if (data.length > 1 && data.length <= 4) {
+      timer = 10;
+    }
+
+    if (data.length > 1 && data.length < 4) {
+      waitTime = 20;
+    }
+
+    MiniFramework.updateState();
+
+    if (waitTime !== undefined) {
+      const waitTimeId = setInterval(() => {
+        waitTime--;
+        MiniFramework.updateState();
+
+        if (waitTime === 0) {
+          clearInterval(waitTimeId);
+
+          if (timer !== undefined) {
+            const timerId = setInterval(() => {
+              timer--;
+              MiniFramework.updateState();
+
+              if (timer === 0) {
+                clearInterval(timerId);
+                window.location.hash = "#/gamestart";
+              }
+            }, 1000);
+          }
+        }
+      }, 1000);
+    }
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+}
+
 function openChat() {
   const chatDiv = document.createElement("div");
   chatDiv.id = "player-chat";
@@ -495,12 +499,28 @@ function openChat() {
     var msg = JSON.parse(event.data);
     console.log(msg);
     if (msg.type === "message") {
-
+  
       var node = document.createElement("div");
       var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
       node.appendChild(textnode);
       document.getElementById("chat-messages").appendChild(node);
     }
+    // if message type is join and the timer is not running, start the timer
+    if (msg.type === "join") {
+      fetchPlayersRenderWaitingTimer();
+
+
+      
+    }
+
+    // if message type is leave and the timer is running, stop the timer
+    if (msg.type === "leave")
+      if (timer != undefined) {
+      clearInterval(timer);
+      timer = undefined;
+    }
+
+
   };
 
   document.getElementById("form").addEventListener("submit", function (e) {
