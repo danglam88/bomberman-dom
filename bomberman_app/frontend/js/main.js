@@ -5,8 +5,7 @@ const GLOBAL_SPEED = 10
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
-let players = [];
-const playersTemp = [];
+const players = [];
 
 let playersFetched = false;
 let waitTime = undefined;
@@ -409,14 +408,13 @@ function fetchPlayersRenderWaitingTimer() {
   .then((response) => response.json())
   .then((data) => {
     playersFetched = true;
-    players = data;
 
     
     data.forEach(player => {
-      playersTemp.push(new Player(player.name, player.x, player.y, player.color))
+      players.push(new Player(player.name, player.x, player.y, player.color))
     })
 
-    console.log(playersTemp)
+    console.log(players)
 
     if (data.length > 1 && data.length <= 4) {
       timer = 10;
