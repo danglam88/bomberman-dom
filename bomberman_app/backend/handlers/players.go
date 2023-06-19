@@ -7,8 +7,8 @@ import (
 
 type Player struct {
 	Name  string `json:"name"`
-	XPos  int    `json:"xpos"`
-	YPos  int    `json:"ypos"`
+	X     int    `json:"x"`
+	Y     int    `json:"y"`
 	Color string `json:"color"`
 }
 
@@ -18,13 +18,13 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 	for i, session := range sessions {
 		switch i {
 		case 0:
-			players = append(players, Player{Name: session, XPos: 5, YPos: 10, Color: "blue"})
+			players = append(players, Player{Name: session, X: 5, Y: 10, Color: "blue"})
 		case 1:
-			players = append(players, Player{Name: session, XPos: 850, YPos: 845, Color: "red"})
+			players = append(players, Player{Name: session, X: 850, Y: 845, Color: "red"})
 		case 2:
-			players = append(players, Player{Name: session, XPos: 850, YPos: 10, Color: "purple"})
+			players = append(players, Player{Name: session, X: 850, Y: 10, Color: "purple"})
 		case 3:
-			players = append(players, Player{Name: session, XPos: 5, YPos: 845, Color: "dark"})
+			players = append(players, Player{Name: session, X: 5, Y: 845, Color: "dark"})
 		}
 	}
 
