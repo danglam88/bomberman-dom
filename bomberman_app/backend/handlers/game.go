@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -33,11 +32,18 @@ type Level struct {
 	Data [][]int `json:"data"`
 }
 
-func NewGame(w http.ResponseWriter, r *http.Request) {
+type Spot struct {
+	Class string
+	Top   int
+	Left  int
+	Z     int
+	Image string
+}
 
-	fmt.Println("NewGame")
+func NewGame(w http.ResponseWriter, r *http.Request) {
 	gameMap := createNewGame()
-	jsonData, err := json.Marshal(gameMap)
+	addedFeatures := gameIntoJSON(gameMap)
+	jsonData, err := json.Marshal(addedFeatures)
 	if err != nil {
 		GetErrResponse(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -130,7 +136,105 @@ func createNewGame() Level {
 		coordinate := brickAddedCoords[i]
 		copyLevel.Data[coordinate[0]][coordinate[1]] = gifts[i]
 	}
-
-	fmt.Println(copyLevel)
 	return copyLevel
+}
+
+func gameIntoJSON(gameMap Level) []Spot {
+	filledMap := []Spot{}
+	for i := 0; i < len(gameMap.Data); i++ {
+		for j := 0; j < len(gameMap.Data[i]); j++ {
+			if gameMap.Data[i][j] == 1 {
+				thisSpot := Spot{
+					Class: "wall",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/wall.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 3 {
+				thisSpot := Spot{
+					Class: "player moving",
+					Top:   i*45 + 10, //10
+					Left:  j*45 + 5,  //5
+					Z:     2,
+					Image: "url('img/blue-front0.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 5 {
+				thisSpot := Spot{
+					Class: "player moving",
+					Top:   i*45 - 10, //845
+					Left:  j*45 - 5,  //850
+					Z:     2,
+					Image: "url('img/purple-front0.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 6 {
+				thisSpot := Spot{
+					Class: "player moving",
+					Top:   i*45 + 10, //10
+					Left:  j*45 - 5,  //850
+					Z:     2,
+					Image: "url('img/dark-front0.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 7 {
+				thisSpot := Spot{
+					Class: "player moving",
+					Top:   i*45 - 10, //845
+					Left:  j*45 + 5,  //5
+					Z:     2,
+					Image: "url('img/red-front0.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 4 {
+				thisSpot := Spot{
+					Class: "brick",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/brick.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 8 {
+				thisSpot := Spot{
+					Class: "brick multiple-bombs-gift",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/brick.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 9 {
+				thisSpot := Spot{
+					Class: "brick bomb-range-gift",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/brick.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 10 {
+				thisSpot := Spot{
+					Class: "brick speed-gift",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/brick.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			} else if gameMap.Data[i][j] == 11 {
+				thisSpot := Spot{
+					Class: "brick life-gift",
+					Top:   i * 45,
+					Left:  j * 45,
+					Z:     1,
+					Image: "url('img/brick.png')",
+				}
+				filledMap = append(filledMap, thisSpot)
+			}
+		}
+	}
+	return filledMap
 }
