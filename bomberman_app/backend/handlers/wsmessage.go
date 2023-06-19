@@ -31,6 +31,8 @@ func SetManager(m *Manager) {
 	Mgr = m
 }
 
+var timerTimestamp time.Time
+
 type Manager struct {
 	clients ClientList
 	nextID  int
@@ -38,11 +40,11 @@ type Manager struct {
 }
 
 type Message struct {
-	From      int    `json:"from"`
-	Message   string `json:"message"`
-	Type      string `json:"type"`
-	Nickname  string `json:"nickname"`
-	Timestamp string `json:"timestamp"`
+	From      int       `json:"from"`
+	Message   string    `json:"message"`
+	Type      string    `json:"type"`
+	Nickname  string    `json:"nickname"`
+	Timestamp time.Time `json:"timestamp"`
 }
 
 type GameUpdateMessage struct {
@@ -90,6 +92,28 @@ func (m *Manager) addClient(client *Client) {
 	defer m.Unlock()
 
 	m.clients[client] = true
+
+	// not working yet. Broadcast joinmsg with countdowntimer and nickname
+	joinMsg := Message{
+		From:     client.userId,
+		Type:     "join",
+		Nickname: "Player " + strconv.Itoa(client.userId),
+	}
+
+	if timerTimestamp.IsZero() {
+		joinMsg.Timestamp = time.Now()
+	} else {
+		joinMsg.Timestamp = timerTimestamp
+	}
+
+	joinMsgJson, err := json.Marshal(joinMsg)
+	if err != nil {
+		log.Println(err)
+	} else {
+		for c := range client.manager.clients {
+			c.egress <- joinMsgJson
+		}
+	}
 }
 
 func (m *Manager) removeClient(client *Client) {
@@ -116,27 +140,14 @@ func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
 	client := &Client{
 		connection: conn,
 		manager:    manager,
-		egress:     make(chan []byte),
+		egress:     make(chan []byte, 1),
 		userId:     id,
 	}
 
-	// not working yet. Broadcast joinmsg with countdowntimer and nickname
-	joinMsg := Message{
-		From:      client.userId,
-		Type:      "join",
-		Nickname:  "Player " + strconv.Itoa(client.userId),
-		Timestamp: time.Now().Format("2006-01-02 15:04:05"),
+	if len(manager.clients) == 1 {
+		timerTimestamp = time.Now()
 	}
-	joinMsgJson, err := json.Marshal(joinMsg)
 
-	if err != nil {
-		log.Println(err)
-	} else {
-		for c := range client.manager.clients {
-			c.egress <- joinMsgJson
-		}
-
-	}
 	return client
 }
 
@@ -261,7 +272,7 @@ func (c *Client) readMessages() {
 			}
 
 			if res.From > 0 {
-				res.Timestamp = time.Now().Format("2006-01-02 15:04:05")
+				res.Timestamp = time.Now()
 				message, err := json.Marshal(res)
 				if err != nil {
 					log.Println(err)
