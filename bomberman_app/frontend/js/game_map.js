@@ -11,10 +11,8 @@ function createMap(players) {
     fetch("/new_game")
     .then(response => response.json())
     .then(data => {
-      console.log(givenMap)
-      if (givenMap === undefined) {
+      console.log(data)
         givenMap = data;
-      }
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
 

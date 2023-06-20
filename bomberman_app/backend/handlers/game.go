@@ -40,8 +40,12 @@ type Spot struct {
 	Image string
 }
 
+var gameMap Level
+
 func NewGame(w http.ResponseWriter, r *http.Request) {
-	gameMap := createNewGame()
+	if gameMap.Data == nil {
+		gameMap = createNewGame()
+	}
 	addedFeatures := gameIntoJSON(gameMap)
 	jsonData, err := json.Marshal(addedFeatures)
 	if err != nil {
