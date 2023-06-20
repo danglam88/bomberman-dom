@@ -29,7 +29,6 @@ const totalTime = 181000;
 const hintStart = 121000;
 const lifePoints = 200;
 const intervalDuration = 100;
-const oneStepSize = 10;
 const highScoresNo = 5;
 const probability = 0.9;
 const allDirections = ["Up", "Down", "Left", "Right"];
@@ -101,7 +100,7 @@ const movePlayer = (player) => {
         switch (player.direction) {
             case "ArrowUp":
                 if (currentTop > mapMarginTop) {
-                    currentTop -= oneStepSize;
+                    currentTop -= player.getSpeed();
                 }
 
                 topBarrier = barrierCheck(currentTop, currentLeft, "Up", "Player");
@@ -121,7 +120,7 @@ const movePlayer = (player) => {
                 break;
             case "ArrowDown":
                 if (currentTop < mapHeight - mapMarginBottom) {
-                    currentTop += oneStepSize;
+                    currentTop += player.getSpeed();
                 }
 
                 topBarrier = barrierCheck(currentTop, currentLeft, "Down", "Player");
@@ -141,7 +140,7 @@ const movePlayer = (player) => {
                 break;
             case "ArrowLeft":
                 if (currentLeft > mapMarginLeft) {
-                    currentLeft -= oneStepSize;
+                    currentLeft -= player.getSpeed();
                 }
 
                 leftBarrier = barrierCheck(currentTop, currentLeft, "Left", "Player");
@@ -161,7 +160,7 @@ const movePlayer = (player) => {
                 break;
             case "ArrowRight":
                 if (currentLeft < mapWidth - mapMarginRight) {
-                    currentLeft += oneStepSize;
+                    currentLeft += player.getSpeed();
                 }
 
                 leftBarrier = barrierCheck(currentTop, currentLeft, "Right", "Player");
