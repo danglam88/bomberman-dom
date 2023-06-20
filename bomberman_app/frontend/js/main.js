@@ -1,5 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import {createMap} from "./game_map.js";
+import { createMap } from "./map.js";
 import { Player } from "./class.js";
 import { GLOBAL_SPEED } from "./game.js";
 
@@ -17,6 +17,8 @@ const timerConst = 10;
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
 let timerActivated = false;
+
+let gameStarted = false;
 
 export const Title = () => {
   return `
@@ -57,7 +59,6 @@ export const Naming = () => {
           if (response.status === 200) {
             localStorage.setItem("nickname", event.target.value);
             window.location.hash = "#/waiting";
-            setTimeout(openChat, 100);
           } else if (response.status === 409) {
             validateError =
               "Nickname was already taken, please choose another one";
@@ -78,6 +79,15 @@ export const Naming = () => {
 
   return `
   <MF>
+    ${(localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0) || (Array.isArray(players) && players.length === 4) || gameStarted
+    ? `
+    <div class="start" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
+      <div class="storytext" style="align-self: center;">
+        Game is not available at the moment. Please try again later...
+      </div>
+    </div>
+    `
+    : `
     <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
       <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
       <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
@@ -88,6 +98,7 @@ export const Naming = () => {
           : ""
       }
     </div>
+    `}
   </MF>
   `;
 };
@@ -102,13 +113,13 @@ export const Counter = () => {
     <div class="start" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
       <div class="storytext" style="align-self: center;">
         ${
-          localStorage.getItem("nickname").trim().length > 0 &&
+          localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 &&
           Array.isArray(players) &&
           players.length === 1
             ? `You (${localStorage.getItem(
                 "nickname"
               )}) are the only one who joined the game. Let's wait for other players...`
-            : localStorage.getItem("nickname").trim().length > 0 &&
+            : localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 &&
               Array.isArray(players) &&
               players.length > 1 &&
               players.length < 4 &&
@@ -124,7 +135,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Let's wait for ${waitTime} more seconds...`
-            : localStorage.getItem("nickname").trim().length > 0 &&
+            : localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 &&
               Array.isArray(players) &&
               players.length > 1 &&
               players.length <= 4 &&
@@ -140,7 +151,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : `Nickname: ${localStorage.getItem("nickname")}, Array: ${Array.isArray(players)}, Length: ${players.length}, WaitTime: ${waitTime}, Timer: ${timer}`
+            : `Game is not available at the moment. Please try again later...`
         }
       </div>
     </div>
@@ -154,7 +165,7 @@ export const Start = () => {
     ${Title()}
     <div id="core-part" class="core-part">
       <div id="game" class="game">
-        ${Info()}
+        <div id="info">${Info()}</div>
         ${Naming()}
       </div>
     </div>
@@ -168,23 +179,8 @@ export const Waiting = () => {
     ${Title()}
     <div id="core-part" class="core-part">
       <div id="game" class="game">
-        ${Info()}
+        <div id="info">${Info()}</div>
         ${Counter()}
-      </div>
-    </div>
-  </MF>
-  `;
-};
-
-export const GameStart = () => {
-
-  return `
-  <MF>
-    ${Title()}
-    <div id="core-part" class="core-part">
-      <div id="game" class="game">
-      <div id="info">${Info()}</div>
-      <div id="map"></div>
       </div>
     </div>
   </MF>
@@ -202,10 +198,18 @@ function Router() {
     ) {
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
-      MiniFramework.render(Waiting, container);
+      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3 && !gameStarted) {
+        MiniFramework.render(Waiting, container);
+        setTimeout(openChat, 100);
+      } else {
+        window.location.hash = "#/";
+      }
     } else if (window.location.hash === "#/gamestart") {
-      MiniFramework.render(GameStart, container);
-      createMap(players);
+      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length <=4 && gameStarted) {
+        createMap(players);
+      } else {
+        window.location.hash = "#/";
+      }
     }
 
     // Set focus on the input textfield when the page is loaded
@@ -293,6 +297,8 @@ function fetchPlayersRenderWaitingTimer() {
 
               if (timer === 0) {
                 clearInterval(timerId);
+
+                gameStarted = true;
                 window.location.hash = "#/gamestart";
               }
             }, 1000);

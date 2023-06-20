@@ -1,6 +1,6 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { Title, Info } from "./main.js";
-import { GLOBAL_SPEED, GameLogic } from "./game.js";
+import { GameLogic } from "./game.js";
 
 const mapWidth = 900;
 const mapHeight = 900;
@@ -39,11 +39,11 @@ const PaintMap = () => {
         <div id="map">
             <div class="map" style="background: url('img/grass.png'); height: ${mapHeight}px; width: ${mapWidth}px;">
               ${givenMap.map((object) => (
-                  `<div class="${object.Class}" style="${object.Class.includes("player") ? "transform: translate(" + object.Left + "px, " + object.Top + "px);" : "top: " + object.Top + "px; left: " + object.Left+"px"}; background-image: ${object.Image}; z-index: ${object.Z}; "></div>`   
+                  `<div class="${object.class}" style="${object.class.includes("player") ? "transform: translate(" + object.left + "px, " + object.top + "px);" : "top: " + object.top + "px; left: " + object.left+"px"}; background-image: ${object.image}; z-index: ${object.z}; "></div>`
               ))}
             </div>
         </div>
-        </div>
+      </div>
     </div>
   </MF>
   `;

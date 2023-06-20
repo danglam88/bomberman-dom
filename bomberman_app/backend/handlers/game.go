@@ -33,11 +33,11 @@ type Level struct {
 }
 
 type Spot struct {
-	Class string
-	Top   int
-	Left  int
-	Z     int
-	Image string
+	Class string `json:"class"`
+	Top   int    `json:"top"`
+	Left  int    `json:"left"`
+	Z     int    `json:"z"`
+	Image string `json:"image"`
 }
 
 var gameMap Level

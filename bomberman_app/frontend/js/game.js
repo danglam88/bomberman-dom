@@ -40,7 +40,6 @@ const scoreGoal = 1000;
 
 export const GameLogic = (players) => {
     let isGameOver = false
-    let isGamePaused = false
     let previousTimeStamp = 0
   
     const gameLoop = (timestamp, players) => {
@@ -51,7 +50,7 @@ export const GameLogic = (players) => {
         }
       
           // Check that all characters moving with global speed and not moving while pause
-        if ((timestamp < previousTimeStamp + GLOBAL_SPEED) || isGamePaused) {
+        if (timestamp < previousTimeStamp + GLOBAL_SPEED) {
             window.requestAnimationFrame(function(timestamp) {
                 gameLoop(timestamp, players);
         });
