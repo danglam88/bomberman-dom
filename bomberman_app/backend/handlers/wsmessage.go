@@ -15,6 +15,7 @@ import (
 const (
 	MESSAGE_TYPE = "message"
 	GAME_UPDATE  = "game-update"
+	LEAVE_MSG    = "leave"
 )
 
 var (
@@ -185,8 +186,35 @@ func (c *Client) readMessages() {
 			continue
 		}
 
-		if msgType.Type == "leave" {
-			c.manager.removeClient(c)
+		if msgType.Type == LEAVE_MSG {
+			// Handle the leave message
+			res = Message{
+				From:      c.userId,
+				Type:      LEAVE_MSG,
+				Timestamp: time.Now(),
+				Nickname:  c.Nickname,
+			}
+
+			resJson, err := json.Marshal(res)
+
+			fmt.Println(resJson)
+
+			if err != nil {
+				log.Printf("error marshalling leave message: %v", err)
+				continue
+			}
+
+			for i, session := range sessions {
+				if session == c.Nickname {
+					sessions = append(sessions[:i], sessions[i+1:]...)
+					break
+				}
+			}
+
+			for client := range c.manager.clients {
+				client.egress <- resJson
+			}
+
 			continue
 		}
 

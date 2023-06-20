@@ -371,7 +371,24 @@ function openChat() {
 
     // if message type is leave and the timer is running, stop the timer
     if (msg.type === "leave") {
+      
+
+      if (players.length == 2) {
+        timerTimestamp = undefined;
+        timer = undefined;
+        waitTime = undefined;
+        timerActivated = false;
+        waitTimeActivated = false;
+
+      }
       fetchPlayersRenderWaitingTimer();
+
+      var node = document.createElement("div");
+      var textnode = document.createTextNode(msg.nickname + " left the game");
+
+      node.appendChild(textnode);
+      document.getElementById("chat-messages").appendChild(node);
+
     }
 
     if (msg.type = "game-update") {
@@ -407,6 +424,7 @@ function openChat() {
   window.addEventListener("beforeunload", function (e) {
     var msg = {
       Type: "leave",
+      nickname: nickname,
     };
   
     socket.send(JSON.stringify(msg));
