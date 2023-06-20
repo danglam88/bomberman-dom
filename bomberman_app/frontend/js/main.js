@@ -12,6 +12,7 @@ let timer = undefined;
 
 
 let timerTimestamp = undefined;
+let waitTimeActivated = false;
 let timerActivated = false;
 
 export const Title = () => {
@@ -136,7 +137,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : `nickname: ${localStorage.getItem("nickname").trim().length}, playersLength: ${players.length}, waitTime: ${waitTime}`
+            : `Nickname: ${localStorage.getItem("nickname")}, Array: ${Array.isArray(players)}, Length: ${players.length}, WaitTime: ${waitTime}, Timer: ${timer}`
         }
       </div>
     </div>
@@ -387,16 +388,13 @@ function fetchPlayersRenderWaitingTimer() {
 
     if (timerTimestamp === undefined) {
       if (data.length === 2) {
-        console.log("timer 2: ");
-        timer = 10;
-      }
-
-      if (data.length === 2) {
-        console.log("waitTime 2: ");
+        console.log("waitTime timer 2: ");
         waitTime = 20;
+        timer = 10;
       } else if (data.length === 4) {
-        console.log("waitTime 4: ");
+        console.log("waitTime timer 4: ");
         waitTime = 0;
+        timer = 10;
       }
     } else {
       // Parse the timestamp into a Date object
@@ -406,10 +404,12 @@ function fetchPlayersRenderWaitingTimer() {
       const diff = Date.now() - givenTimestamp;
 
       if (diff <= 20000) {
-        waitTime = Math.floor((20000 - diff) / 1000);
+        console.log("diff small: ", diff);
+        waitTime = players.length === 4 ? 0 : Math.floor((20000 - diff) / 1000);
         timer = 10;
         console.log("small diff: ", waitTime);
       } else {
+        console.log("diff big: ", diff);
         waitTime = 0;
         timer = Math.floor((30000 - diff) / 1000);
         console.log("big diff: ", timer);
@@ -418,22 +418,30 @@ function fetchPlayersRenderWaitingTimer() {
 
     MiniFramework.updateState();
 
-    if (waitTime !== undefined && !timerActivated) {
-      console.log("timer activated: ", waitTime);
-      timerActivated = true;
-      const waitTimeId = setInterval(() => {
-        waitTime--;
-        MiniFramework.updateState();
+    if (waitTime !== undefined && !waitTimeActivated) {
+      console.log("waitTime activated: ", waitTime);
+      waitTimeActivated = true;
 
-        if (waitTime <= 0) {
+      const waitTimeId = setInterval(() => {
+        if (waitTime > 0) {
+          waitTime--;
+          MiniFramework.updateState();
+        }
+
+        if (waitTime === 0) {
           clearInterval(waitTimeId);
+
           console.log("timer out 1: ", timer);
-          if (timer !== undefined) {
+          if (timer !== undefined && !timerActivated) {
             console.log("timer in 1: ", timer);
+            timerActivated = true;
+
             const timerId = setInterval(() => {
               console.log("timer setinterval: ", timer);
-              timer--;
-              MiniFramework.updateState();
+              if (timer > 0) {
+                timer--;
+                MiniFramework.updateState();
+              }
 
               if (timer === 0) {
                 clearInterval(timerId);
@@ -505,8 +513,8 @@ function openChat() {
     if (msg.type === "join") {
       console.log("timestamp 1-2: ", msg.timestamp);
       console.log("players-length: ", players.length);
-      if (players.length === 3) {
-        console.log("timestamp 3: ", msg.timestamp);
+      if (players.length >= 3 && players.length <= 4) {
+        console.log("timestamp 3-4: ", msg.timestamp);
         timerTimestamp = msg.timestamp;
         console.log("timerTimestamp: ", timerTimestamp);
       }
@@ -514,11 +522,11 @@ function openChat() {
     }
 
     // if message type is leave and the timer is running, stop the timer
-    if (msg.type === "leave")
-      if (timer != undefined) {
-      clearInterval(timer);
-      timer = undefined;
-    }
+    // if (msg.type === "leave")
+    //   if (timer != undefined) {
+    //   clearInterval(timer);
+    //   timer = undefined;
+    // }
 
     if (msg.type = "game-update") {
       const player = players.find(player => player.name == msg.player)
