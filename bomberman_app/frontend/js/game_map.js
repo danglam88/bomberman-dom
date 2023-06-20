@@ -1,18 +1,30 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import { Title, Info, Chat} from "./main.js";
+import { Title, Info } from "./main.js";
+import { GLOBAL_SPEED, GameLogic } from "./game.js";
 
 const mapWidth = 900;
 const mapHeight = 900;
 
 let givenMap;
 
-async function createMap() {
+function createMap(players) {
     fetch("/new_game")
     .then(response => response.json())
     .then(data => {
+      console.log(givenMap)
+      if (givenMap === undefined) {
         givenMap = data;
+      }
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
+
+        players.forEach((player) => {
+          player.addDiv()
+        })
+  
+        console.log(players)
+  
+        GameLogic(players);
     })
     .catch(error => {
       console.error(error)
@@ -34,7 +46,6 @@ const PaintMap = () => {
             </div>
         </div>
         </div>
-      ${Chat()}
     </div>
   </MF>
   `;

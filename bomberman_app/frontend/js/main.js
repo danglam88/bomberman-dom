@@ -1,7 +1,7 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import {createMap} from "./game_map.js";
 import { Player } from "./class.js";
-import { GLOBAL_SPEED, GameLogic } from "./game.js";
+import { GLOBAL_SPEED } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -203,8 +203,7 @@ function Router() {
       MiniFramework.render(Waiting, container);
     } else if (window.location.hash === "#/gamestart") {
       MiniFramework.render(GameStart, container);
-      createMap();
-      GameLogic(players);
+      createMap(players);
     }
 
     // Set focus on the input textfield when the page is loaded
@@ -231,17 +230,17 @@ function fetchPlayersRenderWaitingTimer() {
       players.push(new Player(player.name, player.color, GLOBAL_SPEED, i+1))
     })
 
-    console.log(players)
+    console.log("ww", players)
 
     if (timerTimestamp === undefined) {
       if (data.length === 2) {
         console.log("waitTime timer 2: ");
-        waitTime = 20;
-        timer = 10;
+        waitTime = 2;
+        timer = 1;
       } else if (data.length === 4) {
         console.log("waitTime timer 4: ");
         waitTime = 0;
-        timer = 10;
+        timer = 1;
       }
     } else {
       // Parse the timestamp into a Date object
@@ -253,7 +252,7 @@ function fetchPlayersRenderWaitingTimer() {
       if (diff <= 20000) {
         console.log("diff small: ", diff);
         waitTime = players.length === 4 ? 0 : Math.floor((20000 - diff) / 1000);
-        timer = 10;
+        timer = 1;
         console.log("small diff: ", waitTime);
       } else {
         console.log("diff big: ", diff);

@@ -11,7 +11,7 @@ export class Player {
     }
 
     addDiv() {
-        this.div = document.querySelector(".player" + this.index)
+        this.div = document.querySelector("." + this.color)
     }
 
     // dropBomb() {
@@ -143,7 +143,5 @@ export class Bomb {
 
     explode() {
         this.owner.addBomb();
-        //todo what is this for
-        //this = null;
     }
 }
