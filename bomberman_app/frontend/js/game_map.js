@@ -1,3 +1,6 @@
+import MiniFramework from "../mini_framework/mini-framework.js";
+import { Title, Info, Chat} from "./main.js";
+
 const mapWidth = 900;
 const mapHeight = 900;
 const tileSize = 45;
@@ -16,6 +19,8 @@ const bombRangeGift = 2;
 const speedGift = 2;
 const lifeGift = 2;
 const bricksNo = 100;
+
+let givenMap;
 
 // 0 = empty/ghost, 1 = wall, 2 = brick, 3 = player1, 4 = safe-zone, 5 = player2, 6 = player3, 7 = player4
 const level = [
@@ -44,8 +49,16 @@ const level = [
 let finalHTMLstring = [];
 
 //create the game map
-const createMap = () => {
-    let mapElement = document.createElement("div");
+async function createMap() {
+    let Game = await testGet().then((data) => {
+        return data;
+    });
+
+    return Game
+
+    console.log(Game);
+ 
+    /*let mapElement = document.createElement("div");
     mapElement.classList.add("map");
     mapElement.style.background = "url('img/grass.png')";
     mapElement.style.height = mapHeight + "px";
@@ -56,11 +69,10 @@ const createMap = () => {
     //console.log(finalHTMLstring);
     fillMap();
     //finalHTMLstring.push("</div>");
-    //console.log(finalHTMLstring);
+    //console.log(finalHTMLstring);*/
 }
 
 function fillMap() {
-    testGet();
     let remainingBricks = bricksNo;
     const case2Positions = [];
     let colNo = level[0].length;
@@ -165,15 +177,39 @@ function createTile(fileName, y, x, promotedLayer = "") {
     }
 }
 
-function testGet() {
+async function testGet() {
     fetch("/new_game")
     .then(response => response.json())
     .then(data => {
-      console.log(data)
+        console.log(data);
+        givenMap = data;
+        let container = document.getElementById("root")
+        console.log(container)
+        console.log(givenMap)
+        MiniFramework.render(PaintMap, container)
     })
     .catch(error => {
       console.error(error)
     })
 }
 
+const PaintMap = () => {
+    return `
+    <MF>
+    ${Title()}
+    <div class="core-part">
+      <div id="game" class="game">
+      <div id="info">${Info()}</div>
+      <div id="map" style="background: url('img/grass.png'); height: 900px; width: 900px;">
+        ${givenMap}
+      </div>
+      </div>
+      ${Chat()}
+    </div>
+  </MF>
+  `;
+    
+}
+
 export default createMap;
+export { testGet };

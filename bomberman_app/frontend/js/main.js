@@ -1,5 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import createMap from "./game_map.js";
+import testGet from "./game_map.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -95,11 +95,11 @@ export const Counter = () => {
       players = data;
 
       if (data.length > 1 && data.length <= 4) {
-        timer = 10;
+        timer = 1;
       }
 
       if (data.length > 1 && data.length < 4) {
-        waitTime = 20;
+        waitTime = 2;
       }
 
       MiniFramework.updateState();
@@ -150,7 +150,12 @@ export const Counter = () => {
 }
 
 export const GameMap = () => {
-  return `
+
+  const container = document.getElementById("map");
+  console.log(container);
+  testGet();
+
+  /*return `
   <MF>
     <div class="map" style="background: url(&quot;img/grass.png&quot;); height: 900px; width: 900px;">
       <div class="player moving" style="transform: translate(5px, 10px); z-index: 2; background-image: url(&quot;img/blue-front0.png&quot;);"></div>
@@ -299,7 +304,7 @@ export const GameMap = () => {
       <div class="brick" style="top: 540px; left: 225px; z-index: 1; background-image: url(&quot;img/brick.png&quot;);"></div>
     </div>
   </MF>
-  `;
+  `;*/
 }
 
 export const Start = () => {
@@ -338,8 +343,8 @@ export const GameStart = () => {
     ${Title()}
     <div class="core-part">
       <div id="game" class="game">
-        ${Info()}
-        ${GameMap()}
+      <div id="info">${Info()}</div>
+      <div id="map" style="background: url('img/grass.png'); height: 900px; width: 900px;"></div>
       </div>
       ${Chat()}
     </div>
@@ -358,6 +363,8 @@ function Router() {
       MiniFramework.render(Waiting, container);
     } else if (window.location.hash === "#/gamestart") {
       MiniFramework.render(GameStart, container);
+      //GameMap();
+      testGet();
     }
 
 		// Set focus on the input textfield when the page is loaded
@@ -375,4 +382,3 @@ function Router() {
 }
 
 Router();
-createMap();
