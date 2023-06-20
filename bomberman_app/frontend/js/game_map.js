@@ -49,7 +49,8 @@ const level = [
 let finalHTMLstring = [];
 
 //create the game map
-async function createMap() {
+/*async function 
+createMap() {
     let Game = await testGet().then((data) => {
         return data;
     });
@@ -58,7 +59,7 @@ async function createMap() {
 
     console.log(Game);
  
-    /*let mapElement = document.createElement("div");
+    let mapElement = document.createElement("div");
     mapElement.classList.add("map");
     mapElement.style.background = "url('img/grass.png')";
     mapElement.style.height = mapHeight + "px";
@@ -69,10 +70,10 @@ async function createMap() {
     //console.log(finalHTMLstring);
     fillMap();
     //finalHTMLstring.push("</div>");
-    //console.log(finalHTMLstring);*/
-}
+    //console.log(finalHTMLstring);
+}*/
 
-function fillMap() {
+/*function fillMap() {
     let remainingBricks = bricksNo;
     const case2Positions = [];
     let colNo = level[0].length;
@@ -175,7 +176,7 @@ function createTile(fileName, y, x, promotedLayer = "") {
         tileElement.style.backgroundImage = "url('img/" + fileName;
         mapElement.appendChild(tileElement);
     }
-}
+}*/
 
 async function testGet() {
     fetch("/new_game")
@@ -192,24 +193,30 @@ async function testGet() {
       console.error(error)
     })
 }
-
+//<div class="player moving" style="transform: translate(5px, 10px); z-index: 2; background-image: url(&quot;img/blue-front0.png&quot;);"></div>
 const PaintMap = () => {
+
+    console.log(givenMap[0].Class)
+
     return `
     <MF>
     ${Title()}
     <div class="core-part">
       <div id="game" class="game">
-      <div id="info">${Info()}</div>
-      <div id="map" style="background: url('img/grass.png'); height: 900px; width: 900px;">
-        ${givenMap}
-      </div>
-      </div>
+        <div id="info">${Info()}</div>
+        <div id="map">
+            <div class="map" style="background: url('img/grass.png'); height: 900px; width: 900px;">
+              ${givenMap.map((object) => (
+                  `<div class="${object.Class}" style="${object.Class.includes("player") ? "transform: translate(" + object.Left + "px, " + object.Top + "px);" : "top: " + object.Top + "px; left: " + object.Left+"px"}; background-image: ${object.Image}; z-index: ${object.Z}; "></div>`   
+              ))}
+            </div>
+        </div>
+        </div>
       ${Chat()}
     </div>
   </MF>
   `;
-    
 }
 
-export default createMap;
+//export default createMap;
 export { testGet };

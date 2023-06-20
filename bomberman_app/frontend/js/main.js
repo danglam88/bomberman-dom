@@ -1,5 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import testGet from "./game_map.js";
+import {testGet} from "./game_map.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -344,7 +344,7 @@ export const GameStart = () => {
     <div class="core-part">
       <div id="game" class="game">
       <div id="info">${Info()}</div>
-      <div id="map" style="background: url('img/grass.png'); height: 900px; width: 900px;"></div>
+      // <div id="map" style="background: url('img/grass.png'); height: 900px; width: 900px;"></div>
       </div>
       ${Chat()}
     </div>

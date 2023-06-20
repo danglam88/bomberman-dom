@@ -154,7 +154,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 3 {
 				thisSpot := Spot{
-					Class: "player moving",
+					Class: "player blue",
 					Top:   i*45 + 10, //10
 					Left:  j*45 + 5,  //5
 					Z:     2,
@@ -163,7 +163,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 5 {
 				thisSpot := Spot{
-					Class: "player moving",
+					Class: "player purple",
 					Top:   i*45 - 10, //845
 					Left:  j*45 - 5,  //850
 					Z:     2,
@@ -172,7 +172,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 6 {
 				thisSpot := Spot{
-					Class: "player moving",
+					Class: "player dark",
 					Top:   i*45 + 10, //10
 					Left:  j*45 - 5,  //850
 					Z:     2,
@@ -181,7 +181,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 7 {
 				thisSpot := Spot{
-					Class: "player moving",
+					Class: "player red",
 					Top:   i*45 - 10, //845
 					Left:  j*45 + 5,  //5
 					Z:     2,
