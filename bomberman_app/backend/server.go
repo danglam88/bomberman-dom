@@ -14,6 +14,10 @@ func main() {
 			Endpoint:    "/players",
 			GetFunction: handlers.GetPlayers,
 		},
+		{
+			Endpoint:    "/new_game",
+			GetFunction: handlers.NewGame,
+		},
 	}
 
 	handlers.Start(collection)
