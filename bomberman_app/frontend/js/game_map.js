@@ -20,9 +20,6 @@ async function createMap() {
 }
 
 const PaintMap = () => {
-
-    console.log(givenMap[0].Class)
-
     return `
     <MF>
     ${Title()}
@@ -30,7 +27,7 @@ const PaintMap = () => {
       <div id="game" class="game">
         <div id="info">${Info()}</div>
         <div id="map">
-            <div class="map" style="background: url('img/grass.png'); height: 900px; width: 900px;">
+            <div class="map" style="background: url('img/grass.png'); height: ${mapHeight}px; width: ${mapWidth}px;">
               ${givenMap.map((object) => (
                   `<div class="${object.Class}" style="${object.Class.includes("player") ? "transform: translate(" + object.Left + "px, " + object.Top + "px);" : "top: " + object.Top + "px; left: " + object.Left+"px"}; background-image: ${object.Image}; z-index: ${object.Z}; "></div>`   
               ))}
