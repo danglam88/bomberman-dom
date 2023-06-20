@@ -1,5 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import { createMap } from "./map.js";
+import { createMap, givenMap } from "./map.js";
 import { Player } from "./class.js";
 import { GLOBAL_SPEED } from "./game.js";
 
@@ -17,16 +17,7 @@ const timerConst = 10;
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
 let timerActivated = false;
-
 let gameStarted = false;
-
-export const Title = () => {
-  return `
-  <MF>
-    <h1>BOMBERMAN • DOM</h1>
-  </MF>
-  `;
-};
 
 export const Info = () => {
   return `
@@ -162,7 +153,6 @@ export const Counter = () => {
 export const Start = () => {
   return `
   <MF>
-    ${Title()}
     <div id="core-part" class="core-part">
       <div id="game" class="game">
         <div id="info">${Info()}</div>
@@ -176,7 +166,6 @@ export const Start = () => {
 export const Waiting = () => {
   return `
   <MF>
-    ${Title()}
     <div id="core-part" class="core-part">
       <div id="game" class="game">
         <div id="info">${Info()}</div>
@@ -198,7 +187,7 @@ function Router() {
     ) {
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
-      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3 && !gameStarted) {
+      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3 && !givenMap) {
         MiniFramework.render(Waiting, container);
         setTimeout(openChat, 100);
       } else {
@@ -315,37 +304,16 @@ function fetchPlayersRenderWaitingTimer() {
 }
 
 function openChat() {
-  const chatDiv = document.createElement("div");
-  chatDiv.id = "player-chat";
-  const form = document.createElement("form")
-  const input = document.createElement("input")
-  const button = document.createElement("button")
-  form.id = "form"
-  button.innerText = "Send"
-  input.id = "input"
-  form.appendChild(input)
-  form.appendChild(button)
-  chatDiv.appendChild(form)
-  const chatMessages = document.createElement('div')
-  chatMessages.id = "chat-messages"
-  chatMessages.className = "chat-messages"
-  chatDiv.appendChild(chatMessages)
-  document.getElementById("core-part").appendChild(chatDiv);
-  console.log(document.getElementById("player-chat"))
-  console.log("openChat")
-  const nickname = localStorage.getItem("nickname");
-  console.log(nickname)
+  document.getElementById("chat").style.display = "";
 
+  const nickname = localStorage.getItem("nickname");
   var socket = new WebSocket("ws://localhost:8080/ws");
 
   socket.onopen = function () {
-    console.log("Connected!");
-
     var payload = JSON.stringify({
       type: "nickname",
       nickname: nickname,
     });
-
     socket.send(payload);
   };
 
@@ -361,7 +329,9 @@ function openChat() {
       var node = document.createElement("div");
       var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
       node.appendChild(textnode);
-      document.getElementById("chat-messages").appendChild(node);
+      var chatContainer = document.getElementById("chat-messages")
+      chatContainer.appendChild(node);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
     // if message type is join and the timer is not running, start the timer
     if (msg.type === "join") {

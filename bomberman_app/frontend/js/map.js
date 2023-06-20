@@ -1,11 +1,11 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import { Title, Info } from "./main.js";
+import { Info } from "./main.js";
 import { GameLogic } from "./game.js";
 
 const mapWidth = 900;
 const mapHeight = 900;
 
-let givenMap;
+export let givenMap;
 
 function createMap(players) {
     fetch("/new_game")
@@ -32,7 +32,6 @@ function createMap(players) {
 const PaintMap = () => {
     return `
     <MF>
-    ${Title()}
     <div class="core-part">
       <div id="game" class="game">
         <div id="info">${Info()}</div>

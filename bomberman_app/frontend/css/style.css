@@ -12,7 +12,7 @@ h1 {
     color: rgb(165, 224, 15);
     margin-bottom: 0px;
     margin-top: 0px;
-    font-size: 6em;
+    font-size: 5.5em;
     text-align: center;
     text-shadow: 0.2em 0.2em 0.1em rgb(46, 84, 4);
 }
@@ -43,11 +43,29 @@ p {
     margin-top: 10px;
 }
 
+.green {
+    color: rgb(165, 224, 15) !important
+}
+
+#main-wrapper {
+    display: flex;
+}
+
+#root {
+    flex: 1;
+}
+
+#chat {
+    flex: 1;
+    height: 948px;
+    width: 200px;
+    padding: 5px;
+}
+
 .core-part {
-    min-width: 1400px;
     display: flex;
     flex-direction: row;
-    margin-top: 10px;
+    align-items: stretch;
 }
 
 .seachHidden {
@@ -59,8 +77,7 @@ p {
 }
 
 form {
-    width: 900px;
-    height: 95px;
+    width: 194px;
 }
 
 .stats{
@@ -104,11 +121,17 @@ form {
     opacity: 0.5;
 }
 
+#map {
+    display: flex;
+    height: 900px;
+}
+
 .map {
     width: 900px;
     height: 900px;
     display: flex;
     position: absolute;
+    align-items: stretch;
 }
 
 .start {
@@ -199,18 +222,16 @@ form {
 }
 
 .game {
-    margin: 10px;
+    height: 968px;
 }
 
 .chat-messages {
-    color: white
+    color: white;
+    height: 876px;
+    overflow: scroll;
 }
 
-.player-chat {
-    margin: 10px;
-    min-width: 400px;
-    height: 948px;
-    padding: 10px;
+#player-chat {
     background-color: rgb(69, 82, 9);
 }
 
