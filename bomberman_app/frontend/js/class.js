@@ -1,10 +1,8 @@
 export class Player {
-    constructor(name, x, y, color, index) {
+    constructor(name, color, speed, index) {
         this.name = name;
-        this.x = x;
-        this.y = y;
         this.color = color;
-        this.speed = 10;
+        this.speed = speed;
         this.lives = 3;
         this.bomb = 1;
         this.range = 1;
@@ -16,26 +14,10 @@ export class Player {
         this.div = document.querySelector(".player" + this.index)
     }
 
-    moveUp() {
-        this.y -= this.speed;
-    }
-
-    moveDown() {
-        this.y += this.speed;
-    }
-
-    moveLeft() {
-        this.x -= this.speed;
-    }
-
-    moveRight() {
-        this.x += this.speed;
-    }
-
-    dropBomb() {
-        this.bomb--;
-        return new Bomb(this.x, this.y, this.range, this);
-    }
+    // dropBomb() {
+    //     this.bomb--;
+    //     return new Bomb(this.x, this.y, this.range, this);
+    // }
 
     addBomb() {
         this.bomb++;
@@ -72,10 +54,6 @@ export class Player {
                 this.addLife();
                 break;
         }
-    }
-
-    getPosition() {
-        return [this.x, this.y];
     }
 
     getBomb() {
