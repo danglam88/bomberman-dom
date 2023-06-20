@@ -123,6 +123,11 @@ func (m *Manager) removeClient(client *Client) {
 	if _, ok := m.clients[client]; ok {
 		client.connection.Close()
 		delete(m.clients, client)
+
+		// If only one player is left, stop the timer
+		if len(m.clients) == 1 {
+			timerTimestamp = time.Time{} // Reset the timer timestamp
+		}
 	}
 }
 
@@ -180,6 +185,11 @@ func (c *Client) readMessages() {
 			continue
 		}
 
+		if msgType.Type == "leave" {
+			c.manager.removeClient(c)
+			continue
+		}
+
 		if msgType.Type == "nickname" {
 			// Handle the nickname payload
 			var nicknamePayload struct {
@@ -199,27 +209,6 @@ func (c *Client) readMessages() {
 			c.Nickname = nickname
 
 			continue
-		}
-
-		if msgType.Type == "gamestate" {
-			var statePayload struct {
-				State json.RawMessage `json:"state"`
-			}
-
-			err = json.Unmarshal(payload, &statePayload)
-
-			if err != nil {
-				log.Printf("error unmarshalling gamestate payload: %v", err)
-				continue
-			}
-
-			// gameState = updateGameState(statePayload.State)
-			// broadcastGameState(gameState)
-			continue
-		}
-
-		if msgType.Type == "playerCounter" {
-
 		}
 
 		if msgType.Type == GAME_UPDATE {
@@ -301,24 +290,4 @@ func (c *Client) writeMessages() {
 		}
 	}
 
-}
-
-type GameState struct {
-	Type  string      `json:"type"`
-	State interface{} `json:"state"`
-}
-
-func (m *Manager) broadcastGameState(gameState GameState) {
-	m.Lock()
-	defer m.Unlock()
-
-	message, err := json.Marshal(gameState)
-	if err != nil {
-		log.Printf("error marshalling game state: %v", err)
-		return
-	}
-
-	for client := range m.clients {
-		client.egress <- message
-	}
 }

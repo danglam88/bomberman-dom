@@ -11,6 +11,8 @@ let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
+const waitTimeConst = 20;
+const timerConst = 10;
 
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
@@ -235,12 +237,12 @@ function fetchPlayersRenderWaitingTimer() {
     if (timerTimestamp === undefined) {
       if (data.length === 2) {
         console.log("waitTime timer 2: ");
-        waitTime = 2;
-        timer = 1;
+        waitTime = waitTimeConst;
+        timer = timerConst;
       } else if (data.length === 4) {
         console.log("waitTime timer 4: ");
         waitTime = 0;
-        timer = 1;
+        timer = timerConst;
       }
     } else {
       // Parse the timestamp into a Date object
@@ -252,7 +254,7 @@ function fetchPlayersRenderWaitingTimer() {
       if (diff <= 20000) {
         console.log("diff small: ", diff);
         waitTime = players.length === 4 ? 0 : Math.floor((20000 - diff) / 1000);
-        timer = 1;
+        timer = timerConst;
         console.log("small diff: ", waitTime);
       } else {
         console.log("diff big: ", diff);
@@ -368,11 +370,9 @@ function openChat() {
     }
 
     // if message type is leave and the timer is running, stop the timer
-    // if (msg.type === "leave")
-    //   if (timer != undefined) {
-    //   clearInterval(timer);
-    //   timer = undefined;
-    // }
+    if (msg.type === "leave") {
+      fetchPlayersRenderWaitingTimer();
+    }
 
     if (msg.type = "game-update") {
       const player = players.find(player => player.name == msg.player)
@@ -402,6 +402,14 @@ function openChat() {
   //todo set from onkeydown in MF template
   document.addEventListener('keydown', (e) => {
       handleKeyInput(e)
+  });
+
+  window.addEventListener("beforeunload", function (e) {
+    var msg = {
+      Type: "leave",
+    };
+  
+    socket.send(JSON.stringify(msg));
   });
 
   const handleKeyInput = (e) => {

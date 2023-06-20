@@ -182,7 +182,7 @@ const movePlayer = (player) => {
 
         if (player.direction === null) {
             let background = player.div.style.background;
-
+            // handle this in classes instead?
             switch (true) {
                 case background === 'url("./img/' + player.color + '-back0.png")' || background === 'url("./img/' + player.color + '-back1.png")' || background === 'url("./img/' + player.color + '-back2.png")':
                     player.div.style.background = 'url("./img/' + player.color + '-back0.png")';
