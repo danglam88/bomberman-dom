@@ -19,13 +19,13 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 	for i, session := range sessions {
 		switch i {
 		case 0:
-			Players = append(Players, Player{Name: session, X: 5, Y: 10, Color: "blue"})
+			Players = append(Players, Player{Name: session, X: 0, Y: 0, Color: "blue"})
 		case 1:
-			Players = append(Players, Player{Name: session, X: 850, Y: 845, Color: "red"})
+			Players = append(Players, Player{Name: session, X: 855, Y: 0, Color: "dark"})
 		case 2:
-			Players = append(Players, Player{Name: session, X: 850, Y: 10, Color: "purple"})
+			Players = append(Players, Player{Name: session, X: 0, Y: 855, Color: "red"})
 		case 3:
-			Players = append(Players, Player{Name: session, X: 5, Y: 845, Color: "dark"})
+			Players = append(Players, Player{Name: session, X: 855, Y: 855, Color: "purple"})
 		}
 	}
 

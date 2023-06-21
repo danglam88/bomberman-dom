@@ -8,19 +8,18 @@ const mapHeight = 900;
 let givenMap;
 
 function createMap(players) {
+  console.log("createMap")
     fetch("/new_game")
     .then(response => response.json())
     .then(data => {
-      console.log(data)
         givenMap = data;
+        removeExtraPlayers(players);
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
 
         players.forEach((player) => {
           player.addDiv()
-        })
-  
-        console.log(players)
+        });
   
         GameLogic(players);
     })
@@ -46,6 +45,18 @@ const PaintMap = () => {
     </div>
   </MF>
   `;
+}
+
+function removeExtraPlayers(players) {
+  let addPlayers = players.length;
+  for (let i = 0; i < givenMap.length; i++) {
+    if (givenMap[i].class.includes("player")) {
+      if (addPlayers <= 0) {
+        givenMap.splice(i, 1);
+      }
+      addPlayers--;
+    }
+  }
 }
 
 //export default createMap;

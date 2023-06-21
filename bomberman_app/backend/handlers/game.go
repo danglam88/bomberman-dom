@@ -8,24 +8,18 @@ import (
 )
 
 const (
-	mapWidth  = 900
-	mapHeight = 900
-	tileSize  = 45
-
-	player1StartTop  = 10
-	player1StartLeft = 5
-	player2StartTop  = mapHeight - 55
-	player2StartLeft = mapWidth - 50
-	player3StartTop  = 10
-	player3StartLeft = mapWidth - 50
-	player4StartTop  = mapHeight - 55
-	player4StartLeft = 5
+	tileSize = 45
 
 	multipleBombsGift = 2 //8
 	bombRangeGift     = 2 //9
 	speedGift         = 2 //10
 	lifeGift          = 2 //11
 	bricksNo          = 100
+)
+
+var (
+	mapWidth  = 0
+	mapHeight = 0
 )
 
 type Level struct {
@@ -83,6 +77,8 @@ func createNewGame() Level {
 			{7, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 5},
 		},
 	}
+	mapWidth = len(orginalMap.Data[0]) * tileSize
+	mapHeight = len(orginalMap.Data) * tileSize
 
 	copyLevel := Level{
 		Data: make([][]int, len(orginalMap.Data)),
@@ -150,8 +146,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			if gameMap.Data[i][j] == 1 {
 				thisSpot := Spot{
 					Class: "wall",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/wall.png')",
 				}
@@ -159,8 +155,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 3 {
 				thisSpot := Spot{
 					Class: "player blue",
-					Top:   i*45 + 10, //10
-					Left:  j*45 + 5,  //5
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     2,
 					Image: "url('img/blue-front0.png')",
 				}
@@ -168,8 +164,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 5 {
 				thisSpot := Spot{
 					Class: "player purple",
-					Top:   i*45 - 10, //845
-					Left:  j*45 - 5,  //850
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     2,
 					Image: "url('img/purple-front0.png')",
 				}
@@ -177,8 +173,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 6 {
 				thisSpot := Spot{
 					Class: "player dark",
-					Top:   i*45 + 10, //10
-					Left:  j*45 - 5,  //850
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     2,
 					Image: "url('img/dark-front0.png')",
 				}
@@ -186,8 +182,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 7 {
 				thisSpot := Spot{
 					Class: "player red",
-					Top:   i*45 - 10, //845
-					Left:  j*45 + 5,  //5
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     2,
 					Image: "url('img/red-front0.png')",
 				}
@@ -195,8 +191,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 4 {
 				thisSpot := Spot{
 					Class: "brick",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/brick.png')",
 				}
@@ -204,8 +200,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 8 {
 				thisSpot := Spot{
 					Class: "brick gift multiple-bombs-gift",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/brick.png')",
 				}
@@ -213,8 +209,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 9 {
 				thisSpot := Spot{
 					Class: "brick gift bomb-range-gift",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/brick.png')",
 				}
@@ -222,8 +218,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 10 {
 				thisSpot := Spot{
 					Class: "brick gift speed-gift",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/brick.png')",
 				}
@@ -231,8 +227,8 @@ func gameIntoJSON(gameMap Level) []Spot {
 			} else if gameMap.Data[i][j] == 11 {
 				thisSpot := Spot{
 					Class: "brick gift life-gift",
-					Top:   i * 45,
-					Left:  j * 45,
+					Top:   i * tileSize,
+					Left:  j * tileSize,
 					Z:     1,
 					Image: "url('img/brick.png')",
 				}

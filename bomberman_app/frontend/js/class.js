@@ -1,6 +1,8 @@
 export class Player {
-    constructor(name, color, speed, index) {
+    constructor(name, x, y, color, speed, index) {
         this.name = name;
+        this.x = x;
+        this.y = y;
         this.color = color;
         this.speed = speed;
         this.lives = 3;
@@ -163,5 +165,43 @@ export class Bomb {
 
     explode() {
         this.owner.addBomb();
+    }
+}
+
+export class Group {
+    constructor() {
+        this.id = this.generateId();
+        this.players = [];
+        this.status = "waiting";
+    }
+
+    generateId() {
+        return Date.now().toString(36) + Math.random().toString(36);
+    }
+
+    addPlayer(player) {
+        this.players.push(player);
+    }
+
+    removePlayer(player) {
+        this.players.splice(this.players.indexOf(player), 1);
+    }
+
+    getPlayers() {
+        return this.players;
+    }
+
+    getPlayer(index) {
+        return this.players[index];
+    }
+
+    getLength() {
+        return this.players.length;
+    }
+
+    reset() {
+        this.players.forEach(player => {
+            player.reset();
+        });
     }
 }

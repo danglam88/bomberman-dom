@@ -226,7 +226,8 @@ function fetchPlayersRenderWaitingTimer() {
     players = []
 
     data.forEach((player, i) => {
-      players.push(new Player(player.name, player.color, GLOBAL_SPEED, i+1))
+      console.log("player", player)
+      players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1))
     })
 
     console.log("ww", players)
