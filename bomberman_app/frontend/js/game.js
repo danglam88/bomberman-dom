@@ -21,10 +21,6 @@ const doorSize = 33;
 const giftSize = 33;
 const mapWidth = 900;
 const mapHeight = 900;
-const mapMarginTop = 15;
-const mapMarginBottom = 60;
-const mapMarginLeft = 5;
-const mapMarginRight = 55;
 const totalTime = 181000;
 const hintStart = 121000;
 const lifePoints = 200;
@@ -98,8 +94,10 @@ const movePlayer = (player) => {
 
         switch (player.direction) {
             case "ArrowUp":
-                if (currentTop > mapMarginTop) {
+                if (currentTop > player.getSpeed()) {
                     currentTop -= player.getSpeed();
+                } else {
+                    currentTop = 0;
                 }
 
                 topBarrier = barrierCheck(currentTop, currentLeft, "Up", "Player");
@@ -107,6 +105,8 @@ const movePlayer = (player) => {
                 if (topBarrier !== undefined) {
                     currentTop = topBarrier;
                 }
+
+                player.setY(currentTop);
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
@@ -118,8 +118,10 @@ const movePlayer = (player) => {
 
                 break;
             case "ArrowDown":
-                if (currentTop < mapHeight - mapMarginBottom) {
+                if (currentTop < mapHeight - playerSize - player.getSpeed()) {
                     currentTop += player.getSpeed();
+                } else {
+                    currentTop = mapHeight - playerSize;
                 }
 
                 topBarrier = barrierCheck(currentTop, currentLeft, "Down", "Player");
@@ -127,6 +129,8 @@ const movePlayer = (player) => {
                 if (topBarrier !== undefined) {
                     currentTop = topBarrier;
                 }
+
+                player.setY(currentTop);
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
@@ -138,8 +142,10 @@ const movePlayer = (player) => {
 
                 break;
             case "ArrowLeft":
-                if (currentLeft > mapMarginLeft) {
+                if (currentLeft > player.getSpeed()) {
                     currentLeft -= player.getSpeed();
+                } else {
+                    currentLeft = 0;
                 }
 
                 leftBarrier = barrierCheck(currentTop, currentLeft, "Left", "Player");
@@ -147,6 +153,8 @@ const movePlayer = (player) => {
                 if (leftBarrier !== undefined) {
                     currentLeft = leftBarrier;
                 }
+
+                player.setX(currentLeft);
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
@@ -158,8 +166,10 @@ const movePlayer = (player) => {
 
                 break;
             case "ArrowRight":
-                if (currentLeft < mapWidth - mapMarginRight) {
+                if (currentLeft < mapWidth - playerSize - player.getSpeed()) {
                     currentLeft += player.getSpeed();
+                } else {
+                    currentLeft = mapWidth - playerSize;
                 }
 
                 leftBarrier = barrierCheck(currentTop, currentLeft, "Right", "Player");
@@ -167,6 +177,8 @@ const movePlayer = (player) => {
                 if (leftBarrier !== undefined) {
                     currentLeft = leftBarrier;
                 }
+
+                player.setX(currentLeft);
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 

@@ -114,6 +114,14 @@ export class Player {
             } 
         }
     }
+
+    setX(x) {
+        this.x = x;
+    }
+
+    setY(y) {
+        this.y = y;
+    }
 }
 
 export class Bomb {
