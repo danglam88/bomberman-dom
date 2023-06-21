@@ -36,6 +36,10 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
+	if gameMap.Data != nil {
+		w.WriteHeader(http.StatusLocked)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 	w.Write(jsonData)
 }

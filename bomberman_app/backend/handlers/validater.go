@@ -19,7 +19,7 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 	nickname := s["nickname"]
 
 	// Check if the nickname is already in use
-	if len(sessions) == 4 {
+	if len(sessions) >= 4 {
 		w.WriteHeader(http.StatusTooManyRequests)
 	} else if !isNicknameAvailable(nickname) {
 		w.WriteHeader(http.StatusConflict)

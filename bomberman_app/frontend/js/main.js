@@ -25,8 +25,6 @@ export const Info = () => {
       <div class="howtoplay" style="text-align: center;">Use arrows to move, shift to place bombs</div>
       <div class="stats" style="height: 45px; width: 900px; top: 130px;">
         <div class="lives">Lives: 3</div>
-        <div class="timer">Time: 3:00</div>
-        <div class="score">Score: 0</div>
       </div>
     </MF>
     `;
@@ -74,7 +72,7 @@ export const Naming = () => {
 
   return `
   <MF>
-    ${(localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0) || (Array.isArray(players) && players.length === 4) || gameStarted
+    ${(Array.isArray(players) && players.length === 4) || gameStarted
     ? `
     <div class="start" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
       <div class="storytext" style="align-self: center;">
@@ -219,17 +217,22 @@ function Router() {
 
 function fetchPlayersRenderWaitingTimer() {
   fetch("/players")
-  .then((response) => response.json())
+  .then((response) => {
+    if (response.status === 423) {
+      throw new Error("Game is not available at the moment. Please try again later...");
+    }
+    return response.json()
+  })
   .then((data) => {
     playersFetched = true;
-
     players = []
 
     data.forEach((player, i) => {
+      console.log("player: ", player)
       players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1))
     })
 
-    console.log("ww", players)
+    console.log("players: ", players)
 
     if (timerTimestamp === undefined) {
       if (data.length === 2) {
