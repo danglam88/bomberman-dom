@@ -16,10 +16,6 @@ function createMap(players) {
         removeExtraPlayers(players);
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
-
-        players.forEach((player) => {
-          player.addDiv()
-        });
   
         GameLogic(players);
     })
