@@ -291,10 +291,18 @@ const giftCheck = (player, giftElement) => {
         giftLeft = giftLeft.replace("px", "");
         giftLeft = parseInt(giftLeft);
 
-        if (player.y + playerSize > giftTop && player.y < giftTop + giftSize && player.x + playerSize > giftLeft && player.x < giftLeft + giftSize) {
+        if (player.getY() + playerSize > giftTop && player.getY() < giftTop + giftSize && player.getX() + playerSize > giftLeft && player.getX() < giftLeft + giftSize) {
+            
             giftElement.remove();
+            
             if (giftElement.classList.contains("speed-gift")) {
                 player.addPowerUp("speed")
+            } else if (giftElement.classList.contains("multiple-bombs-gift")) {
+                player.addPowerUp("bomb")
+            }  else if (giftElement.classList.contains("bomb-range-gift")) {
+                player.addPowerUp("range")
+            } else if (giftElement.classList.contains("life-gift")) {
+                player.addPowerUp("life")
             }
         }
     }

@@ -581,12 +581,27 @@ form {
     margin-left: 6px;
 }
 
-.speed-gift {
+.gift {
     width: 45px;
     height: 45px;
     position: absolute;
-    animation: speedblink 1s infinite;
     background-size: 45px 45px;
+}
+
+.speed-gift {
+    animation: speedblink 1s infinite;
+}
+
+.multiple-bombs-gift {
+    animation: numberblink 1s infinite;
+}
+
+.bomb-range-gift {
+    animation: rangeblink 1s infinite;
+}
+
+.life-gift {
+    animation: lifeblink 1s infinite;
 }
 
 @keyframes speedblink {
@@ -595,5 +610,32 @@ form {
     }
     50% {
         background-image: url("/img/speed1.png");
+    }
+}
+
+@keyframes rangeblink {
+    0% {
+        background-image: url("/img/range.png");  
+    }
+    50% {
+        background-image: url("/img/range1.png");
+    }
+}
+
+@keyframes lifeblink {
+    0% {
+        background-image: url("/img/life.png");  
+    }
+    50% {
+        background-image: url("/img/life1.png");
+    }
+}
+
+@keyframes numberblink {
+    0% {
+        background-image: url("/img/number.png");  
+    }
+    50% {
+        background-image: url("/img/number1.png");
     }
 }
