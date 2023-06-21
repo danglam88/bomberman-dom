@@ -580,3 +580,20 @@ form {
     margin-top: 6px;
     margin-left: 6px;
 }
+
+.speed-gift {
+    width: 45px;
+    height: 45px;
+    position: absolute;
+    animation: speedblink 1s infinite;
+    background-size: 45px 45px;
+}
+
+@keyframes speedblink {
+    0% {
+        background-image: url("/img/speed.png");  
+    }
+    50% {
+        background-image: url("/img/speed1.png");
+    }
+}

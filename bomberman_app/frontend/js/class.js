@@ -24,7 +24,7 @@ export class Player {
     }
 
     addSpeed() {
-        this.speed += 5;
+        this.speed += 2;
     }
 
     addRange() {

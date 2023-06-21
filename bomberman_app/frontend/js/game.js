@@ -212,6 +212,11 @@ const movePlayer = (player) => {
 
         //todo temp
         player.direction = null
+
+        let giftElements = document.querySelectorAll(".gift");
+        giftElements.forEach((gift) => {
+            giftCheck(player, gift)
+        })
     }
 }
 
@@ -270,4 +275,27 @@ for (let i = 0; i < bricks.length; i++) {
 }
 
 return undefined;
+}
+
+const giftCheck = (player, giftElement) => {
+
+    if (player !== null && giftElement !== null && !giftElement.classList.contains("brick")) {
+        //todo add animation earlier (after destroying a brick)
+        //giftElement.style.animation = "animation: speedblink 1s infinite"
+
+        let giftTop = giftElement.style.top;
+        giftTop = giftTop.replace("px", "");
+        giftTop = parseInt(giftTop);
+
+        let giftLeft = giftElement.style.left;
+        giftLeft = giftLeft.replace("px", "");
+        giftLeft = parseInt(giftLeft);
+
+        if (player.y + playerSize > giftTop && player.y < giftTop + giftSize && player.x + playerSize > giftLeft && player.x < giftLeft + giftSize) {
+            giftElement.remove();
+            if (giftElement.classList.contains("speed-gift")) {
+                player.addPowerUp("speed")
+            }
+        }
+    }
 }

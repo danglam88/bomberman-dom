@@ -203,7 +203,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 8 {
 				thisSpot := Spot{
-					Class: "brick multiple-bombs-gift",
+					Class: "brick gift multiple-bombs-gift",
 					Top:   i * 45,
 					Left:  j * 45,
 					Z:     1,
@@ -212,7 +212,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 9 {
 				thisSpot := Spot{
-					Class: "brick bomb-range-gift",
+					Class: "brick gift bomb-range-gift",
 					Top:   i * 45,
 					Left:  j * 45,
 					Z:     1,
@@ -221,7 +221,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 10 {
 				thisSpot := Spot{
-					Class: "brick speed-gift",
+					Class: "brick gift speed-gift",
 					Top:   i * 45,
 					Left:  j * 45,
 					Z:     1,
@@ -230,7 +230,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 11 {
 				thisSpot := Spot{
-					Class: "brick life-gift",
+					Class: "brick gift life-gift",
 					Top:   i * 45,
 					Left:  j * 45,
 					Z:     1,
