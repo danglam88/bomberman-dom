@@ -87,7 +87,11 @@ export class Player {
     }
 
     isDead() {
-        return this.lives == 0;
+        return this.lives === 0;
+    }
+
+    bombStillLeft() {
+        return this.bomb > 0;
     }
 
     setDirection(dir) {
@@ -121,6 +125,14 @@ export class Player {
 
     setY(y) {
         this.y = y;
+    }
+
+    getX() {
+        return this.x;
+    }
+
+    getY() {
+        return this.y;
     }
 }
 
