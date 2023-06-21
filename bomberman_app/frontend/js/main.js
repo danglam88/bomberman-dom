@@ -11,8 +11,8 @@ let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
-const waitTimeConst = 20;
-const timerConst = 10;
+const waitTimeConst = 2;
+const timerConst = 1;
 
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
@@ -226,7 +226,6 @@ function fetchPlayersRenderWaitingTimer() {
     players = []
 
     data.forEach((player, i) => {
-      console.log("player", player)
       players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1))
     })
 
@@ -330,9 +329,14 @@ function openChat() {
     var msg = JSON.parse(event.data);
     
     if (msg.type === "message") {
+      let player = players.find(player => player.name === msg.nickname)
   
       var node = document.createElement("div");
+      var picture = document.createElement("img");
+      picture.src = "img/"+player.color+"-front0.png";
+  
       var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+      node.appendChild(picture);
       node.appendChild(textnode);
       var chatContainer = document.getElementById("chat-messages")
       chatContainer.appendChild(node);

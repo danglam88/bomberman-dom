@@ -78,6 +78,12 @@ p {
 
 form {
     width: 194px;
+    display: flex;
+    flex-direction: row;
+}
+
+form button {
+    background-color: rgb(184, 221, 20);
 }
 
 .stats{
@@ -229,6 +235,18 @@ form {
     color: white;
     height: 876px;
     overflow: scroll;
+}
+
+.chat-messages div {
+    margin-top: 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chat-messages img {
+    height: 30px;
+    width: auto;
 }
 
 #player-chat {
