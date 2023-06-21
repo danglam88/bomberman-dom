@@ -11,8 +11,8 @@ let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
-const waitTimeConst = 2;
-const timerConst = 1;
+const waitTimeConst = 2; //waiting for new players join
+const timerConst = 1; //countdown until game start
 
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
@@ -314,15 +314,26 @@ function openChat() {
   document.getElementById("chat").style.display = "";
 
   const nickname = localStorage.getItem("nickname");
-  var socket = new WebSocket("ws://localhost:8080/ws");
 
-  socket.onopen = function () {
-    var payload = JSON.stringify({
-      type: "nickname",
-      nickname: nickname,
-    });
-    socket.send(payload);
-  };
+  // Check if the WebSocket is already open
+  if (localStorage.getItem("websocketOpen") !== "true") {
+    var socket = new WebSocket("ws://localhost:8080/ws");
+
+    socket.onopen = function () {
+      // Set the flag in localStorage
+      localStorage.setItem("websocketOpen", "true");
+
+      var payload = JSON.stringify({
+        type: "nickname",
+        nickname: nickname,
+      });
+      socket.send(payload);
+    };
+
+    socket.onclose = function () {
+      // Clear the flag in localStorage when the WebSocket is closed
+      localStorage.setItem("websocketOpen", "false");
+    };
 
   socket.onerror = function (error) {
     console.log("WebSocket error: " + error);
@@ -386,6 +397,10 @@ function openChat() {
       }
     }
   };
+  
+
+
+  
 
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -409,7 +424,13 @@ function openChat() {
       handleKeyInput(e)
   });
 
+
+
+  
+
   window.addEventListener("beforeunload", function (e) {
+    //also check if game is started, to prevent staying in the game on hash change
+
     var msg = {
       Type: "leave",
       nickname: nickname,
@@ -428,6 +449,13 @@ function openChat() {
       socket.send(JSON.stringify(msg));
     }
   };
+} else {
+  document.getElementById("chat").style.display = "";
+  // set websocketOpen to false if websocket is not open
+  localStorage.setItem("websocketOpen", "false");
+  // send user to root if websocket is not open
+  window.location.hash = "#/";
+};
 }
 
 Router();
