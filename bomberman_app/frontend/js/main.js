@@ -1,5 +1,5 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
-import { createMap, givenMap } from "./map.js";
+import { createMap } from "./map.js";
 import { Player } from "./class.js";
 import { GLOBAL_SPEED } from "./game.js";
 
@@ -57,6 +57,10 @@ export const Naming = () => {
           } else if (response.status === 429) {
             validateError =
               "There are already 4 players in the game, please try again later";
+            MiniFramework.updateState();
+          } else if (response.status === 423) {
+            validateError =
+              "Game has already started, please try again later";
             MiniFramework.updateState();
           }
         })
@@ -187,7 +191,7 @@ function Router() {
     ) {
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
-      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3 && !givenMap) {
+      if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3) {
         MiniFramework.render(Waiting, container);
         setTimeout(openChat, 100);
       } else {

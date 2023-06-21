@@ -5,7 +5,7 @@ import { GameLogic } from "./game.js";
 const mapWidth = 900;
 const mapHeight = 900;
 
-export let givenMap;
+let givenMap;
 
 function createMap(players) {
     fetch("/new_game")

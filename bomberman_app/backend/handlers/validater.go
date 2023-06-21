@@ -23,6 +23,8 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusTooManyRequests)
 	} else if !isNicknameAvailable(nickname) {
 		w.WriteHeader(http.StatusConflict)
+	} else if gameMap.Data != nil {
+		w.WriteHeader(http.StatusLocked)
 	} else {
 		sessions = append(sessions, nickname)
 		w.WriteHeader(http.StatusOK)
