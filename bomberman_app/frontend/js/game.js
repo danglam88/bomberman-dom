@@ -56,11 +56,6 @@ export const GameLogic = (players) => {
       
         previousTimeStamp = timestamp;
       
-        // Move Player
-        players.forEach((player) => {
-            movePlayer(player);
-        });
-      
         window.requestAnimationFrame(function(timestamp) {
             gameLoop(timestamp, players);
         });
@@ -74,7 +69,7 @@ export const GameLogic = (players) => {
     gameLoop(0, players)
 }
 
-const movePlayer = (player) => {
+export const movePlayer = (player) => {
   
     if (player.div !== null) {
         let transValue = player.div.style.transform;
@@ -228,6 +223,7 @@ let walls = document.querySelectorAll(".wall");
 
 for (let i = 0; i < walls.length; i++) {
   let wallTop = walls[i].style.top;
+
   wallTop = wallTop.replace("px", "");
   wallTop = parseInt(wallTop);
 
@@ -294,7 +290,7 @@ const giftCheck = (player, giftElement) => {
         if (player.getY() + playerSize > giftTop && player.getY() < giftTop + giftSize && player.getX() + playerSize > giftLeft && player.getX() < giftLeft + giftSize) {
             
             giftElement.remove();
-            
+
             if (giftElement.classList.contains("speed-gift")) {
                 player.addPowerUp("speed")
             } else if (giftElement.classList.contains("multiple-bombs-gift")) {

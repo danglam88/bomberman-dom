@@ -1,7 +1,7 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 import { Player } from "./class.js";
-import { GLOBAL_SPEED } from "./game.js";
+import { GLOBAL_SPEED, movePlayer } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -394,6 +394,9 @@ function openChat() {
       const player = players.find(player => player.name == msg.player)
       if (player !== undefined) {
         player.setDirection(msg.key)
+
+         // Move Player
+          movePlayer(player);
       }
     }
   };
