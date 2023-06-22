@@ -3,7 +3,7 @@ body {
     background-color: #000;
     margin: 5px;
     align-items: center;
-    min-width: 1400px;
+    min-width: 1200px;
     display:flex;
     flex-direction: column;
 }
@@ -58,7 +58,7 @@ p {
 #chat {
     flex: 1;
     height: 948px;
-    width: 200px;
+    width: 250px;
     padding: 5px;
 }
 
@@ -77,7 +77,7 @@ p {
 }
 
 form {
-    width: 194px;
+    width: 250px;
     display: flex;
     flex-direction: row;
 }

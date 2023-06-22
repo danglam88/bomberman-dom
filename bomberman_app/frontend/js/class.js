@@ -16,10 +16,10 @@ export class Player {
         this.div = document.querySelector("." + this.color)
     }
 
-    // dropBomb() {
-    //     this.bomb--;
-    //     return new Bomb(this.x, this.y, this.range, this);
-    // }
+    dropBomb() {
+        this.bomb--;
+        return new Bomb(this.x, this.y, this.range, this);
+    }
 
     addBomb() {
         this.bomb++;

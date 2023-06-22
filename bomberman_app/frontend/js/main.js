@@ -393,10 +393,18 @@ function openChat() {
     if (msg.type = "game-update") {
       const player = players.find(player => player.name == msg.player)
       if (player !== undefined) {
-        player.setDirection(msg.key)
 
-         // Move Player
+        if (msg.key === 16) {
+          console.log("here")
+          player.dropBomb()
+          
+          // Drop Bomb visualisation
+        } else {
+          player.setDirection(msg.key)
+
+          // Move Player
           movePlayer(player);
+        }
       }
     }
   };
@@ -444,6 +452,15 @@ function openChat() {
 
   const handleKeyInput = (e) => {
     if (e.keyCode >= 37 && e.keyCode <= 40) {
+      const msg = {
+          Type : "game-update",
+          Key : e.keyCode
+      };
+
+      socket.send(JSON.stringify(msg));
+    }
+
+    if (e.key == "Shift") {
       const msg = {
           Type : "game-update",
           Key : e.keyCode
