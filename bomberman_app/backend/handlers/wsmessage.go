@@ -18,6 +18,7 @@ const (
 	LEAVE_MSG    = "leave"
 	WAITTIME_MSG = "wait-time"
 	TIMER_MSG    = "timer"
+	NICKNAME_MSG = "nickname"
 )
 
 var (
@@ -34,7 +35,10 @@ func SetManager(m *Manager) {
 	Mgr = m
 }
 
-var timerTimestamp time.Time
+var waitTimeActivated = false
+var timerActivated = false
+var waitTime = 20
+var timer = 10
 
 type Manager struct {
 	clients ClientList
@@ -79,10 +83,8 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nickname := r.Header.Get("nickname")
-	fmt.Println(nickname)
-	fmt.Println(r.Header)
 
-	client := NewClient(conn, m, id)
+	client := NewClient(conn, m, id, nickname)
 	m.addClient(client)
 
 	//Start client
@@ -96,25 +98,49 @@ func (m *Manager) addClient(client *Client) {
 
 	m.clients[client] = true
 
-	// not working yet. Broadcast joinmsg with countdowntimer and nickname
-	joinMsg := Message{
-		From:     client.userId,
-		Type:     "join",
-		Nickname: "Player " + strconv.Itoa(client.userId),
+	if (waitTimeActivated || timerActivated) && waitTime == 20 && timer == 10 {
+		go m.countDown()
+	}
+}
+
+func (m *Manager) countDown() {
+
+	for waitTimeActivated && waitTime >= 0 {
+		msg := Message{Type: WAITTIME_MSG}
+		msg.Message = strconv.Itoa(waitTime)
+		msgJson, err := json.Marshal(msg)
+		if err != nil {
+			log.Println(err)
+		} else {
+			for c := range m.clients {
+				c.egress <- msgJson
+			}
+		}
+		time.Sleep(1 * time.Second)
+		waitTime--
+		if waitTime == -1 {
+			timerActivated = true
+			waitTimeActivated = false
+		}
 	}
 
-	if timerTimestamp.IsZero() {
-		joinMsg.Timestamp = time.Now()
-	} else {
-		joinMsg.Timestamp = timerTimestamp
-	}
-
-	joinMsgJson, err := json.Marshal(joinMsg)
-	if err != nil {
-		log.Println(err)
-	} else {
-		for c := range client.manager.clients {
-			c.egress <- joinMsgJson
+	for timerActivated && timer >= 0 {
+		msg := Message{Type: TIMER_MSG}
+		msg.Message = strconv.Itoa(timer)
+		msgJson, err := json.Marshal(msg)
+		if err != nil {
+			log.Println(err)
+		} else {
+			for c := range m.clients {
+				c.egress <- msgJson
+			}
+		}
+		time.Sleep(1 * time.Second)
+		timer--
+		if timer == -1 {
+			timerActivated = false
+			timer = 10
+			waitTime = 20
 		}
 	}
 }
@@ -129,7 +155,10 @@ func (m *Manager) removeClient(client *Client) {
 
 		// If only one player is left, stop the timer
 		if len(m.clients) == 1 {
-			timerTimestamp = time.Time{} // Reset the timer timestamp
+			waitTimeActivated = false
+			timerActivated = false
+			waitTime = 20
+			timer = 10
 		}
 	}
 }
@@ -144,16 +173,20 @@ type Client struct {
 	Nickname   string
 }
 
-func NewClient(conn *websocket.Conn, manager *Manager, id int) *Client {
+func NewClient(conn *websocket.Conn, manager *Manager, id int, nickname string) *Client {
 	client := &Client{
 		connection: conn,
 		manager:    manager,
 		egress:     make(chan []byte, 1),
 		userId:     id,
+		Nickname:   nickname,
 	}
 
 	if len(manager.clients) == 1 {
-		timerTimestamp = time.Now()
+		waitTimeActivated = true
+	} else if len(manager.clients) == 3 {
+		timerActivated = true
+		waitTimeActivated = false
 	}
 
 	return client
@@ -220,7 +253,7 @@ func (c *Client) readMessages() {
 			continue
 		}
 
-		if msgType.Type == "nickname" {
+		if msgType.Type == NICKNAME_MSG {
 			// Handle the nickname payload
 			var nicknamePayload struct {
 				Nickname string `json:"nickname"`

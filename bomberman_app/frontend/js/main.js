@@ -11,12 +11,6 @@ let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
-const waitTimeConst = 2; //waiting for new players join
-const timerConst = 1; //countdown until game start
-
-let timerTimestamp = undefined;
-let waitTimeActivated = false;
-let timerActivated = false;
 let gameStarted = false;
 
 export const Info = () => {
@@ -117,7 +111,7 @@ export const Counter = () => {
               players.length > 1 &&
               players.length < 4 &&
               waitTime !== undefined &&
-              waitTime > 0
+              waitTime >= 0
             ? `There are totally ${
                 players.length
               } players in the game: You (${localStorage.getItem(
@@ -133,7 +127,7 @@ export const Counter = () => {
               players.length > 1 &&
               players.length <= 4 &&
               timer !== undefined &&
-              timer > 0
+              timer >= 0
             ? `There are totally ${
                 players.length
               } players in the game: You (${localStorage.getItem(
@@ -144,7 +138,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : `Game is not available at the moment. Please try again later...`
+            : `Counter is loading...`
         }
       </div>
     </div>
@@ -234,75 +228,11 @@ function fetchPlayersRenderWaitingTimer() {
 
     console.log("players: ", players)
 
-    if (timerTimestamp === undefined) {
-      if (data.length === 2) {
-        console.log("waitTime timer 2: ");
-        waitTime = waitTimeConst;
-        timer = timerConst;
-      } else if (data.length === 4) {
-        console.log("waitTime timer 4: ");
-        waitTime = 0;
-        timer = timerConst;
-      }
-    } else {
-      // Parse the timestamp into a Date object
-      const date = new Date(timerTimestamp);
-      // Get the timestamp in milliseconds from the parsed date
-      const givenTimestamp = date.getTime();
-      const diff = Date.now() - givenTimestamp;
-
-      if (diff <= 20000) {
-        console.log("diff small: ", diff);
-        waitTime = players.length === 4 ? 0 : Math.floor((20000 - diff) / 1000);
-        timer = timerConst;
-        console.log("small diff: ", waitTime);
-      } else {
-        console.log("diff big: ", diff);
-        waitTime = 0;
-        timer = Math.floor((30000 - diff) / 1000);
-        console.log("big diff: ", timer);
-      }
-    }
-
     MiniFramework.updateState();
 
-    if (waitTime !== undefined && !waitTimeActivated) {
-      console.log("waitTime activated: ", waitTime);
-      waitTimeActivated = true;
-
-      const waitTimeId = setInterval(() => {
-        if (waitTime > 0) {
-          waitTime--;
-          MiniFramework.updateState();
-        }
-
-        if (waitTime === 0) {
-          clearInterval(waitTimeId);
-
-          console.log("timer out 1: ", timer);
-          if (timer !== undefined && !timerActivated) {
-            console.log("timer in 1: ", timer);
-            timerActivated = true;
-
-            const timerId = setInterval(() => {
-              console.log("timer setinterval: ", timer);
-              if (timer > 0) {
-                timer--;
-                MiniFramework.updateState();
-              }
-
-              if (timer === 0) {
-                clearInterval(timerId);
-
-                gameStarted = true;
-                window.location.hash = "#/gamestart";
-              }
-            }, 1000);
-            console.log("timer in 2: ", timer);
-          }
-          console.log("timer out 2: ", timer);
-        }
-      }, 1000);
+    if (timer === 0) {
+      gameStarted = true;
+      window.location.hash = "#/gamestart";
     }
   })
   .catch((error) => {
@@ -357,29 +287,26 @@ function openChat() {
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
     // if message type is join and the timer is not running, start the timer
-    if (msg.type === "join") {
-      console.log("timestamp 1-2: ", msg.timestamp);
-      console.log("players-length: ", players.length);
-      if (players.length >= 3 && players.length <= 4) {
-        console.log("timestamp 3-4: ", msg.timestamp);
-        timerTimestamp = msg.timestamp;
-        console.log("timerTimestamp: ", timerTimestamp);
+    if (msg.type === "wait-time" || msg.type === "timer") {
+
+      if (msg.type === "wait-time") {
+        waitTime = parseInt(msg.message);
+      } else if (msg.type === "timer") {
+        timer = parseInt(msg.message);
+        waitTime = undefined;
       }
+
       fetchPlayersRenderWaitingTimer();
     }
 
     // if message type is leave and the timer is running, stop the timer
     if (msg.type === "leave") {
-      
 
       if (players.length == 2) {
-        timerTimestamp = undefined;
         timer = undefined;
         waitTime = undefined;
-        timerActivated = false;
-        waitTimeActivated = false;
-
       }
+
       fetchPlayersRenderWaitingTimer();
 
       var node = document.createElement("div");
@@ -387,7 +314,6 @@ function openChat() {
 
       node.appendChild(textnode);
       document.getElementById("chat-messages").appendChild(node);
-
     }
 
     if (msg.type = "game-update") {
@@ -411,10 +337,6 @@ function openChat() {
       }
     }
   };
-  
-
-
-  
 
   document.getElementById("form").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -437,10 +359,6 @@ function openChat() {
   document.addEventListener('keydown', (e) => {
       handleKeyInput(e)
   });
-
-
-
-  
 
   window.addEventListener("beforeunload", function (e) {
     //also check if game is started, to prevent staying in the game on hash change

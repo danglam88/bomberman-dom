@@ -12,9 +12,6 @@ type Player struct {
 	Color string `json:"color"`
 }
 
-var waitTime = 20
-var timer = 10
-
 func GetPlayers(w http.ResponseWriter, r *http.Request) {
 
 	Players := []Player{}
