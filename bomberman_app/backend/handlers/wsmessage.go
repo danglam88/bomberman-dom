@@ -16,6 +16,8 @@ const (
 	MESSAGE_TYPE = "message"
 	GAME_UPDATE  = "game-update"
 	LEAVE_MSG    = "leave"
+	WAITTIME_MSG = "wait-time"
+	TIMER_MSG    = "timer"
 )
 
 var (
