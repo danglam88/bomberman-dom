@@ -18,6 +18,7 @@ let timerTimestamp = undefined;
 let waitTimeActivated = false;
 let timerActivated = false;
 let gameStarted = false;
+let canPlayerMove = true;
 
 export const Info = () => {
   return `
@@ -403,10 +404,15 @@ function openChat() {
           
           // Drop Bomb visualisation
         } else {
-          player.setDirection(msg.key)
-
           // Move Player
-          movePlayer(player);
+          if (canPlayerMove) {
+            player.setDirection(msg.key)
+            movePlayer(player);
+            canPlayerMove = false
+            setTimeout(() => {
+              canPlayerMove = true
+            }, 50)
+          }
         }
       }
     }

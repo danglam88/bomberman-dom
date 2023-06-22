@@ -32,7 +32,6 @@ const livesInfoGapLeft = 20;
 const popupDuration = 4000;
 const scoreGoal = 1000;
 
-
 export const GameLogic = (players) => {
     let isGameOver = false
     let previousTimeStamp = 0
@@ -70,9 +69,9 @@ export const GameLogic = (players) => {
 
 export const movePlayer = (player) => {
 
-    window.addEventListener("keydown", function(event) {
+    window.addEventListener("keydown", (event) => {
         if (event.key.startsWith("Arrow")) {
-            event.preventDefault();
+          event.preventDefault();
         }
     });
   
