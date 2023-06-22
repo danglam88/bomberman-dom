@@ -570,8 +570,8 @@ form button {
 }
 
 .bomb {
-    width: 33px;
-    height: 33px;
+    width: 45px;
+    height: 45px;
     object-fit: contain;
     position: absolute;
     background-repeat: no-repeat;
