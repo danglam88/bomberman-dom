@@ -6,13 +6,14 @@ import { GLOBAL_SPEED, movePlayer } from "./game.js";
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
 let players = [];
+let socket = undefined;
 
 let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
 
-const waitTimeConst = 2; //waiting for new players join
-const timerConst = 1; //countdown until game start
+const waitTimeConst = 20; //waiting for new players join
+const timerConst = 10; //countdown until game start
 
 let timerTimestamp = undefined;
 let waitTimeActivated = false;
@@ -187,6 +188,30 @@ function Router() {
       window.location.hash !== "#/gamestart" &&
       window.location.hash !== "#/gameover"
     ) {
+      console.log("leaving game")
+      if (localStorage.getItem("nickname")) {
+        // if game have started or counter is running, leave the game
+        if (gameStarted || timer > 0 || waitTime > 0) {
+        var msg = {
+          Type: "leave",
+          nickname: localStorage.getItem("nickname"),
+        };
+  
+        socket.send(JSON.stringify(msg));
+        
+        timerTimestamp = undefined;
+        waitTimeActivated = false;
+        timerActivated = false;
+        gameStarted = false;
+
+        window.location.hash = "/";
+
+        
+      }
+      //redirect to "/"
+      
+
+    }
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3) {
@@ -317,7 +342,7 @@ function openChat() {
 
   // Check if the WebSocket is already open
   if (localStorage.getItem("websocketOpen") !== "true") {
-    var socket = new WebSocket("ws://localhost:8080/ws");
+    socket = new WebSocket("ws://localhost:8080/ws");
 
     socket.onopen = function () {
       // Set the flag in localStorage
@@ -426,11 +451,7 @@ function openChat() {
     };
 
     socket.send(JSON.stringify(msg));
-  }) // Call routeChange to handle initial page load
-
-  //logic for a game (which needed a socket) 
-  //todo maybe export socket (export handleKeyInput func at least)? 
-  //todo set from onkeydown in MF template
+  }) 
   document.addEventListener('keydown', (e) => {
       handleKeyInput(e)
   });
