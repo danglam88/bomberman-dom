@@ -5,8 +5,9 @@ import { GLOBAL_SPEED, movePlayer, animateBomb } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
-let players = [];
+let playerChecked = false;
 
+let players = [];
 let playersFetched = false;
 let waitTime = undefined;
 let timer = undefined;
@@ -26,40 +27,18 @@ export const Info = () => {
 };
 
 export const Naming = () => {
+  if (!playerChecked) {
+    const nickname = localStorage.getItem("nickname");
+    if (nickname && nickname.trim().length > 0) {
+      checkPlayerAlreadyExists(nickname, "true");
+    }
+  }
+
   const validateInput = (event) => {
     if (!regex.test(event.key) && event.key !== "Enter") {
       event.preventDefault();
     } else if (event.key === "Enter" && event.target.value !== "") {
-      let options = {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nickname: event.target.value }),
-      };
-
-      fetch("/validate", options)
-        .then((response) => {
-          if (response.status === 200) {
-            localStorage.setItem("nickname", event.target.value);
-            window.location.hash = "#/waiting";
-          } else if (response.status === 409) {
-            validateError =
-              "Nickname was already taken, please choose another one";
-            MiniFramework.updateState();
-          } else if (response.status === 429) {
-            validateError =
-              "There are already 4 players in the game, please try again later";
-            MiniFramework.updateState();
-          } else if (response.status === 423) {
-            validateError =
-              "Game has already started, please try again later";
-            MiniFramework.updateState();
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      checkPlayerAlreadyExists(event.target.value, "false");
     }
   };
 
@@ -188,13 +167,17 @@ function Router() {
         MiniFramework.render(Waiting, container);
         setTimeout(openChat, 100);
       } else {
+        console.log("from waiting to root");
         window.location.hash = "#/";
+        window.location.reload();
       }
     } else if (window.location.hash === "#/gamestart") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length <=4 && gameStarted) {
         createMap(players);
       } else {
+        console.log("from gamestart to root");
         window.location.hash = "#/";
+        window.location.reload();
       }
     }
 
@@ -208,6 +191,41 @@ function Router() {
   }
   window.onhashchange = routeChange;
   routeChange();
+}
+
+function checkPlayerAlreadyExists(nickname, initialCheck) {
+  let options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ nickname, initialCheck }),
+  };
+
+  fetch("/validate", options)
+    .then((response) => {
+      playerChecked = true;
+
+      if (response.status === 200 && initialCheck === "false") {
+        localStorage.setItem("nickname", nickname);
+        window.location.hash = "#/waiting";
+      } else if (response.status === 423) {
+        validateError =
+          "Game has already started, please try again later";
+        MiniFramework.updateState();
+      } else if (response.status === 429) {
+        validateError =
+          "There are already 4 players in the game, please try again later";
+        MiniFramework.updateState();
+      } else if (response.status === 409) {
+        validateError =
+          "Nickname was already taken, please choose another one";
+        MiniFramework.updateState();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 
 function fetchPlayersRenderWaitingTimer() {
@@ -266,143 +284,144 @@ function openChat() {
       localStorage.setItem("websocketOpen", "false");
     };
 
-  socket.onerror = function (error) {
-    console.log("WebSocket error: " + error);
-  };
+    socket.onerror = function (error) {
+      console.log("WebSocket error: " + error);
+    };
 
-  socket.onmessage = function (event) {
-    var msg = JSON.parse(event.data);
+    socket.onmessage = function (event) {
+      var msg = JSON.parse(event.data);
     
-    if (msg.type === "message") {
-      let player = players.find(player => player.name === msg.nickname)
+      if (msg.type === "message") {
+        let player = players.find(player => player.name === msg.nickname)
   
-      var node = document.createElement("div");
-      var picture = document.createElement("img");
-      picture.src = "img/"+player.color+"-front0.png";
+        var node = document.createElement("div");
+        var picture = document.createElement("img");
+        picture.src = "img/"+player.color+"-front0.png";
   
-      var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
-      node.appendChild(picture);
-      node.appendChild(textnode);
-      var chatContainer = document.getElementById("chat-messages")
-      chatContainer.appendChild(node);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-    // if message type is join and the timer is not running, start the timer
-    if (msg.type === "wait-time" || msg.type === "timer") {
+        var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+        node.appendChild(picture);
+        node.appendChild(textnode);
+        var chatContainer = document.getElementById("chat-messages")
+        chatContainer.appendChild(node);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+      // if message type is join and the timer is not running, start the timer
+      if (msg.type === "wait-time" || msg.type === "timer") {
 
-      if (msg.type === "wait-time") {
-        waitTime = parseInt(msg.message);
-      } else if (msg.type === "timer") {
-        timer = parseInt(msg.message);
-        waitTime = undefined;
+        if (msg.type === "wait-time") {
+          waitTime = parseInt(msg.message);
+        } else if (msg.type === "timer") {
+          timer = parseInt(msg.message);
+          waitTime = undefined;
+        }
+
+        fetchPlayersRenderWaitingTimer();
       }
 
-      fetchPlayersRenderWaitingTimer();
-    }
+      // if message type is leave and the timer is running, stop the timer
+      if (msg.type === "leave") {
 
-    // if message type is leave and the timer is running, stop the timer
-    if (msg.type === "leave") {
+        if (players.length == 2) {
+          timer = undefined;
+          waitTime = undefined;
+        }
 
-      if (players.length == 2) {
-        timer = undefined;
-        waitTime = undefined;
+        fetchPlayersRenderWaitingTimer();
+
+        var node = document.createElement("div");
+        var textnode = document.createTextNode(msg.nickname + " left the game");
+
+        node.appendChild(textnode);
+        document.getElementById("chat-messages").appendChild(node);
       }
 
-      fetchPlayersRenderWaitingTimer();
+      if (msg.type = "game-update") {
+        const player = players.find(player => player.name == msg.player)
+        if (player !== undefined) {
 
-      var node = document.createElement("div");
-      var textnode = document.createTextNode(msg.nickname + " left the game");
+          if (msg.key === 16) {
+            console.log(msg)
+            player.dropBomb()
+            animateBomb(player)
 
-      node.appendChild(textnode);
-      document.getElementById("chat-messages").appendChild(node);
-    }
-
-    if (msg.type = "game-update") {
-      const player = players.find(player => player.name == msg.player)
-      if (player !== undefined) {
-
-        if (msg.key === 16) {
-          console.log(msg)
-          player.dropBomb()
-          animateBomb(player)
-
-          console.log(player.bomb)
+            console.log(player.bomb)
           
-          // Drop Bomb visualisation
-        } else {
-          // Move Player
-          if (canPlayerMove) {
-            player.setDirection(msg.key)
-            movePlayer(player);
-            canPlayerMove = false
-            setTimeout(() => {
-              canPlayerMove = true
-            }, 50)
+            // Drop Bomb visualisation
+          } else {
+            // Move Player
+            if (canPlayerMove) {
+              player.setDirection(msg.key)
+              movePlayer(player);
+              canPlayerMove = false
+              setTimeout(() => {
+                canPlayerMove = true
+              }, 50)
+            }
           }
         }
       }
-    }
-  };
-
-  document.getElementById("form").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    var input = document.getElementById("input");
-    var message = input.value;
-    input.value = "";
-
-    var msg = {
-      Type: "message",
-      Message: message,
     };
 
-    socket.send(JSON.stringify(msg));
-  }) // Call routeChange to handle initial page load
+    document.getElementById("form").addEventListener("submit", function (e) {
+      e.preventDefault();
 
-  //logic for a game (which needed a socket) 
-  //todo maybe export socket (export handleKeyInput func at least)? 
-  //todo set from onkeydown in MF template
-  document.addEventListener('keydown', (e) => {
+      var input = document.getElementById("input");
+      var message = input.value;
+      input.value = "";
+
+      var msg = {
+        Type: "message",
+        Message: message,
+      };
+
+      socket.send(JSON.stringify(msg));
+    }) // Call routeChange to handle initial page load
+
+    //logic for a game (which needed a socket) 
+    //todo maybe export socket (export handleKeyInput func at least)? 
+    //todo set from onkeydown in MF template
+    document.addEventListener('keydown', (e) => {
       handleKeyInput(e)
-  });
+    });
 
-  window.addEventListener("beforeunload", function (e) {
-    //also check if game is started, to prevent staying in the game on hash change
+    window.addEventListener("beforeunload", function (e) {
+      //also check if game is started, to prevent staying in the game on hash change
 
-    var msg = {
-      Type: "leave",
-      nickname: nickname,
+      var msg = {
+        Type: "leave",
+        nickname: nickname,
+      };
+
+      socket.send(JSON.stringify(msg));
+    });
+
+    const handleKeyInput = (e) => {
+      if (e.keyCode >= 37 && e.keyCode <= 40) {
+        const msg = {
+          Type : "game-update",
+          Key : e.keyCode
+        };
+
+        socket.send(JSON.stringify(msg));
+      }
+
+      if (e.key == "Shift") {
+        const msg = {
+          Type : "game-update",
+          Key : e.keyCode
+        };
+
+        socket.send(JSON.stringify(msg));
+      }
     };
-  
-    socket.send(JSON.stringify(msg));
-  });
-
-  const handleKeyInput = (e) => {
-    if (e.keyCode >= 37 && e.keyCode <= 40) {
-      const msg = {
-          Type : "game-update",
-          Key : e.keyCode
-      };
-
-      socket.send(JSON.stringify(msg));
-    }
-
-    if (e.key == "Shift") {
-      const msg = {
-          Type : "game-update",
-          Key : e.keyCode
-      };
-
-      socket.send(JSON.stringify(msg));
-    }
+  } else {
+    document.getElementById("chat").style.display = "";
+    // set websocketOpen to false if websocket is not open
+    localStorage.setItem("websocketOpen", "false");
+    // send user to root if websocket is not open
+    console.log("from chat to root");
+    //window.location.hash = "#/";
   };
-} else {
-  document.getElementById("chat").style.display = "";
-  // set websocketOpen to false if websocket is not open
-  localStorage.setItem("websocketOpen", "false");
-  // send user to root if websocket is not open
-  window.location.hash = "#/";
-};
 }
 
 Router();

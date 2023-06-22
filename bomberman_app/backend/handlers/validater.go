@@ -17,23 +17,31 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nickname := s["nickname"]
+	initialCheck := s["initialCheck"]
 
 	// Check if the nickname is already in use
 	if len(sessions) >= 4 {
 		w.WriteHeader(http.StatusTooManyRequests)
-	} else if !isNicknameAvailable(nickname) {
-		w.WriteHeader(http.StatusConflict)
+	} else if !isNicknameAvailable(nickname, initialCheck) {
+		if initialCheck == "true" {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusConflict)
+		}
 	} else if gameMap.Data != nil {
 		w.WriteHeader(http.StatusLocked)
-	} else {
+	} else if initialCheck == "false" {
 		sessions = append(sessions, nickname)
 		w.WriteHeader(http.StatusOK)
 	}
 }
 
-func isNicknameAvailable(nickname string) bool {
-	for _, session := range sessions {
+func isNicknameAvailable(nickname, initialCheck string) bool {
+	for i, session := range sessions {
 		if session == nickname {
+			if initialCheck == "true" {
+				sessions = append(sessions[:i], sessions[i+1:]...)
+			}
 			return false
 		}
 	}
