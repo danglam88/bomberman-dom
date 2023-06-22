@@ -570,11 +570,11 @@ form button {
 }
 
 .bomb {
-    margin-left: 6px;
-    margin-top: 6px;
     width: 33px;
     height: 33px;
+    object-fit: contain;
     position: absolute;
+    background-repeat: no-repeat;
 }
 
 .ghost {

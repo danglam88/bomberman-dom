@@ -303,3 +303,16 @@ const giftCheck = (player, giftElement) => {
         }
     }
 }
+
+export function animateBomb(player){
+    let map = document.getElementsByClassName("map")[0]
+    let bombNode = document.createElement("div")
+    bombNode.classList.add("bomb")
+    bombNode.style.backgroundImage = "url('img/bomb.png')"
+    bombNode.style.top = player.y+6 + "px"
+    bombNode.style.left = player.x+6 + "px"
+    bombNode.style.backgroundPosition = "0px 0px";
+      
+    map.appendChild(bombNode)
+}
+

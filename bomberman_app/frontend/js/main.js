@@ -1,7 +1,7 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 import { Player } from "./class.js";
-import { GLOBAL_SPEED, movePlayer } from "./game.js";
+import { GLOBAL_SPEED, movePlayer, animateBomb } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -395,8 +395,11 @@ function openChat() {
       if (player !== undefined) {
 
         if (msg.key === 16) {
-          console.log("here")
+          console.log(msg)
           player.dropBomb()
+          animateBomb(player)
+
+          console.log(player.bomb)
           
           // Drop Bomb visualisation
         } else {
