@@ -69,6 +69,12 @@ export const GameLogic = (players) => {
 }
 
 export const movePlayer = (player) => {
+
+    window.addEventListener("keydown", function(event) {
+        if (event.key.startsWith("Arrow")) {
+            event.preventDefault();
+        }
+    });
   
     if (player.div !== null) {
         let transValue = player.div.style.transform;
