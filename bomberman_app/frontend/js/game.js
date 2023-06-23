@@ -43,13 +43,13 @@ export const GameLogic = (players) => {
             return;
         }
       
-          // Check that all characters moving with global speed and not moving while pause
+          // Check that all characters moving with global speed
         if (timestamp < previousTimeStamp + GLOBAL_SPEED) {
             window.requestAnimationFrame(function(timestamp) {
                 gameLoop(timestamp, players);
-        });
+            });
       
-          return;
+            return;
         }
       
         previousTimeStamp = timestamp;
@@ -69,29 +69,15 @@ export const GameLogic = (players) => {
 
 export const movePlayer = (player) => {
 
-    window.addEventListener("keydown", (event) => {
-        if (event.key.startsWith("Arrow")) {
-          event.preventDefault();
-        }
-    });
-  
     if (player.div !== null) {
-        let transValue = player.div.style.transform;
 
-        let currentTop = transValue.substring(transValue.indexOf(" ") + 1, transValue.indexOf(")"));
-        currentTop = currentTop.replace("px", "");
-        currentTop = parseInt(currentTop);
-
-        let currentLeft = transValue.substring(transValue.indexOf("(") + 1, transValue.indexOf(","));
-        currentLeft = currentLeft.replace("px", "");
-        currentLeft = parseInt(currentLeft);
-
-        let background = player.div.style.background;
+        let currentTop = player.getY();
+        let currentLeft = player.getX();
 
         let topBarrier;
         let leftBarrier;
 
-        switch (player.direction) {
+        switch (player.getDirection()) {
             case "ArrowUp":
                 if (currentTop > player.getSpeed()) {
                     currentTop -= player.getSpeed();
@@ -109,7 +95,7 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (background === 'url("./img/' + player.color + '-back1.png")') {
+                if (player.div.style.background === 'url("./img/' + player.color + '-back1.png")') {
                     player.div.style.background = 'url("./img/' + player.color + '-back2.png")';
                 } else {
                     player.div.style.background = 'url("./img/' + player.color + '-back1.png")';
@@ -133,7 +119,7 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (background === 'url("./img/' + player.color + '-front1.png")') {
+                if (player.div.style.background === 'url("./img/' + player.color + '-front1.png")') {
                     player.div.style.background = 'url("./img/' + player.color + '-front2.png")';
                 } else {
                     player.div.style.background = 'url("./img/' + player.color + '-front1.png")';
@@ -157,7 +143,7 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (background === 'url("./img/' + player.color + '-left1.png")') {
+                if (player.div.style.background === 'url("./img/' + player.color + '-left1.png")') {
                     player.div.style.background = 'url("./img/' + player.color + '-left2.png")';
                 } else {
                     player.div.style.background = 'url("./img/' + player.color + '-left1.png")';
@@ -181,36 +167,32 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (background === 'url("./img/' + player.color + '-right1.png")') {
+                if (player.div.style.background === 'url("./img/' + player.color + '-right1.png")') {
                     player.div.style.background = 'url("./img/' + player.color + '-right2.png")';
                 } else {
                     player.div.style.background = 'url("./img/' + player.color + '-right1.png")';
                 }
 
                 break;
-        }
+            case null:
+                // handle this in classes instead?
+                switch (true) {
+                    case player.div.style.background === 'url("./img/' + player.color + '-back1.png")' || player.div.style.background === 'url("./img/' + player.color + '-back2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-back0.png")';
+                        break;
+                    case player.div.style.background === 'url("./img/' + player.color + '-front1.png")' || player.div.style.background === 'url("./img/' + player.color + '-front2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-front0.png")';
+                        break;
+                    case player.div.style.background === 'url("./img/' + player.color + '-left1.png")' || player.div.style.background === 'url("./img/' + player.color + '-left2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-left0.png")';
+                        break;
+                    case player.div.style.background === 'url("./img/' + player.color + '-right1.png")' || player.div.style.background === 'url("./img/' + player.color + '-right2.png")':
+                        player.div.style.background = 'url("./img/' + player.color + '-right0.png")';
+                        break;
+                }
 
-        if (player.direction === null) {
-            let background = player.div.style.background;
-            // handle this in classes instead?
-            switch (true) {
-                case background === 'url("./img/' + player.color + '-back0.png")' || background === 'url("./img/' + player.color + '-back1.png")' || background === 'url("./img/' + player.color + '-back2.png")':
-                    player.div.style.background = 'url("./img/' + player.color + '-back0.png")';
-                    break;
-                case background === 'url("./img/' + player.color + '-front0.png")' || background === 'url("./img/' + player.color + '-front1.png")' || background === 'url("./img/' + player.color + '-front2.png")':
-                    player.div.style.background = 'url("./img/' + player.color + '-front0.png")';
-                    break;
-                case background === 'url("./img/' + player.color + '-left0.png")' || background === 'url("./img/' + player.color + '-left1.png")' || background === 'url("./img/' + player.color + '-left2.png")':
-                    player.div.style.background = 'url("./img/' + player.color + '-left0.png")';
-                    break;
-                case background === 'url("./img/' + player.color + '-right0.png")' || background === 'url("./img/' + player.color + '-right1.png")' || background === 'url("./img/' + player.color + '-right2.png")':
-                    player.div.style.background = 'url("./img/' + player.color + '-right0.png")';
-                    break;
-            }
+                break;
         }
-
-        //todo temp
-        player.direction = null
 
         let giftElements = document.querySelectorAll(".gift");
         giftElements.forEach((gift) => {

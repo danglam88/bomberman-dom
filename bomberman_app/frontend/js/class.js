@@ -117,8 +117,17 @@ export class Player {
             {
                 this.direction = "ArrowDown"
                 break
-            } 
+            }
+            case null :
+            {
+                this.direction = null
+                break
+            }
         }
+    }
+
+    getDirection() {
+        return this.direction;
     }
 
     setX(x) {

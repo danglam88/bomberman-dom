@@ -55,9 +55,10 @@ type Message struct {
 }
 
 type GameUpdateMessage struct {
-	Type   string `json:"type"`
-	Player string `json:"player"`
-	Key    int    `json:"key"`
+	Type    string `json:"type"`
+	Player  string `json:"player"`
+	Key     int    `json:"key"`
+	Pressed bool   `json:"pressed"`
 }
 
 func NewManager() *Manager {

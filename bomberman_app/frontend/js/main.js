@@ -333,21 +333,30 @@ function openChat() {
 
       if (msg.type = "game-update") {
         const player = players.find(player => player.name == msg.player)
+
         if (player !== undefined) {
 
           if (msg.key === 16) {
-            console.log(msg)
+
             player.dropBomb()
             animateBomb(player)
 
             console.log(player.bomb)
           
             // Drop Bomb visualisation
-          } else {
+          } else if (msg.key >= 37 && msg.key <= 40) {
+
             // Move Player
-            if (canPlayerMove) {
+            if (!msg.pressed) {
+
+              player.setDirection(null)
+              movePlayer(player);
+
+            } else if (canPlayerMove) {
+
               player.setDirection(msg.key)
               movePlayer(player);
+
               canPlayerMove = false
               setTimeout(() => {
                 canPlayerMove = true
@@ -376,8 +385,15 @@ function openChat() {
     //logic for a game (which needed a socket) 
     //todo maybe export socket (export handleKeyInput func at least)? 
     //todo set from onkeydown in MF template
-    document.addEventListener('keydown', (e) => {
+    window.addEventListener('keydown', (e) => {
+      if (e.key.startsWith("Arrow")) {
+        e.preventDefault();
+      }
       handleKeyInput(e)
+    });
+
+    window.addEventListener('keyup', (e) => {
+      handleKeyOutput(e)
     });
 
     window.addEventListener("beforeunload", function (e) {
@@ -392,19 +408,23 @@ function openChat() {
     });
 
     const handleKeyInput = (e) => {
-      if (e.keyCode >= 37 && e.keyCode <= 40) {
+      if ((e.keyCode >= 37 && e.keyCode <= 40) || e.key == "Shift") {
         const msg = {
           Type : "game-update",
-          Key : e.keyCode
+          Key : e.keyCode,
+          Pressed: true,
         };
 
         socket.send(JSON.stringify(msg));
       }
+    };
 
-      if (e.key == "Shift") {
+    const handleKeyOutput = (e) => {
+      if (e.keyCode >= 37 && e.keyCode <= 40) {
         const msg = {
           Type : "game-update",
-          Key : e.keyCode
+          Key : e.keyCode,
+          Pressed: false,
         };
 
         socket.send(JSON.stringify(msg));
