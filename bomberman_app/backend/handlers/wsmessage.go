@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -18,7 +19,6 @@ const (
 	LEAVE_MSG    = "leave"
 	WAITTIME_MSG = "wait-time"
 	TIMER_MSG    = "timer"
-	NICKNAME_MSG = "nickname"
 )
 
 var (
@@ -82,7 +82,9 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nickname := r.Header.Get("nickname")
+	pathString := strings.TrimPrefix(r.URL.Path, "/ws/")
+	nickname := strings.Split(pathString, "/")[0]
+	fmt.Println("Nickname: " + nickname)
 
 	client := NewClient(conn, m, id, nickname)
 	m.addClient(client)
@@ -249,27 +251,6 @@ func (c *Client) readMessages() {
 			for client := range c.manager.clients {
 				client.egress <- resJson
 			}
-
-			continue
-		}
-
-		if msgType.Type == NICKNAME_MSG {
-			// Handle the nickname payload
-			var nicknamePayload struct {
-				Nickname string `json:"nickname"`
-			}
-
-			err = json.Unmarshal(payload, &nicknamePayload)
-
-			if err != nil {
-				log.Printf("error unmarshalling nickname payload: %v", err)
-				continue
-			}
-
-			nickname := nicknamePayload.Nickname
-
-			// Update the client's username
-			c.Nickname = nickname
 
 			continue
 		}

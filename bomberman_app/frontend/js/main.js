@@ -266,17 +266,11 @@ function openChat() {
 
   // Check if the WebSocket is already open
   if (localStorage.getItem("websocketOpen") !== "true") {
-    var socket = new WebSocket("ws://localhost:8080/ws");
+    var socket = new WebSocket("ws://localhost:8080/ws/" + nickname);
 
     socket.onopen = function () {
       // Set the flag in localStorage
       localStorage.setItem("websocketOpen", "true");
-
-      var payload = JSON.stringify({
-        type: "nickname",
-        nickname: nickname,
-      });
-      socket.send(payload);
     };
 
     socket.onclose = function () {

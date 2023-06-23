@@ -52,7 +52,7 @@ func Start(collection []Handler) {
 	mux.Handle("/sound/", http.StripPrefix("/sound", soundFs))
 
 	manager := NewManager()
-	mux.HandleFunc("/ws", manager.serveWS)
+	mux.HandleFunc("/ws/", manager.serveWS)
 
 	limitedMux := Limit(mux)
 
