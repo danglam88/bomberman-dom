@@ -7,6 +7,7 @@ const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
 let playerChecked = false;
 
+let waitingError = "";
 let players = [];
 let playersFetched = false;
 let waitTime = undefined;
@@ -118,7 +119,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : `Counter is loading...`
+            : waitingError !== "" ? waitingError : `Counter is loading...`
         }
       </div>
     </div>
@@ -230,17 +231,16 @@ function checkPlayerAlreadyExists(nickname, initialCheck) {
 
 function fetchPlayersRenderWaitingTimer() {
   fetch("/players")
-  .then((response) => {
-    if (response.status === 423) {
-      throw new Error("Game is not available at the moment. Please try again later...");
-    }
-    return response.json()
-  })
+  .then((response) => response.json())
   .then((data) => {
     playersFetched = true;
     players = []
 
-    data.forEach((player, i) => {
+    if (data.started) {
+      waitingError = "Game is not available at the moment. Please try again later..."
+    }
+
+    data.players.forEach((player, i) => {
       console.log("player: ", player)
       players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1))
     })

@@ -12,34 +12,38 @@ type Player struct {
 	Color string `json:"color"`
 }
 
+type GameStatus struct {
+	Players []Player `json:"players"`
+	Started bool     `json:"started"`
+}
+
 func GetPlayers(w http.ResponseWriter, r *http.Request) {
 
-	Players := []Player{}
+	GameState := GameStatus{Players: []Player{}, Started: false}
 
 	for i, session := range sessions {
 		switch i {
 		case 0:
-			Players = append(Players, Player{Name: session, X: 0, Y: 0, Color: "blue"})
+			GameState.Players = append(GameState.Players, Player{Name: session, X: 0, Y: 0, Color: "blue"})
 		case 1:
-			Players = append(Players, Player{Name: session, X: 855, Y: 0, Color: "dark"})
+			GameState.Players = append(GameState.Players, Player{Name: session, X: 855, Y: 0, Color: "dark"})
 		case 2:
-			Players = append(Players, Player{Name: session, X: 0, Y: 855, Color: "red"})
+			GameState.Players = append(GameState.Players, Player{Name: session, X: 0, Y: 855, Color: "red"})
 		case 3:
-			Players = append(Players, Player{Name: session, X: 855, Y: 855, Color: "purple"})
+			GameState.Players = append(GameState.Players, Player{Name: session, X: 855, Y: 855, Color: "purple"})
 		}
 	}
 
-	jsonData, err := json.Marshal(Players)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	if gameMap.Data != nil {
+		GameState.Started = true
+	}
+
+	jsonData, err := json.Marshal(GameState)
 	if err != nil {
 		GetErrResponse(w, err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	if gameMap.Data != nil {
-		w.WriteHeader(http.StatusLocked)
-	} else {
-		w.WriteHeader(http.StatusOK)
 	}
 	w.Write(jsonData)
 }
