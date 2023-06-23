@@ -166,11 +166,14 @@ function Router() {
     } else if (window.location.hash === "#/waiting") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3) {
         MiniFramework.render(Waiting, container);
-        setTimeout(openChat, 100);
+        setTimeout(() => {
+          if (waitingError === "") {
+            openChat();
+          }
+        }, 100);
       } else {
         console.log("from waiting to root");
         window.location.hash = "#/";
-        window.location.reload();
       }
     } else if (window.location.hash === "#/gamestart") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length <=4 && gameStarted) {
@@ -178,7 +181,6 @@ function Router() {
       } else {
         console.log("from gamestart to root");
         window.location.hash = "#/";
-        window.location.reload();
       }
     }
 
