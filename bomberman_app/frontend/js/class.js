@@ -16,6 +16,14 @@ export class Player {
         this.div = document.querySelector("." + this.color)
     }
 
+    setImg(img) {
+        this.div.style.background = img
+    }
+
+    getImg() {
+        return this.div.style.background
+    }
+
     dropBomb() {
         this.bomb--;
         return new Bomb(this.x, this.y, this.range, this);

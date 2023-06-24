@@ -95,10 +95,10 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (player.div.style.background === 'url("./img/' + player.color + '-back1.png")') {
-                    player.div.style.background = 'url("./img/' + player.color + '-back2.png")';
+                if (player.getImg() === 'url("./img/' + player.color + '-back1.png")') {
+                    player.setImg('url("./img/' + player.color + '-back2.png")');
                 } else {
-                    player.div.style.background = 'url("./img/' + player.color + '-back1.png")';
+                    player.setImg('url("./img/' + player.color + '-back1.png")');
                 }
 
                 break;
@@ -119,10 +119,10 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (player.div.style.background === 'url("./img/' + player.color + '-front1.png")') {
-                    player.div.style.background = 'url("./img/' + player.color + '-front2.png")';
+                if (player.getImg() === 'url("./img/' + player.color + '-front1.png")') {
+                    player.setImg('url("./img/' + player.color + '-front2.png")');
                 } else {
-                    player.div.style.background = 'url("./img/' + player.color + '-front1.png")';
+                    player.setImg('url("./img/' + player.color + '-front1.png")');
                 }
 
                 break;
@@ -143,10 +143,10 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (player.div.style.background === 'url("./img/' + player.color + '-left1.png")') {
-                    player.div.style.background = 'url("./img/' + player.color + '-left2.png")';
+                if (player.getImg() === 'url("./img/' + player.color + '-left1.png")') {
+                    player.setImg('url("./img/' + player.color + '-left2.png")');
                 } else {
-                    player.div.style.background = 'url("./img/' + player.color + '-left1.png")';
+                    player.setImg('url("./img/' + player.color + '-left1.png")');
                 }
 
                 break;
@@ -167,27 +167,26 @@ export const movePlayer = (player) => {
 
                 player.div.style.transform = "translate(" + currentLeft + "px, " + currentTop + "px)";
 
-                if (player.div.style.background === 'url("./img/' + player.color + '-right1.png")') {
-                    player.div.style.background = 'url("./img/' + player.color + '-right2.png")';
+                if (player.getImg() === 'url("./img/' + player.color + '-right1.png")') {
+                    player.setImg('url("./img/' + player.color + '-right2.png")');
                 } else {
-                    player.div.style.background = 'url("./img/' + player.color + '-right1.png")';
+                    player.setImg('url("./img/' + player.color + '-right1.png")');
                 }
 
                 break;
             case null:
-                // handle this in classes instead?
                 switch (true) {
-                    case player.div.style.background === 'url("./img/' + player.color + '-back1.png")' || player.div.style.background === 'url("./img/' + player.color + '-back2.png")':
-                        player.div.style.background = 'url("./img/' + player.color + '-back0.png")';
+                    case player.getImg() === 'url("./img/' + player.color + '-back1.png")' || player.getImg() === 'url("./img/' + player.color + '-back2.png")':
+                        player.setImg('url("./img/' + player.color + '-back0.png")');
                         break;
-                    case player.div.style.background === 'url("./img/' + player.color + '-front1.png")' || player.div.style.background === 'url("./img/' + player.color + '-front2.png")':
-                        player.div.style.background = 'url("./img/' + player.color + '-front0.png")';
+                    case player.getImg() === 'url("./img/' + player.color + '-front1.png")' || player.getImg() === 'url("./img/' + player.color + '-front2.png")':
+                        player.setImg('url("./img/' + player.color + '-front0.png")');
                         break;
-                    case player.div.style.background === 'url("./img/' + player.color + '-left1.png")' || player.div.style.background === 'url("./img/' + player.color + '-left2.png")':
-                        player.div.style.background = 'url("./img/' + player.color + '-left0.png")';
+                    case player.getImg() === 'url("./img/' + player.color + '-left1.png")' || player.getImg() === 'url("./img/' + player.color + '-left2.png")':
+                        player.setImg('url("./img/' + player.color + '-left0.png")');
                         break;
-                    case player.div.style.background === 'url("./img/' + player.color + '-right1.png")' || player.div.style.background === 'url("./img/' + player.color + '-right2.png")':
-                        player.div.style.background = 'url("./img/' + player.color + '-right0.png")';
+                    case player.getImg() === 'url("./img/' + player.color + '-right1.png")' || player.getImg() === 'url("./img/' + player.color + '-right2.png")':
+                        player.setImg('url("./img/' + player.color + '-right0.png")');
                         break;
                 }
 
