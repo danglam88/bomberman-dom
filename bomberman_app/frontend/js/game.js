@@ -1,13 +1,9 @@
 export const GLOBAL_SPEED = 10
 
-//todo 
-const playerStartTop = 10;
-const playerStartLeft = 5;
+//todo
 const playerSize = 45;
-const playerNameMaxLength = 15;
 const tileSize = 45;
 const brickSize = 45;
-const superBrickSize = 45;
 const wallSize = 45;
 const tileDuration = 500;
 const stopDuration = 500;
@@ -15,22 +11,14 @@ const flashDuration = 500;
 const appearDuration = 500;
 const screamDuration = 500;
 const bombDuration = 3000;
-const invincibleDuration = 5000;
 const bombSize = 45;
 const giftSize = 33;
 const mapWidth = 900;
 const mapHeight = 900;
-const totalTime = 181000;
-const hintStart = 121000;
-const lifePoints = 200;
+const hintStart = 60000;
 const intervalDuration = 100;
-const highScoresNo = 5;
-const probability = 0.9;
-const allDirections = ["Up", "Down", "Left", "Right"];
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
-const popupDuration = 4000;
-const scoreGoal = 1000;
 
 export const GameLogic = (players) => {
     let isGameOver = false
@@ -289,15 +277,35 @@ const giftCheck = (player, giftElement) => {
     }
 }
 
-export function animateBomb(player){
+export function animateBomb(bomb){
     let map = document.getElementsByClassName("map")[0]
+
     let bombNode = document.createElement("div")
     bombNode.classList.add("bomb")
     bombNode.style.backgroundImage = "url('img/bomb.png')"
-    bombNode.style.top = player.y+6 + "px"
-    bombNode.style.left = player.x+6 + "px"
+    bombNode.style.top = bomb.getY() + "px"
+    bombNode.style.left = bomb.getX() + "px"
     bombNode.style.backgroundPosition = "0px 0px";
       
     map.appendChild(bombNode)
 }
 
+export const noBombPlaced = (currentLeft, currentTop) => {
+    let bombs = document.querySelectorAll(".bomb");
+
+    for (let i = 0; i < bombs.length; i++) {
+        let bombTop = bombs[i].style.top;
+        bombTop = bombTop.replace("px", "");
+        bombTop = parseInt(bombTop);
+
+        let bombLeft = bombs[i].style.left;
+        bombLeft = bombLeft.replace("px", "");
+        bombLeft = parseInt(bombLeft);
+
+        if (currentTop <= bombTop + bombSize && currentLeft <= bombLeft + bombSize && currentTop + bombSize >= bombTop && currentLeft + bombSize >= bombLeft) {
+            return false;
+        }
+    }
+
+    return true;
+}

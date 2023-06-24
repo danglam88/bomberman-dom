@@ -172,8 +172,12 @@ export class Bomb {
         return this.time;
     }
 
-    getPosition() {
-        return [this.x, this.y];
+    getX() {
+        return this.x;
+    }
+
+    getY() {
+        return this.y;
     }
 
     getOwner() {

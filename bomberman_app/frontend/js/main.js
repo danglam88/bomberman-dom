@@ -1,7 +1,7 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 import { Player } from "./class.js";
-import { GLOBAL_SPEED, movePlayer, animateBomb } from "./game.js";
+import { GLOBAL_SPEED, movePlayer, animateBomb, noBombPlaced } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -338,10 +338,9 @@ function openChat() {
 
           if (msg.key === 16) {
 
-            player.dropBomb()
-            animateBomb(player)
-
-            console.log(player.bomb)
+            if (player.bombStillLeft() && noBombPlaced(player.getX(), player.getY())) {
+              animateBomb(player.dropBomb())
+            }
           
             // Drop Bomb visualisation
           } else if (msg.key >= 37 && msg.key <= 40) {
