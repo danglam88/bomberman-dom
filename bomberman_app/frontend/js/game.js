@@ -200,62 +200,62 @@ export const movePlayer = (player) => {
     }
 }
 
-// function that checks if players and ghosts can move in the direction they want to,
-// and if they can, it moves them. Checks also if the player is killed by a ghost
+// function that checks if players can move in the direction they want
 const barrierCheck = (currentTop, currentLeft, direction) => {
 
-let walls = document.querySelectorAll(".wall");
+    let walls = document.querySelectorAll(".wall");
 
-for (let i = 0; i < walls.length; i++) {
-  let wallTop = walls[i].style.top;
+    for (let i = 0; i < walls.length; i++) {
 
-  wallTop = wallTop.replace("px", "");
-  wallTop = parseInt(wallTop);
+        let wallTop = walls[i].style.top;
+        wallTop = wallTop.replace("px", "");
+        wallTop = parseInt(wallTop);
 
-  let wallLeft = walls[i].style.left;
-  wallLeft = wallLeft.replace("px", "");
-  wallLeft = parseInt(wallLeft);
+        let wallLeft = walls[i].style.left;
+        wallLeft = wallLeft.replace("px", "");
+        wallLeft = parseInt(wallLeft);
 
-  if (currentTop + playerSize > wallTop && currentTop < wallTop + wallSize && currentLeft + playerSize > wallLeft && currentLeft < wallLeft + wallSize) {
-      switch (direction) {
-          case "Up":
-              return wallTop + wallSize;
-          case "Down":
-              return wallTop - wallSize;
-          case "Left":
-              return wallLeft + wallSize;
-          case "Right":
-              return wallLeft - wallSize;
-      }
-  }
-}
+        if (currentTop + playerSize > wallTop && currentTop < wallTop + wallSize && currentLeft + playerSize > wallLeft && currentLeft < wallLeft + wallSize) {
+            switch (direction) {
+                case "Up":
+                    return wallTop + wallSize;
+                case "Down":
+                    return wallTop - wallSize;
+                case "Left":
+                    return wallLeft + wallSize;
+                case "Right":
+                    return wallLeft - wallSize;
+            }
+        }
+    }
 
-let bricks = document.querySelectorAll(".brick");
+    let bricks = document.querySelectorAll(".brick");
 
-for (let i = 0; i < bricks.length; i++) {
-  let brickTop = bricks[i].style.top;
-  brickTop = brickTop.replace("px", "");
-  brickTop = parseInt(brickTop);
+    for (let i = 0; i < bricks.length; i++) {
 
-  let brickLeft = bricks[i].style.left;
-  brickLeft = brickLeft.replace("px", "");
-  brickLeft = parseInt(brickLeft);
+        let brickTop = bricks[i].style.top;
+        brickTop = brickTop.replace("px", "");
+        brickTop = parseInt(brickTop);
 
-  if (currentTop + playerSize > brickTop && currentTop < brickTop + brickSize && currentLeft + playerSize > brickLeft && currentLeft < brickLeft + brickSize) {
-      switch (direction) {
-          case "Up":
-              return brickTop + brickSize;
-          case "Down":
-              return brickTop - brickSize;
-          case "Left":
-              return brickLeft + brickSize;
-          case "Right":
-              return brickLeft - brickSize;
-      }
-  }
-}
+        let brickLeft = bricks[i].style.left;
+        brickLeft = brickLeft.replace("px", "");
+        brickLeft = parseInt(brickLeft);
 
-return undefined;
+        if (currentTop + playerSize > brickTop && currentTop < brickTop + brickSize && currentLeft + playerSize > brickLeft && currentLeft < brickLeft + brickSize) {
+            switch (direction) {
+                case "Up":
+                    return brickTop + brickSize;
+                case "Down":
+                    return brickTop - brickSize;
+                case "Left":
+                    return brickLeft + brickSize;
+                case "Right":
+                    return brickLeft - brickSize;
+            }
+        }
+    }
+
+    return undefined;
 }
 
 const giftCheck = (player, giftElement) => {
