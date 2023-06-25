@@ -1,5 +1,5 @@
 export class Player {
-    constructor(name, x, y, color, speed, index) {
+    constructor(name, x, y, color, speed, index, me) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -10,6 +10,7 @@ export class Player {
         this.range = 1;
         this.direction = null
         this.index = index
+        this.me = me
     }
 
     addDiv() {
@@ -152,6 +153,10 @@ export class Player {
 
     getY() {
         return this.y;
+    }
+
+    isMe() {
+        return this.me;
     }
 }
 

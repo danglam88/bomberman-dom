@@ -244,7 +244,8 @@ function fetchPlayersRenderWaitingTimer() {
 
     data.players.forEach((player, i) => {
       console.log("player: ", player)
-      players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1))
+      const isMe = player.name == localStorage.getItem("nickname")
+      players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1, isMe))
     })
 
     console.log("players: ", players)
@@ -407,7 +408,7 @@ function openChat() {
     });
 
     const handleKeyInput = (e) => {
-      if ((e.keyCode >= 37 && e.keyCode <= 40) || e.key == "Shift") {
+      if (e.keyCode >= 37 && e.keyCode <= 40) {
         const msg = {
           Type : "game-update",
           Key : e.keyCode,
@@ -415,6 +416,18 @@ function openChat() {
         };
 
         socket.send(JSON.stringify(msg));
+      } else if (e.key == "Shift") {
+        const player = players.find(player => player.me)
+
+        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
+          const msg = {
+            Type : "game-update",
+            Key : e.keyCode,
+            Pressed: true,
+          };
+
+          socket.send(JSON.stringify(msg));
+        }
       }
     };
 
