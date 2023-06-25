@@ -12,7 +12,7 @@ const appearDuration = 500;
 const screamDuration = 500;
 const bombDuration = 3000;
 const bombSize = 45;
-const giftSize = 33;
+const giftSize = 45;
 const mapWidth = 900;
 const mapHeight = 900;
 const hintStart = 60000;
@@ -278,16 +278,44 @@ const giftCheck = (player, giftElement) => {
 }
 
 export function animateBomb(bomb){
-    let map = document.getElementsByClassName("map")[0]
+    bomb.setId(Date.now())
+    bomb.setIndex(0)
 
     let bombNode = document.createElement("div")
+    bombNode.id = bomb.getId()
     bombNode.classList.add("bomb")
     bombNode.style.backgroundImage = "url('img/bomb.png')"
     bombNode.style.top = bomb.getY() + "px"
     bombNode.style.left = bomb.getX() + "px"
-    bombNode.style.backgroundPosition = "0px 0px";
-      
+    bombNode.style.backgroundPosition = `${bomb.getIndex()}px 0px`
+
+    let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)
+
+    const tileId = setInterval(() => {
+        if (bomb.getIndex() === 0 || bomb.getIndex() === bombSize) {
+            bomb.setIndex(bomb.getIndex() + bombSize)
+        } else {
+            bomb.setIndex(0)
+        }
+
+        bombNode.style.backgroundPosition = `${bomb.getIndex()}px 0px`
+    }, tileDuration)
+
+    setTimeout(() => {
+        clearInterval(tileId)
+
+        createFlashPieces(bomb.getId(), bomb);
+        destroyObjects(bomb.getId(), bomb);
+
+        setTimeout(() => {
+            removeFlashPieces(bomb.getId());
+
+            bombNode.remove();
+            bomb.explode();
+
+        }, flashDuration)
+    }, bombDuration)
 }
 
 export const noBombPlaced = (currentLeft, currentTop) => {
@@ -308,4 +336,196 @@ export const noBombPlaced = (currentLeft, currentTop) => {
     }
 
     return true;
+}
+
+const noWallPlaced = (flashLeft, flashTop) => {
+    let walls = document.querySelectorAll(".wall");
+
+    for (let i = 0; i < walls.length; i++) {
+        let wallTop = walls[i].style.top;
+        wallTop = wallTop.replace("px", "");
+        wallTop = parseInt(wallTop);
+
+        let wallLeft = walls[i].style.left;
+        wallLeft = wallLeft.replace("px", "");
+        wallLeft = parseInt(wallLeft);
+
+        if (flashTop < wallTop + wallSize && flashLeft < wallLeft + wallSize && flashTop + bombSize > wallTop && flashLeft + bombSize > wallLeft) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+const noWallBetween = (bombLeft, bombTop, currentLeft, currentTop) => {
+    let walls = document.querySelectorAll(".wall");
+
+    for (let i = 0; i < walls.length; i++) {
+        let wallTop = walls[i].style.top;
+        wallTop = wallTop.replace("px", "");
+        wallTop = parseInt(wallTop);
+
+        let wallLeft = walls[i].style.left;
+        wallLeft = wallLeft.replace("px", "");
+        wallLeft = parseInt(wallLeft);
+
+        if ((bombLeft < wallLeft + wallSize && wallLeft < bombLeft + bombSize && ((bombTop < wallTop && wallTop < currentTop) || (currentTop < wallTop && wallTop < bombTop))) || (bombTop < wallTop + wallSize && wallTop < bombTop + bombSize && ((bombLeft < wallLeft && wallLeft < currentLeft) || (currentLeft < wallLeft && wallLeft < bombLeft)))) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// function to check what to remove while bomb is exploding
+const destroyObjects = (bombID, bomb) => {
+    let bombElement = document.getElementById(bombID);
+
+    if (bombElement !== null) {
+        bombElement.style.backgroundImage = "url('./img/explode.png')";
+
+        let bombTop = bombElement.style.top;
+        bombTop = bombTop.replace("px", "");
+        bombTop = parseInt(bombTop);
+
+        let minBombTop = bombTop - bomb.getRange() * bombSize;
+        let maxBombTop = bombTop + bombSize + bomb.getRange() * bombSize;
+
+        let bombLeft = bombElement.style.left;
+        bombLeft = bombLeft.replace("px", "");
+        bombLeft = parseInt(bombLeft);
+
+        let minBombLeft = bombLeft - bomb.getRange() * bombSize;
+        let maxBombLeft = bombLeft + bombSize + bomb.getRange() * bombSize;
+
+        let gifts = document.querySelectorAll(".gift");
+
+        for (let i = 0; i < gifts.length; i++) {
+            if (!gifts[i].classList.contains("brick")) {
+                let giftTop = gifts[i].style.top;
+                giftTop = giftTop.replace("px", "");
+                giftTop = parseInt(giftTop);
+
+                let giftLeft = gifts[i].style.left;
+                giftLeft = giftLeft.replace("px", "");
+                giftLeft = parseInt(giftLeft);
+
+                if (noWallBetween(bombLeft, bombTop, giftLeft, giftTop) && ((giftLeft < bombLeft + bombSize && giftLeft + giftSize > bombLeft && giftTop < maxBombTop && giftTop + giftSize > minBombTop) || (giftTop < bombTop + bombSize && giftTop + giftSize > bombTop && giftLeft < maxBombLeft && giftLeft + giftSize > minBombLeft))) {
+                    gifts[i].remove();
+                }
+            }
+        }
+
+        let bricks = document.querySelectorAll(".brick");
+
+        for (let i = 0; i < bricks.length; i++) {
+            let brickTop = bricks[i].style.top;
+            brickTop = brickTop.replace("px", "");
+            brickTop = parseInt(brickTop);
+
+            let brickLeft = bricks[i].style.left;
+            brickLeft = brickLeft.replace("px", "");
+            brickLeft = parseInt(brickLeft);
+
+            if (noWallBetween(bombLeft, bombTop, brickLeft, brickTop) && ((brickLeft < bombLeft + bombSize && brickLeft + brickSize > bombLeft && brickTop < maxBombTop && brickTop + brickSize > minBombTop) || (brickTop < bombTop + bombSize && brickTop + brickSize > bombTop && brickLeft < maxBombLeft && brickLeft + brickSize > minBombLeft))) {
+                if (!bricks[i].classList.contains("gift")) {
+                    bricks[i].remove();
+                } else {
+                    bricks[i].classList.remove("brick");
+                    bricks[i].style.width = giftSize + "px";
+                    bricks[i].style.height = giftSize + "px";
+                    bricks[i].style.position = "absolute";
+                }
+            }
+        }
+
+        /*let playerElements = document.querySelectorAll(".player");
+
+        for (let i = 0; i < playerElements.length; i++) {
+            const player = players.find(player => playerElements[i].classList.contains(player.color));
+
+            if (player !== undefined) {
+                let playerTop = player.getY();
+                let playerLeft = player.getX();
+
+                if (noWallBetween(bombLeft, bombTop, playerLeft, playerTop) && ((playerLeft < bombLeft + bombSize && playerLeft + playerSize > bombLeft && playerTop < maxBombTop && playerTop + playerSize > minBombTop) || (playerTop < bombTop + bombSize && playerTop + playerSize > bombTop && playerLeft < maxBombLeft && playerLeft + playerSize > minBombLeft))) {
+                    if (player.getLives() > 0) {
+                        player.removeLife();
+                    }
+                    if (player.getLives() === 0) {
+                        playerElements[i].remove();
+                    }
+                }
+            }
+        }*/
+    }
+}
+
+// function to create flash pieces while bomb is exploding
+const createFlashPieces = (bombID, bomb) => {
+    let mapElement = document.querySelector(".map");
+    let bombElement = document.getElementById(bombID);
+
+    if (mapElement !== null && bombElement !== null) {
+        let bombTop = bombElement.style.top;
+        bombTop = bombTop.replace("px", "");
+        bombTop = parseInt(bombTop);
+
+        let minBombTop = bombTop - bomb.getRange() * bombSize;
+        let maxBombTop = bombTop + bombSize + bomb.getRange() * bombSize;
+
+        let bombLeft = bombElement.style.left;
+        bombLeft = bombLeft.replace("px", "");
+        bombLeft = parseInt(bombLeft);
+
+        let minBombLeft = bombLeft - bomb.getRange() * bombSize;
+        let maxBombLeft = bombLeft + bombSize + bomb.getRange() * bombSize;
+
+        let flashTop = minBombTop;
+        let flashLeft = bombLeft;
+
+        while (flashTop < maxBombTop) {
+            if (noWallPlaced(flashLeft, flashTop) && noWallBetween(bombLeft, bombTop, flashLeft, flashTop) && flashTop >= 0 && flashTop + bombSize <= mapHeight && flashLeft >= 0 && flashLeft + bombSize <= mapWidth) {
+                let flashElement = document.createElement("div");
+                flashElement.classList.add("flash" + bombID);
+                flashElement.style.top = flashTop + "px";
+                flashElement.style.left = flashLeft + "px";
+                flashElement.style.width = bombSize + "px";
+                flashElement.style.height = bombSize + "px";
+                flashElement.style.backgroundImage = "url('./img/explode.png')";
+                flashElement.style.position = "absolute";
+                mapElement.appendChild(flashElement);
+            }
+            flashTop += bombSize;
+        }
+
+        flashTop = bombTop;
+        flashLeft = minBombLeft;
+
+        while (flashLeft < maxBombLeft) {
+            if (noWallPlaced(flashLeft, flashTop) && noWallBetween(bombLeft, bombTop, flashLeft, flashTop) && flashTop >= 0 && flashTop + bombSize <= mapHeight && flashLeft >= 0 && flashLeft + bombSize <= mapWidth) {
+                let flashElement = document.createElement("div");
+                flashElement.classList.add("flash" + bombID);
+                flashElement.style.top = flashTop + "px";
+                flashElement.style.left = flashLeft + "px";
+                flashElement.style.width = bombSize + "px";
+                flashElement.style.height = bombSize + "px";
+                flashElement.style.backgroundImage = "url('./img/explode.png')";
+                flashElement.style.position = "absolute";
+                mapElement.appendChild(flashElement);
+            }
+            flashLeft += bombSize;
+        }
+    }
+}
+
+const removeFlashPieces = (bombID) => {
+    let flashPieces = document.querySelectorAll(".flash" + bombID);
+
+    if (flashPieces !== null) {
+        for (let i = 0; i < flashPieces.length; i++) {
+            flashPieces[i].remove();
+        }
+    }
 }

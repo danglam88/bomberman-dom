@@ -100,7 +100,7 @@ export function openChat() {
   
     if (player !== undefined) {
       if (msg.key === 16) {
-        if (player.bombStillLeft() && noBombPlaced(player.getX(), player.getY())) {
+        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
           animateBomb(player.dropBomb());
         }
       } else if (msg.key >= 37 && msg.key <= 40) {

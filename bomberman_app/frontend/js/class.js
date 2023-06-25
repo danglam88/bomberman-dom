@@ -97,14 +97,6 @@ export class Player {
         this.range = 1;
     }
 
-    isDead() {
-        return this.lives === 0;
-    }
-
-    bombStillLeft() {
-        return this.bomb > 0;
-    }
-
     setDirection(dir) {
         switch (dir) {
             case 37 : 
@@ -165,16 +157,27 @@ export class Bomb {
         this.x = x;
         this.y = y;
         this.range = range;
-        this.time = 3000;
         this.owner = owner;
+    }
+
+    setId(id) {
+        this.id = id;
+    }
+
+    getId() {
+        return this.id;
+    }
+
+    setIndex(index) {
+        this.index = index;
+    }
+
+    getIndex() {
+        return this.index;
     }
 
     getRange() {
         return this.range;
-    }
-
-    getTime() {
-        return this.time;
     }
 
     getX() {
