@@ -261,159 +261,22 @@ function fetchPlayersRenderWaitingTimer() {
   });
 }
 
-function openChat() {
-  document.getElementById("chat").style.display = "";
-
+const openChat = () => {
+  const chat = document.getElementById("chat");
+  chat.style.display = "";
   const nickname = localStorage.getItem("nickname");
+  const isWebSocketOpen = localStorage.getItem("websocketOpen") === "true";
 
-  // Check if the WebSocket is already open
-  if (localStorage.getItem("websocketOpen") !== "true") {
-    var socket = new WebSocket("ws://localhost:8080/ws/" + nickname);
-
-    socket.onopen = function () {
-      // Set the flag in localStorage
-      localStorage.setItem("websocketOpen", "true");
-    };
-
-    socket.onclose = function () {
-      // Clear the flag in localStorage when the WebSocket is closed
-      localStorage.setItem("websocketOpen", "false");
-    };
-
-    socket.onerror = function (error) {
-      console.log("WebSocket error: " + error);
-    };
-
-    socket.onmessage = function (event) {
-      var msg = JSON.parse(event.data);
-    
-      if (msg.type === "message") {
-        let player = players.find(player => player.name === msg.nickname)
-  
-        var node = document.createElement("div");
-        var picture = document.createElement("img");
-        picture.src = "img/"+player.color+"-front0.png";
-  
-        var textnode = document.createTextNode(msg.nickname + ": " + msg.message);
-        node.appendChild(picture);
-        node.appendChild(textnode);
-        var chatContainer = document.getElementById("chat-messages")
-        chatContainer.appendChild(node);
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-      }
-      // if message type is join and the timer is not running, start the timer
-      if (msg.type === "wait-time" || msg.type === "timer") {
-
-        if (msg.type === "wait-time") {
-          waitTime = parseInt(msg.message);
-        } else if (msg.type === "timer") {
-          timer = parseInt(msg.message);
-          waitTime = undefined;
-        }
-
-        fetchPlayersRenderWaitingTimer();
-      }
-
-      // if message type is leave and the timer is running, stop the timer
-      if (msg.type === "leave") {
-
-        if (players.length == 2) {
-          timer = undefined;
-          waitTime = undefined;
-        }
-
-        fetchPlayersRenderWaitingTimer();
-
-        var node = document.createElement("div");
-        var textnode = document.createTextNode(msg.nickname + " left the game");
-
-        node.appendChild(textnode);
-        document.getElementById("chat-messages").appendChild(node);
-      }
-
-      if (msg.type = "game-update") {
-        const player = players.find(player => player.name == msg.player)
-
-        if (player !== undefined) {
-
-          if (msg.key === 16) {
-
-            if (player.bombStillLeft() && noBombPlaced(player.getX(), player.getY())) {
-              animateBomb(player.dropBomb())
-            }
-          
-            // Drop Bomb visualisation
-          } else if (msg.key >= 37 && msg.key <= 40) {
-
-            // Move Player
-            if (!msg.pressed) {
-
-              player.setDirection(null)
-              movePlayer(player);
-
-            } else if (canPlayerMove) {
-
-              player.setDirection(msg.key)
-              movePlayer(player);
-
-              canPlayerMove = false
-              setTimeout(() => {
-                canPlayerMove = true
-              }, 50)
-            }
-          }
-        }
-      }
-    };
-
-    document.getElementById("form").addEventListener("submit", function (e) {
-      e.preventDefault();
-
-      var input = document.getElementById("input");
-      var message = input.value;
-      input.value = "";
-
-      var msg = {
-        Type: "message",
-        Message: message,
-      };
-
-      socket.send(JSON.stringify(msg));
-    }) // Call routeChange to handle initial page load
-
-    //logic for a game (which needed a socket) 
-    //todo maybe export socket (export handleKeyInput func at least)? 
-    //todo set from onkeydown in MF template
-    window.addEventListener('keydown', (e) => {
-      if (e.key.startsWith("Arrow")) {
-        e.preventDefault();
-      }
-      handleKeyInput(e)
-    });
-
-    window.addEventListener('keyup', (e) => {
-      handleKeyOutput(e)
-    });
-
-    window.addEventListener("beforeunload", function (e) {
-      //also check if game is started, to prevent staying in the game on hash change
-
-      var msg = {
-        Type: "leave",
-        nickname: nickname,
-      };
-
-      socket.send(JSON.stringify(msg));
-    });
+  if (!isWebSocketOpen) {
+    const socket = initWebSocket(nickname);
 
     const handleKeyInput = (e) => {
       if ((e.keyCode >= 37 && e.keyCode <= 40) || e.key == "Shift") {
         const msg = {
-          Type : "game-update",
-          Key : e.keyCode,
+          Type: "game-update",
+          Key: e.keyCode,
           Pressed: true,
         };
-
         socket.send(JSON.stringify(msg));
       }
     };
@@ -421,22 +284,119 @@ function openChat() {
     const handleKeyOutput = (e) => {
       if (e.keyCode >= 37 && e.keyCode <= 40) {
         const msg = {
-          Type : "game-update",
-          Key : e.keyCode,
+          Type: "game-update",
+          Key: e.keyCode,
           Pressed: false,
         };
-
         socket.send(JSON.stringify(msg));
       }
     };
+
+    socket.onopen = () => localStorage.setItem("websocketOpen", "true");
+    socket.onclose = () => localStorage.setItem("websocketOpen", "false");
+    socket.onerror = (error) => console.log("WebSocket error: " + error);
+    socket.onmessage = (event) => handleWebSocketMessage(event, socket);
+
+    initEventListeners(socket, handleKeyInput, handleKeyOutput);
   } else {
-    document.getElementById("chat").style.display = "";
-    // set websocketOpen to false if websocket is not open
+    chat.style.display = "";
     localStorage.setItem("websocketOpen", "false");
-    // send user to root if websocket is not open
     console.log("from chat to root");
     //window.location.hash = "#/";
-  };
+  }
 }
+
+const initWebSocket = (nickname) => {
+  return new WebSocket("ws://localhost:8080/ws/" + nickname);
+}
+
+const handleWebSocketMessage = (event) => {
+  const msg = JSON.parse(event.data);
+  if (msg.type === "message") {
+    const player = players.find(player => player.name === msg.nickname);
+    const node = document.createElement("div");
+    const picture = document.createElement("img");
+    picture.src = "img/" + player.color + "-front0.png";
+    const textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+    node.appendChild(picture);
+    node.appendChild(textnode);
+    const chatContainer = document.getElementById("chat-messages");
+    chatContainer.appendChild(node);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  } 
+
+  if (msg.type === "wait-time" || msg.type === "timer") {
+    if (msg.type === "wait-time") {
+      waitTime = parseInt(msg.message);
+    } else if (msg.type === "timer") {
+      timer = parseInt(msg.message);
+      waitTime = undefined;
+    }
+    fetchPlayersRenderWaitingTimer();
+  }
+
+  if (msg.type === "leave") {
+    if (players.length === 2) {
+      timer = undefined;
+      waitTime = undefined;
+    }
+    fetchPlayersRenderWaitingTimer();
+    const node = document.createElement("div");
+    const textnode = document.createTextNode(msg.nickname + " left the game");
+    node.appendChild(textnode);
+    document.getElementById("chat-messages").appendChild(node);
+  }
+
+  if (msg.type === "game-update") {
+    const player = players.find(player => player.name == msg.player);
+    if (player !== undefined) {
+      if (msg.key === 16) {
+        if (player.bombStillLeft() && noBombPlaced(player.getX(), player.getY())) {
+          animateBomb(player.dropBomb());
+        }
+      } else if (msg.key >= 37 && msg.key <= 40) {
+        if (!msg.pressed) {
+          player.setDirection(null);
+          movePlayer(player);
+        } else if (canPlayerMove) {
+          player.setDirection(msg.key);
+          movePlayer(player);
+          canPlayerMove = false;
+          setTimeout(() => {
+            canPlayerMove = true;
+          }, 50);
+        }
+      }
+    }
+  }
+};
+
+
+const initEventListeners = (socket, handleKeyInput, handleKeyOutput) => {
+  document.getElementById("form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const input = document.getElementById("input");
+    const message = input.value;
+    input.value = "";
+    const msg = { Type: "message", Message: message };
+    socket.send(JSON.stringify(msg));
+  });
+
+  window.addEventListener('keydown', (e) => {
+    if (e.key.startsWith("Arrow")) {
+      e.preventDefault();
+    }
+    handleKeyInput(e);
+  });
+
+  window.addEventListener('keyup', handleKeyOutput);
+
+  window.addEventListener("beforeunload", (e) => {
+    const nickname = localStorage.getItem("nickname");
+    const msg = { Type: "leave", nickname: nickname };
+    socket.send(JSON.stringify(msg));
+  });
+}
+
 
 Router();
