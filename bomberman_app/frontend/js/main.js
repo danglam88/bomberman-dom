@@ -382,13 +382,9 @@ const handleWebSocketMessage = (event) => {
         if (!msg.pressed) {
           player.setDirection(null);
           movePlayer(player);
-        } else if (canPlayerMove) {
+        } else {
           player.setDirection(msg.key);
           movePlayer(player);
-          canPlayerMove = false;
-          setTimeout(() => {
-            canPlayerMove = true;
-          }, 50);
         }
       }
     }
@@ -410,10 +406,15 @@ const initEventListeners = (socket, handleKeyInput, handleKeyOutput) => {
     if (e.key.startsWith("Arrow")) {
       e.preventDefault();
     }
-    handleKeyInput(e);
-  });
 
-  window.addEventListener('keyup', handleKeyOutput);
+    if (canPlayerMove) {
+      handleKeyInput(e);
+      canPlayerMove = false
+      setTimeout(() => {
+        canPlayerMove = true
+      }, 50)
+    }
+  });
 
   window.addEventListener("beforeunload", (e) => {
     const nickname = localStorage.getItem("nickname");
