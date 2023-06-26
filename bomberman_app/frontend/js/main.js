@@ -389,7 +389,7 @@ const handleWebSocketMessage = (event) => {
     if (player !== undefined) {
       if (msg.key === 16) {
         if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
-          animateBomb(player.dropBomb());
+          animateBomb(player.dropBomb(), players);
         }
       } else if (msg.key >= 37 && msg.key <= 40) {
         if (!msg.pressed) {

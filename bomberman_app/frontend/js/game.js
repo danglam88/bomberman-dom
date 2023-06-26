@@ -42,7 +42,6 @@ export const GameLogic = (players) => {
             window.requestAnimationFrame(function(timestamp) {
                 gameLoop(timestamp, players);
             });
-      
             return;
         }
       
@@ -219,10 +218,12 @@ const createLivesInfo = (player) => {
     }
 
     let livesInfo = document.getElementById("livesInfo-" + player.getColor());
-    if (livesInfo !== null) {
+    if (livesInfo !== null && player.getLives() <= 0) {
+        livesInfo.remove();
+    } else if (livesInfo !== null) {
         livesInfo.innerHTML = "<h5>" + player.getLives() + "</h5>";
         livesInfo.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
-    } else {
+    } else if (player.getLives() > 0) {
         let livesElement = document.createElement("div");
         livesElement.id = "livesInfo-" + player.getColor();
         livesElement.classList.add("moving");
@@ -327,7 +328,7 @@ const giftCheck = (player, giftElement) => {
     }
 }
 
-export function animateBomb(bomb){
+export function animateBomb(bomb, players){
     bomb.setId(Date.now())
     bomb.setIndex(0)
 
@@ -344,7 +345,7 @@ export function animateBomb(bomb){
 
     setTimeout(() => {
         createFlashPieces(bomb.getId(), bomb);
-        destroyObjects(bomb.getId(), bomb);
+        destroyObjects(bomb.getId(), bomb, players);
 
         setTimeout(() => {
             removeFlashPieces(bomb.getId());
@@ -417,7 +418,7 @@ const noWallBetween = (bombLeft, bombTop, currentLeft, currentTop) => {
 }
 
 // function to check what to remove while bomb is exploding
-const destroyObjects = (bombID, bomb) => {
+const destroyObjects = (bombID, bomb, players) => {
     let bombElement = document.getElementById(bombID);
 
     if (bombElement !== null) {
@@ -482,7 +483,7 @@ const destroyObjects = (bombID, bomb) => {
             }
         }
 
-        /*let playerElements = document.querySelectorAll(".player");
+        let playerElements = document.querySelectorAll(".player");
 
         for (let i = 0; i < playerElements.length; i++) {
             const player = players.find(player => playerElements[i].classList.contains(player.color));
@@ -498,9 +499,13 @@ const destroyObjects = (bombID, bomb) => {
                     if (player.getLives() === 0) {
                         playerElements[i].remove();
                     }
+                    createLivesInfo(player);
+                    if (players.filter(player => player.getLives() > 0).length === 1) {
+                        isGameOver = true;
+                    }
                 }
             }
-        }*/
+        }
     }
 }
 
