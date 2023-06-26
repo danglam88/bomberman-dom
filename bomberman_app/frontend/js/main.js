@@ -16,6 +16,8 @@ let timer = undefined;
 let gameStarted = false;
 let canPlayerMove = true;
 
+let socket;
+
 export const Info = () => {
   return `
     <MF>
@@ -162,6 +164,10 @@ function Router() {
       window.location.hash !== "#/gamestart" &&
       window.location.hash !== "#/gameover"
     ) {
+      // if you change to some other hash route, you will be redirected to root
+      if (socket !== undefined) {
+      window.location = "/";
+      }
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length <= 3) {
@@ -270,7 +276,7 @@ const openChat = () => {
   const isWebSocketOpen = localStorage.getItem("websocketOpen") === "true";
 
   if (!isWebSocketOpen) {
-    const socket = initWebSocket(nickname);
+    socket = initWebSocket(nickname);
 
     const handleKeyInput = (e) => {
       if (e.keyCode >= 37 && e.keyCode <= 40) {
