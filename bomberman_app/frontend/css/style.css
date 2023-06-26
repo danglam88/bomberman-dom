@@ -271,6 +271,12 @@ form button {
     justify-content: center;
 }
 
+.winner-image {
+    height: 500px;
+    width: 500px;
+    object-fit: cover;
+}
+
 .gameovertext{
     color:rgb(184, 221, 20);
     font-size: 6em;

@@ -155,6 +155,21 @@ export const Waiting = () => {
   `;
 };
 
+export const GameOver = () => {
+  const winner = JSON.parse(localStorage.getItem('winner'))
+  const winnerPicture = "img/" + winner.color + "-front0.png";
+  return `
+  <MF>
+    <div id="core-part" class="core-part">
+      <div id="gameover" class="game">
+        <div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
+        <div><img class="winner-image" src="${winnerPicture}"></div>
+        </div>
+    </div>
+  </MF>
+  `;
+}
+
 function Router() {
   function routeChange() {
     const container = document.getElementById("root");
@@ -188,6 +203,8 @@ function Router() {
         console.log("from gamestart to root");
         window.location.hash = "#/";
       }
+    } else if (window.location.hash == "#/gameover"){
+      MiniFramework.render(GameOver, container)
     }
 
     // Set focus on the input textfield when the page is loaded
@@ -388,7 +405,6 @@ const handleWebSocketMessage = (event) => {
   }
 };
 
-
 const initEventListeners = (socket, handleKeyInput, handleKeyOutput) => {
   document.getElementById("form").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -419,6 +435,5 @@ const initEventListeners = (socket, handleKeyInput, handleKeyOutput) => {
     socket.send(JSON.stringify(msg));
   });
 }
-
 
 Router();

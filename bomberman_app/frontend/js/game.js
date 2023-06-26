@@ -19,15 +19,21 @@ const hintStart = 60000;
 const intervalDuration = 100;
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
+// hard-coded code for game over
+// let movements = 5;
+let isGameOver = false
 
 export const GameLogic = (players) => {
-    let isGameOver = false
     let previousTimeStamp = 0
   
     const gameLoop = (timestamp, players) => {
   
         // Check if game over
         if (isGameOver) {
+            // game over wip
+            const winner = players.find(player => player.lives > 0)
+            gameOver(winner)
+            isGameOver = false
             return;
         }
       
@@ -56,7 +62,17 @@ export const GameLogic = (players) => {
 }
 
 export const movePlayer = (player) => {
-
+/*     hard-coded gameover for two players:
+    every 5 movements, a player looses a life */
+/*     movements--
+    if (movements == 0){
+        player.lives--
+        movements = 5
+        if (player.lives == 0){
+            isGameOver = true
+        }
+    } */
+    
     if (player.div !== null) {
 
         let currentTop = player.getY();
@@ -534,4 +550,10 @@ const removeFlashPieces = (bombID) => {
             flashPieces[i].remove();
         }
     }
+}
+
+const gameOver = (winner) => {
+    document.getElementById('chat').remove()
+    localStorage.setItem('winner', JSON.stringify(winner))
+    window.location.hash = "#/gameover"
 }
