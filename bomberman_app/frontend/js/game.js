@@ -342,19 +342,7 @@ export function animateBomb(bomb){
     let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)
 
-    const tileId = setInterval(() => {
-        if (bomb.getIndex() === 0 || bomb.getIndex() === bombSize) {
-            bomb.setIndex(bomb.getIndex() + bombSize)
-        } else {
-            bomb.setIndex(0)
-        }
-
-        bombNode.style.backgroundPosition = `${bomb.getIndex()}px 0px`
-    }, tileDuration)
-
     setTimeout(() => {
-        clearInterval(tileId)
-
         createFlashPieces(bomb.getId(), bomb);
         destroyObjects(bomb.getId(), bomb);
 
