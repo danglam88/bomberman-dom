@@ -56,6 +56,7 @@ export const GameLogic = (players) => {
     
     players.forEach((player) => {
       player.addDiv()
+      //createLivesInfo(player)
     });
   
     gameLoop(0, players)
@@ -399,16 +400,12 @@ const destroyObjects = (bombID, bomb) => {
     if (bombElement !== null) {
         bombElement.style.backgroundImage = "url('./img/explode.png')";
 
-        let bombTop = bombElement.style.top;
-        bombTop = bombTop.replace("px", "");
-        bombTop = parseInt(bombTop);
+        let bombTop = bomb.getY();
 
         let minBombTop = bombTop - bomb.getRange() * bombSize;
         let maxBombTop = bombTop + bombSize + bomb.getRange() * bombSize;
 
-        let bombLeft = bombElement.style.left;
-        bombLeft = bombLeft.replace("px", "");
-        bombLeft = parseInt(bombLeft);
+        let bombLeft = bomb.getX();
 
         let minBombLeft = bombLeft - bomb.getRange() * bombSize;
         let maxBombLeft = bombLeft + bombSize + bomb.getRange() * bombSize;
@@ -490,16 +487,12 @@ const createFlashPieces = (bombID, bomb) => {
     let bombElement = document.getElementById(bombID);
 
     if (mapElement !== null && bombElement !== null) {
-        let bombTop = bombElement.style.top;
-        bombTop = bombTop.replace("px", "");
-        bombTop = parseInt(bombTop);
+        let bombTop = bomb.getY();
 
         let minBombTop = bombTop - bomb.getRange() * bombSize;
         let maxBombTop = bombTop + bombSize + bomb.getRange() * bombSize;
 
-        let bombLeft = bombElement.style.left;
-        bombLeft = bombLeft.replace("px", "");
-        bombLeft = parseInt(bombLeft);
+        let bombLeft = bomb.getX();
 
         let minBombLeft = bombLeft - bomb.getRange() * bombSize;
         let maxBombLeft = bombLeft + bombSize + bomb.getRange() * bombSize;

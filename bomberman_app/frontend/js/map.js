@@ -13,12 +13,11 @@ function createMap(players) {
     .then(response => response.json())
     .then(data => {
         givenMap = data;
-       
 
         removeExtraPlayers(players);
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
-  
+
         GameLogic(players);
     })
     .catch(error => {

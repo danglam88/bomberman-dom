@@ -23,7 +23,6 @@ export const Info = () => {
     <MF>
       <div class="howtoplay" style="text-align: center;">Use arrows to move, shift to place bombs</div>
       <div class="stats" style="height: 45px; width: 900px; top: 130px;">
-        <div class="lives">Lives: 3</div>
       </div>
     </MF>
     `;
@@ -405,7 +404,7 @@ const handleWebSocketMessage = (event) => {
   }
 };
 
-const initEventListeners = (socket, handleKeyInput, handleKeyOutput) => {
+const initEventListeners = (socket, handleKeyInput) => {
   document.getElementById("form").addEventListener("submit", (e) => {
     e.preventDefault();
     const input = document.getElementById("input");
