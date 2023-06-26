@@ -11,9 +11,9 @@ import (
 const (
 	tileSize = 45
 
-	multipleBombsGift = 2 //8
-	bombRangeGift     = 2 //9
-	speedGift         = 2 //10
+	multipleBombsGift = 8 //8
+	bombRangeGift     = 8 //9
+	speedGift         = 4 //10
 	lifeGift          = 2 //11
 	bricksNo          = 100
 )

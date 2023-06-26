@@ -555,12 +555,14 @@ form button {
     width: 45px;
     height: 45px;
     position: absolute;
+    background-size: 45px 45px;
 }
 
 .brick {
     width: 45px;
     height: 45px;
     position: absolute;
+    background-size: 45px 45px;
 }
 
 .player {
@@ -614,7 +616,7 @@ form button {
     animation: numberblink 1s infinite;
 }
 
-.bomb-range-gift-animanion {
+.bomb-range-gift-animation {
     animation: rangeblink 1s infinite;
 }
 
