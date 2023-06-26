@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -39,15 +38,9 @@ var gameMap Level
 var gameStarted = false
 
 func NewGame(w http.ResponseWriter, r *http.Request) {
-	params := r.URL.Query()
-	fmt.Println(params)
-	if len(params) != 0 && params["gamestarted"][0] == "true" {
-		gameStarted = true
-	}
-	fmt.Println("game started: ", gameStarted)
-
+	gameStarted = true
 	if gameMap.Data == nil {
-		gameMap = createNewGame()
+		createNewGame()
 	}
 	addedFeatures := gameIntoJSON(gameMap)
 	jsonData, err := json.Marshal(addedFeatures)
@@ -61,7 +54,7 @@ func NewGame(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonData)
 }
 
-func createNewGame() Level {
+func createNewGame() {
 	orginalMap := Level{
 		Data: [][]int{
 			{3, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 0, 2, 0, 6},
@@ -145,7 +138,7 @@ func createNewGame() Level {
 		coordinate := brickAddedCoords[i]
 		copyLevel.Data[coordinate[0]][coordinate[1]] = gifts[i]
 	}
-	return copyLevel
+	gameMap = copyLevel
 }
 
 func gameIntoJSON(gameMap Level) []Spot {

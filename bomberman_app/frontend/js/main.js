@@ -254,9 +254,6 @@ function fetchPlayersRenderWaitingTimer() {
       const isMe = player.name == localStorage.getItem("nickname")
       players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1, isMe))
     })
-    if (players.length === 1) {
-      createMap(players, true);
-    }
     console.log("players: ", players)
 
     MiniFramework.updateState();
