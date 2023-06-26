@@ -249,8 +249,6 @@ const barrierCheck = (currentTop, currentLeft, direction) => {
 const giftCheck = (player, giftElement) => {
 
     if (player !== null && giftElement !== null && !giftElement.classList.contains("brick")) {
-        //todo add animation earlier (after destroying a brick)
-        //giftElement.style.animation = "animation: speedblink 1s infinite"
 
         let giftTop = giftElement.style.top;
         giftTop = giftTop.replace("px", "");
@@ -433,9 +431,17 @@ const destroyObjects = (bombID, bomb) => {
                     bricks[i].remove();
                 } else {
                     bricks[i].classList.remove("brick");
-                    bricks[i].style.width = giftSize + "px";
-                    bricks[i].style.height = giftSize + "px";
-                    bricks[i].style.position = "absolute";
+                    bricks[i].style.background = "";
+           
+                    if (bricks[i].classList.contains("speed-gift")) {
+                        bricks[i].classList.add("speed-gift-animation")
+                    } else if (bricks[i].classList.contains("multiple-bombs-gift")) {
+                        bricks[i].classList.add("multiple-bombs-gift-animation")   
+                    }  else if (bricks[i].classList.contains("bomb-range-gift")) {
+                        bricks[i].classList.add("bomb-range-gift-animation")
+                    } else if (bricks[i].classList.contains("life-gift")) {
+                        bricks[i].classList.add("life-gift-animation")
+                    }
                 }
             }
         }

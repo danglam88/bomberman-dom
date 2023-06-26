@@ -606,19 +606,19 @@ form button {
     background-size: 45px 45px;
 }
 
-.speed-gift {
+.speed-gift-animation {
     animation: speedblink 1s infinite;
 }
 
-.multiple-bombs-gift {
+.multiple-bombs-gift-animation {
     animation: numberblink 1s infinite;
 }
 
-.bomb-range-gift {
+.bomb-range-gift-animanion {
     animation: rangeblink 1s infinite;
 }
 
-.life-gift {
+.life-gift-animation {
     animation: lifeblink 1s infinite;
 }
 
