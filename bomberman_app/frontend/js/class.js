@@ -91,6 +91,10 @@ export class Player {
         return this.lives;
     }
 
+    getIndex() {
+        return this.index;
+    }
+
     reset() {
         this.bomb = 1;
         this.speed = 10;

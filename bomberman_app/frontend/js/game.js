@@ -55,8 +55,8 @@ export const GameLogic = (players) => {
     
     
     players.forEach((player) => {
-      player.addDiv()
-      //createLivesInfo(player)
+      player.addDiv();
+      createLivesInfo(player);
     });
   
     gameLoop(0, players)
@@ -202,6 +202,41 @@ export const movePlayer = (player) => {
         giftElements.forEach((gift) => {
             giftCheck(player, gift)
         })
+
+        createLivesInfo(player);
+    }
+}
+
+const createLivesInfo = (player) => {
+    let livesTop = player.getY() - livesInfoGapTop;
+    let livesLeft = player.getX() + livesInfoGapLeft;
+    if (player.getColor() === "purple") {
+        livesLeft -= player.getIndex() * 10;
+    } else if (player.getColor() === "red") {
+        livesLeft -= player.getIndex() * 9;
+    } else if (player.getColor() === "dark") {
+        livesLeft -= player.getIndex() * 7;
+    }
+
+    let livesInfo = document.getElementById("livesInfo-" + player.getColor());
+    if (livesInfo !== null) {
+        livesInfo.innerHTML = "<h5>" + player.getLives() + "</h5>";
+        livesInfo.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
+    } else {
+        let livesElement = document.createElement("div");
+        livesElement.id = "livesInfo-" + player.getColor();
+        livesElement.classList.add("moving");
+        livesElement.innerHTML = "<h5>" + player.getLives() + "</h5>";
+        livesElement.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
+        livesElement.style.zIndex = 1;
+        if (player.isMe()) {
+            console.log("I am", player.getColor());
+            livesElement.style.color = "red";
+        } else {
+            livesElement.style.color = "blue";
+        }
+        let map = document.getElementsByClassName("map")[0];
+        map.appendChild(livesElement);
     }
 }
 
