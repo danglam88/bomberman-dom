@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -32,6 +33,7 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusLocked)
 	} else if initialCheck == "false" {
 		sessions = append(sessions, nickname)
+		fmt.Println("Sessions: ", sessions)
 		w.WriteHeader(http.StatusOK)
 	}
 }

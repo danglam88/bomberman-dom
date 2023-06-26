@@ -186,6 +186,7 @@ function Router() {
 
     // Set focus on the input textfield when the page is loaded
     window.onload = () => {
+      localStorage.setItem("websocketOpen", "false");
       const input = document.getElementById("nameplayer");
       if (input !== null) {
         input.focus();
@@ -353,7 +354,9 @@ const handleWebSocketMessage = (event) => {
       timer = undefined;
       waitTime = undefined;
     }
-    fetchPlayersRenderWaitingTimer();
+    if (!gameStarted) {
+      fetchPlayersRenderWaitingTimer();
+    }
     const node = document.createElement("div");
     const textnode = document.createTextNode(msg.nickname + " left the game");
     node.appendChild(textnode);
