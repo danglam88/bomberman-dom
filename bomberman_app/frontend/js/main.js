@@ -121,7 +121,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : waitingError !== "" ? waitingError : `Counter is loading...`
+            : waitingError !== "" ? waitingError : `Counter is loading... localStorage: ${localStorage.getItem("nickname")}, players: ${JSON.stringify(players)}, waitTime: ${waitTime}, timer: ${timer}`
         }
       </div>
     </div>
