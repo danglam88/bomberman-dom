@@ -7,17 +7,26 @@ const mapHeight = 900;
 
 let givenMap;
 
-function createMap(players) {
+function createMap(players, firstTime = false) {
+  let url = "/new_game";
+  if (!firstTime) {
+    url = "/new_game?gamestarted=true";
+  }
   console.log("createMap")
-    fetch("/new_game")
+    fetch(url)
     .then(response => response.json())
     .then(data => {
         givenMap = data;
+        if (!firstTime) {
+
         removeExtraPlayers(players);
         let container = document.getElementById("root")
         MiniFramework.render(PaintMap, container)
   
         GameLogic(players);
+        }else if (firstTime) {
+          return;
+        }
     })
     .catch(error => {
       console.error(error)

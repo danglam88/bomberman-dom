@@ -29,7 +29,7 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusConflict)
 		}
-	} else if gameMap.Data != nil {
+	} else if gameStarted {
 		w.WriteHeader(http.StatusLocked)
 	} else if initialCheck == "false" {
 		sessions = append(sessions, nickname)

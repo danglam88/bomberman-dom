@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
@@ -35,8 +36,16 @@ type Spot struct {
 }
 
 var gameMap Level
+var gameStarted = false
 
 func NewGame(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	fmt.Println(params)
+	if len(params) != 0 && params["gamestarted"][0] == "true" {
+		gameStarted = true
+	}
+	fmt.Println("game started: ", gameStarted)
+
 	if gameMap.Data == nil {
 		gameMap = createNewGame()
 	}
