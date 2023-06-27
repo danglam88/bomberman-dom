@@ -61,17 +61,6 @@ export const GameLogic = (players) => {
 }
 
 export const movePlayer = (player) => {
-/*     hard-coded gameover for two players:
-    every 5 movements, a player looses a life */
-/*     movements--
-    if (movements == 0){
-        player.lives--
-        movements = 5
-        if (player.lives == 0){
-            isGameOver = true
-        }
-    } */
-    
     if (player.div !== null) {
 
         let currentTop = player.getY();
@@ -208,13 +197,6 @@ export const movePlayer = (player) => {
 const createLivesInfo = (player) => {
     let livesTop = player.getY() - livesInfoGapTop;
     let livesLeft = player.getX() + livesInfoGapLeft;
-    if (player.getColor() === "purple") {
-        livesLeft -= player.getIndex() * 10;
-    } else if (player.getColor() === "red") {
-        livesLeft -= player.getIndex() * 9;
-    } else if (player.getColor() === "dark") {
-        livesLeft -= player.getIndex() * 7;
-    }
 
     let livesInfo = document.getElementById("livesInfo-" + player.getColor());
     if (livesInfo !== null && player.getLives() <= 0) {
@@ -486,12 +468,10 @@ export const destroyObjects = (bombID, bomb, players) => {
                     if (player.getLives() > 0) {
                         player.removeLife();
                     }
-                    if (player.getLives() <= 0) {
-                        playerElements[i].remove();
-                    }
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
                         players.splice(players.indexOf(player), 1);
+                        playerElements[i].remove();
                     }
                     if (players.length <= 1) {
                         isGameOver = true;

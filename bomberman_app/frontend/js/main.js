@@ -156,14 +156,19 @@ export const Waiting = () => {
 };
 
 export const GameOver = () => {
+  let winnerPicture = "";
   const winner = JSON.parse(localStorage.getItem('winner'))
-  const winnerPicture = "img/" + winner.color + "-front0.png";
+  if (winner !== null) {
+    winnerPicture = "img/" + winner.color + "-front0.png";
+  }
   return `
   <MF>
     <div id="core-part" class="core-part">
       <div id="gameover" class="game">
-        <div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
-        <div><img class="winner-image" src="${winnerPicture}"></div>
+      ${winner !== null
+        ? `<div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
+          <div><img class="winner-image" src="${winnerPicture}"></div>`
+        : `<div id="gameover-text" style="color: white;"><h1>GAME OVER! No one won!</h1></div>`}
         </div>
     </div>
   </MF>
@@ -406,10 +411,9 @@ const handleWebSocketMessage = (event) => {
       player.dropBomb()
 
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
-      animateBomb(bomb, players);
+      animateBomb(bomb);
 
   } else if (msg.type  === "game-update-bomb-explode") {
-    
       const player = players.find(player => player.name == msg.player);
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
       
