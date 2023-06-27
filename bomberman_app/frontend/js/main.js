@@ -206,6 +206,7 @@ function Router() {
     } else if (window.location.hash == "#/gameover"){
       if (localStorage.getItem("winner") && localStorage.getItem("winner").trim().length > 0 && Array.isArray(players) && players.length <= 1 && isGameOver) {
         MiniFramework.render(GameOver, container)
+        resetGame();
       } else {
         console.log("from gameover to root");
         window.location.hash = "#/";
@@ -460,6 +461,22 @@ const initEventListeners = (socket, handleKeyInput) => {
     const msg = { Type: "leave", nickname: nickname };
     socket.send(JSON.stringify(msg));
   });
+}
+
+function resetGame() {
+  validateError = "";
+  playerChecked = false;
+  players = [];
+  gameStarted = false;
+  timer = undefined;
+  waitTime = undefined;
+  playersFetched = false;
+  waitingError = undefined;
+  canPlayerMove = true;
+  socket = undefined;
+  localStorage.removeItem("websocketOpen");
+  localStorage.removeItem("nickname");
+  localStorage.removeItem("winner");
 }
 
 Router();

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -46,4 +47,29 @@ func GetPlayers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(jsonData)
+}
+
+func UpdatePlayers(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var p string
+	err := decoder.Decode(&p)
+	fmt.Println(p)
+	if err != nil {
+		GetErrResponse(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for i, session := range sessions {
+		if session == p {
+			//remove from session
+			sessions = append(sessions[:i], sessions[i+1:]...)
+		}
+	}
+	fmt.Println("sessions: ", len(sessions))
+	if len(sessions) == 0 {
+		gameStarted = false
+	}
+	//Mgr.FindClientByNickname(p)
+
+	w.WriteHeader(http.StatusOK)
 }

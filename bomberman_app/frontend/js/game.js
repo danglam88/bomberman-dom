@@ -1,3 +1,4 @@
+
 export const GLOBAL_SPEED = 10
 export const flashDuration = 500
 
@@ -33,6 +34,9 @@ export const GameLogic = (players) => {
             // game over wip
             const winner = players.length === 1 ? players[0] : null
             gameOver(winner)
+            if (winner.isMe()) {
+                removePlayerFromBackend(winner.getName())
+            }
             return;
         }
       
@@ -486,12 +490,13 @@ export const destroyObjects = (bombID, bomb, players) => {
                     if (player.getLives() > 0) {
                         player.removeLife();
                     }
-                    if (player.getLives() <= 0) {
-                        playerElements[i].remove();
-                    }
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
+                        if (player.isMe() && players.length > 1) {
+                            removePlayerFromBackend(player.name);
+                        }
                         players.splice(players.indexOf(player), 1);
+                        playerElements[i].remove();
                     }
                     if (players.length <= 1) {
                         isGameOver = true;
@@ -570,4 +575,22 @@ const gameOver = (winner) => {
     document.getElementById('chat').remove()
     localStorage.setItem('winner', JSON.stringify(winner))
     window.location.hash = "#/gameover"
+}
+
+function removePlayerFromBackend(playerName) {
+    console.log("remove player from backend", playerName)
+    let options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify( playerName ),
+      };
+    fetch('/players', options)
+    .then((response) => {
+        if (response.status === 200) {
+            console.log("player removed from backend")
+        }
+    })
+    .catch(error => console.log(error))
 }

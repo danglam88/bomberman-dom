@@ -169,11 +169,27 @@ func (m *Manager) removeClient(client *Client) {
 		delete(m.clients, client)
 
 		// If only one player is left, stop the timer
-		if len(m.clients) == 1 {
+		if len(m.clients) <= 1 {
 			waitTimeActivated = false
 			timerActivated = false
 			waitTime = 20
 			timer = 10
+		}
+	}
+}
+
+func (m *Manager) FindClientByNickname(nickname string) {
+	fmt.Println("Nbr of clients: " + strconv.Itoa(len(m.clients)) + "Nickname: " + nickname)
+	m.Lock()
+	defer m.Unlock()
+
+	for client := range m.clients {
+		fmt.Println("Client nickname: " + client.Nickname)
+		if client.Nickname == nickname {
+			fmt.Println("Client found")
+			client.connection.Close()
+			delete(m.clients, client)
+			fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 		}
 	}
 }
@@ -247,7 +263,7 @@ func (c *Client) readMessages() {
 
 			resJson, err := json.Marshal(res)
 
-			fmt.Println(resJson)
+			//fmt.Println(resJson)
 
 			if err != nil {
 				log.Printf("error marshalling leave message: %v", err)
@@ -277,6 +293,9 @@ func (c *Client) readMessages() {
 				log.Printf("error unmarshalling message: %v", err)
 				continue
 			}
+
+			//todo remove
+			//fmt.Println(data)
 
 			data.Player = c.Nickname
 

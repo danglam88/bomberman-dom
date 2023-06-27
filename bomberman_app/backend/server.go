@@ -11,8 +11,9 @@ func main() {
 			PostFunction: handlers.ValidateNickname,
 		},
 		{
-			Endpoint:    "/players",
-			GetFunction: handlers.GetPlayers,
+			Endpoint:     "/players",
+			GetFunction:  handlers.GetPlayers,
+			PostFunction: handlers.UpdatePlayers,
 		},
 		{
 			Endpoint:    "/new_game",
