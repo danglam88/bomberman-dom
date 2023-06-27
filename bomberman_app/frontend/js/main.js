@@ -1,7 +1,7 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 import { Player } from "./class.js";
-import { GLOBAL_SPEED, movePlayer, animateBomb, noBombPlaced } from "./game.js";
+import { GLOBAL_SPEED, movePlayer, animateBomb, noBombPlaced, isGameOver } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -180,7 +180,7 @@ function Router() {
     ) {
       // if you change to some other hash route, you will be redirected to root
       if (socket !== undefined) {
-      window.location = "/";
+        window.location = "/";
       }
       MiniFramework.render(Start, container);
     } else if (window.location.hash === "#/waiting") {
@@ -203,7 +203,12 @@ function Router() {
         window.location.hash = "#/";
       }
     } else if (window.location.hash == "#/gameover"){
-      MiniFramework.render(GameOver, container)
+      if (localStorage.getItem("winner") && localStorage.getItem("winner").trim().length > 0 && Array.isArray(players) && players.length <= 1 && isGameOver) {
+        MiniFramework.render(GameOver, container)
+      } else {
+        console.log("from gameover to root");
+        window.location.hash = "#/";
+      }
     }
 
     // Set focus on the input textfield when the page is loaded
@@ -293,35 +298,17 @@ const openChat = () => {
   if (!isWebSocketOpen) {
     socket = initWebSocket(nickname);
 
-    const handleKeyInput = (e) => {
+    const handleKeyInput = (e, player) => {
       if (e.keyCode >= 37 && e.keyCode <= 40) {
         const msg = {
           Type: "game-update",
           Key: e.keyCode,
-          Pressed: true,
         };
         socket.send(JSON.stringify(msg));
-      } else if (e.key == "Shift") {
-        const player = players.find(player => player.me)
-
-        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
-          const msg = {
-            Type : "game-update",
-            Key : e.keyCode,
-            Pressed: true,
-          };
-
-          socket.send(JSON.stringify(msg));
-        }
-      }
-    };
-
-    const handleKeyOutput = (e) => {
-      if (e.keyCode >= 37 && e.keyCode <= 40) {
+      } else if (e.key == "Shift" && player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
         const msg = {
-          Type: "game-update",
-          Key: e.keyCode,
-          Pressed: false,
+          Type : "game-update",
+          Key : e.keyCode,
         };
         socket.send(JSON.stringify(msg));
       }
@@ -332,7 +319,7 @@ const openChat = () => {
     socket.onerror = (error) => console.log("WebSocket error: " + error);
     socket.onmessage = (event) => handleWebSocketMessage(event, socket);
 
-    initEventListeners(socket, handleKeyInput, handleKeyOutput);
+    initEventListeners(socket, handleKeyInput);
   } else {
     chat.style.display = "";
     localStorage.setItem("websocketOpen", "false");
@@ -392,13 +379,8 @@ const handleWebSocketMessage = (event) => {
           animateBomb(player.dropBomb(), players);
         }
       } else if (msg.key >= 37 && msg.key <= 40) {
-        if (!msg.pressed) {
-          player.setDirection(null);
-          movePlayer(player);
-        } else {
-          player.setDirection(msg.key);
-          movePlayer(player);
-        }
+        player.setDirection(msg.key);
+        movePlayer(player);
       }
     }
   }
@@ -419,8 +401,10 @@ const initEventListeners = (socket, handleKeyInput) => {
       e.preventDefault();
     }
 
-    if (canPlayerMove) {
-      handleKeyInput(e);
+    const player = players.find(player => player.me)
+
+    if (player !== undefined && player.getLives() > 0 && canPlayerMove) {
+      handleKeyInput(e, player);
       canPlayerMove = false
       setTimeout(() => {
         canPlayerMove = true
@@ -428,7 +412,7 @@ const initEventListeners = (socket, handleKeyInput) => {
     }
   });
 
-  window.addEventListener("beforeunload", (e) => {
+  window.addEventListener("beforeunload", () => {
     const nickname = localStorage.getItem("nickname");
     const msg = { Type: "leave", nickname: nickname };
     socket.send(JSON.stringify(msg));

@@ -172,14 +172,6 @@ export class Bomb {
         return this.id;
     }
 
-    setIndex(index) {
-        this.index = index;
-    }
-
-    getIndex() {
-        return this.index;
-    }
-
     getRange() {
         return this.range;
     }

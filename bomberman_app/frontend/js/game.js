@@ -21,7 +21,7 @@ const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
 // hard-coded code for game over
 // let movements = 5;
-let isGameOver = false
+export let isGameOver = false
 
 export const GameLogic = (players) => {
     let previousTimeStamp = 0
@@ -31,13 +31,12 @@ export const GameLogic = (players) => {
         // Check if game over
         if (isGameOver) {
             // game over wip
-            const winner = players.find(player => player.lives > 0)
+            const winner = players.length === 1 ? players[0] : null
             gameOver(winner)
-            isGameOver = false
             return;
         }
       
-          // Check that all characters moving with global speed
+        // Check that all characters moving with global speed
         if (timestamp < previousTimeStamp + GLOBAL_SPEED) {
             window.requestAnimationFrame(function(timestamp) {
                 gameLoop(timestamp, players);
@@ -330,7 +329,6 @@ const giftCheck = (player, giftElement) => {
 
 export function animateBomb(bomb, players){
     bomb.setId(Date.now())
-    bomb.setIndex(0)
 
     let bombNode = document.createElement("div")
     bombNode.id = bomb.getId()
@@ -338,7 +336,7 @@ export function animateBomb(bomb, players){
     bombNode.style.backgroundImage = "url('img/bomb.png')"
     bombNode.style.top = bomb.getY() + "px"
     bombNode.style.left = bomb.getX() + "px"
-    bombNode.style.backgroundPosition = `${bomb.getIndex()}px 0px`
+    bombNode.style.backgroundPosition = `0px 0px`
 
     let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)
@@ -496,11 +494,14 @@ const destroyObjects = (bombID, bomb, players) => {
                     if (player.getLives() > 0) {
                         player.removeLife();
                     }
-                    if (player.getLives() === 0) {
+                    if (player.getLives() <= 0) {
                         playerElements[i].remove();
                     }
                     createLivesInfo(player);
-                    if (players.filter(player => player.getLives() > 0).length === 1) {
+                    if (player.getLives() <= 0) {
+                        players.splice(players.indexOf(player), 1);
+                    }
+                    if (players.length <= 1) {
                         isGameOver = true;
                     }
                 }
