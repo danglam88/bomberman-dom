@@ -27,7 +27,6 @@ export class Player {
 
     dropBomb() {
         this.bomb--;
-        return new Bomb(this.x, this.y, this.range, this);
     }
 
     addBomb() {
@@ -190,6 +189,14 @@ export class Bomb {
 
     explode() {
         this.owner.addBomb();
+    }
+
+    setDiv(div) {
+        this.div = div;
+    }
+
+    getDiv() {
+        return this.div;
     }
 }
 

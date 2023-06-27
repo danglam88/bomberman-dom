@@ -14,12 +14,17 @@ import (
 )
 
 const (
-	MESSAGE_TYPE = "message"
-	GAME_UPDATE  = "game-update"
-	LEAVE_MSG    = "leave"
-	WAITTIME_MSG = "wait-time"
-	TIMER_MSG    = "timer"
+	MESSAGE_TYPE             = "message"
+	GAME_UPDATE              = "game-update"
+	GAME_UPDATE_BOMB         = "game-update-bomb"
+	GAME_UPDATE_BOMB_EXPLODE = "game-update-bomb-explode"
+	LEAVE_MSG                = "leave"
+	WAITTIME_MSG             = "wait-time"
+	TIMER_MSG                = "timer"
 )
+
+// Set the timeout duration
+const BOMB_DURATION = 3
 
 var (
 	websocketUpgrader = websocket.Upgrader{
@@ -58,6 +63,14 @@ type GameUpdateMessage struct {
 	Type   string `json:"type"`
 	Player string `json:"player"`
 	Key    int    `json:"key"`
+}
+
+type GameUpdateBombMessage struct {
+	Type   string `json:"type"`
+	X      int    `json:"x"`
+	Y      int    `json:"y"`
+	Range  int    `json:"range"`
+	Player string `json:"player"`
 }
 
 func NewManager() *Manager {
@@ -265,9 +278,6 @@ func (c *Client) readMessages() {
 				continue
 			}
 
-			//todo remove
-			fmt.Println(data)
-
 			data.Player = c.Nickname
 
 			message, err := json.Marshal(data)
@@ -276,10 +286,47 @@ func (c *Client) readMessages() {
 				return
 			}
 
-			//todo this part should be separate in the loop
 			for wsclient := range c.manager.clients {
 				wsclient.egress <- message //broadcast to all available clients
 			}
+		}
+
+		if msgType.Type == GAME_UPDATE_BOMB {
+
+			var data GameUpdateBombMessage
+			err = json.Unmarshal(payload, &data)
+
+			if err != nil {
+				log.Printf("error unmarshalling message: %v", err)
+			}
+
+			message, err := json.Marshal(data)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			for wsclient := range c.manager.clients {
+				wsclient.egress <- message //broadcast to all available clients
+			}
+
+			// Start a goroutine to perform the delayed task
+			go func() {
+				time.Sleep(BOMB_DURATION * time.Second)
+
+				data.Type = GAME_UPDATE_BOMB_EXPLODE
+
+				message, err := json.Marshal(data)
+				if err != nil {
+					log.Println(err)
+					return
+				}
+
+				//todo this part should be separate in the loop
+				for wsclient := range c.manager.clients {
+					wsclient.egress <- message //broadcast to all available clients
+				}
+			}()
 		}
 
 		if msgType.Type == MESSAGE_TYPE {

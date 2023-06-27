@@ -1,7 +1,8 @@
 import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
-import { Player } from "./class.js";
-import { GLOBAL_SPEED, movePlayer, animateBomb, noBombPlaced, isGameOver } from "./game.js";
+
+import { Bomb, Player } from "./class.js";
+import { GLOBAL_SPEED, flashDuration, movePlayer, animateBomb, noBombPlaced, createFlashPieces, destroyObjects, removeFlashPieces, isGameOver } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -305,7 +306,27 @@ const openChat = () => {
           Key: e.keyCode,
         };
         socket.send(JSON.stringify(msg));
-      } else if (e.key == "Shift" && player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
+
+      } else if (e.key == "Shift") {
+        const player = players.find(player => player.me)
+
+        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
+          if (player.isMe()) {
+            const msg = {
+              Type: "game-update-bomb",
+              X: player.getX(),
+              Y: player.getY(),
+              Range: player.getRange(),
+              Player : player.getName(),
+            };
+            socket.send(JSON.stringify(msg));
+          }
+        }
+      }
+    };
+
+    const handleKeyOutput = (e) => {
+      if (e.keyCode >= 37 && e.keyCode <= 40) {
         const msg = {
           Type : "game-update",
           Key : e.keyCode,
@@ -374,15 +395,37 @@ const handleWebSocketMessage = (event) => {
   if (msg.type === "game-update") {
     const player = players.find(player => player.name == msg.player);
     if (player !== undefined) {
-      if (msg.key === 16) {
-        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
-          animateBomb(player.dropBomb(), players);
-        }
-      } else if (msg.key >= 37 && msg.key <= 40) {
-        player.setDirection(msg.key);
-        movePlayer(player);
+      if (msg.key >= 37 && msg.key <= 40) {
+          player.setDirection(msg.key);
+          movePlayer(player);
       }
     }
+
+  } else if (msg.type=== "game-update-bomb") {
+      const player = players.find(player => player.name == msg.player);
+      player.dropBomb()
+
+      const bomb = new Bomb(msg.x, msg.y, msg.range, player)
+      animateBomb(bomb, players);
+
+  } else if (msg.type  === "game-update-bomb-explode") {
+    
+      const player = players.find(player => player.name == msg.player);
+      const bomb = new Bomb(msg.x, msg.y, msg.range, player)
+      
+      bomb.setId(msg.x + "-" +msg.y)
+      bomb.setDiv(document.getElementById(bomb.getId()))
+
+      createFlashPieces(bomb.getId(), bomb);
+      destroyObjects(bomb.getId(), bomb, players);
+
+      setTimeout(() => {
+          removeFlashPieces(bomb.getId());
+
+          bomb.getDiv().remove();
+          bomb.explode();
+
+      }, flashDuration)
   }
 };
 

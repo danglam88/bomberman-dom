@@ -1,4 +1,5 @@
 export const GLOBAL_SPEED = 10
+export const flashDuration = 500
 
 //todo
 const playerSize = 45;
@@ -7,7 +8,6 @@ const brickSize = 45;
 const wallSize = 45;
 const tileDuration = 500;
 const stopDuration = 500;
-const flashDuration = 500;
 const appearDuration = 500;
 const screamDuration = 500;
 const bombDuration = 3000;
@@ -327,9 +327,10 @@ const giftCheck = (player, giftElement) => {
     }
 }
 
-export function animateBomb(bomb, players){
-    bomb.setId(Date.now())
 
+export function animateBomb(bomb){
+    bomb.setId(bomb.getX() + "-" + bomb.getY())
+   
     let bombNode = document.createElement("div")
     bombNode.id = bomb.getId()
     bombNode.classList.add("bomb")
@@ -341,18 +342,9 @@ export function animateBomb(bomb, players){
     let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)
 
-    setTimeout(() => {
-        createFlashPieces(bomb.getId(), bomb);
-        destroyObjects(bomb.getId(), bomb, players);
+    bomb.setDiv(bombNode)
 
-        setTimeout(() => {
-            removeFlashPieces(bomb.getId());
-
-            bombNode.remove();
-            bomb.explode();
-
-        }, flashDuration)
-    }, bombDuration)
+    return bomb
 }
 
 export const noBombPlaced = (currentLeft, currentTop) => {
@@ -416,7 +408,7 @@ const noWallBetween = (bombLeft, bombTop, currentLeft, currentTop) => {
 }
 
 // function to check what to remove while bomb is exploding
-const destroyObjects = (bombID, bomb, players) => {
+export const destroyObjects = (bombID, bomb, players) => {
     let bombElement = document.getElementById(bombID);
 
     if (bombElement !== null) {
@@ -511,7 +503,7 @@ const destroyObjects = (bombID, bomb, players) => {
 }
 
 // function to create flash pieces while bomb is exploding
-const createFlashPieces = (bombID, bomb) => {
+export const createFlashPieces = (bombID, bomb) => {
     let mapElement = document.querySelector(".map");
     let bombElement = document.getElementById(bombID);
 
@@ -564,7 +556,7 @@ const createFlashPieces = (bombID, bomb) => {
     }
 }
 
-const removeFlashPieces = (bombID) => {
+export const removeFlashPieces = (bombID) => {
     let flashPieces = document.querySelectorAll(".flash" + bombID);
 
     if (flashPieces !== null) {
