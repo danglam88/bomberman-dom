@@ -19,6 +19,9 @@ export const GameLogic = (players) => {
     let previousTimeStamp = 0
   
     const gameLoop = (timestamp, players) => {
+        if (players.length <= 1) {
+            isGameOver = true
+        }
   
         // Check if game over
         if (isGameOver) {
@@ -467,7 +470,7 @@ export const destroyObjects = (bombID, bomb, players) => {
                     }
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
-                        if (player.isMe()) {
+                        if (player.isMe() && players.length > 1) {
                             removePlayerFromBackend(player.name);
                         }
                         players.splice(players.indexOf(player), 1);

@@ -17,6 +17,19 @@ export class Player {
         this.div = document.querySelector("." + this.color)
     }
 
+    getDiv() {
+        return this.div
+    }
+
+    remove() {
+        this.getDiv().remove();
+      
+        const livesInfo = document.getElementById("livesInfo-" + this.getColor());
+        if (livesInfo !== null) {
+            livesInfo.remove();
+        }
+    }
+
     setImg(img) {
         this.div.style.background = img
     }

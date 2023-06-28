@@ -121,7 +121,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : waitingError !== "" ? waitingError : `Counter is loading...`
+            : waitingError !== "" ? waitingError : `Loading...`
         }
       </div>
     </div>
@@ -392,6 +392,12 @@ const handleWebSocketMessage = (event) => {
     if (!gameStarted) {
       fetchPlayersRenderWaitingTimer();
     }
+    if (gameStarted) {
+      const player = players.find(player => player.name === msg.nickname);
+      player.remove();
+      players.splice(players.indexOf(player), 1);
+    }
+    
     const node = document.createElement("div");
     const textnode = document.createTextNode(msg.nickname + " left the game");
     node.appendChild(textnode);
