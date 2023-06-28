@@ -1,22 +1,13 @@
 export const GLOBAL_SPEED = 10
 export const flashDuration = 500
 
-//todo
 const playerSize = 45;
-const tileSize = 45;
 const brickSize = 45;
 const wallSize = 45;
-const tileDuration = 500;
-const stopDuration = 500;
-const appearDuration = 500;
-const screamDuration = 500;
-const bombDuration = 3000;
 const bombSize = 45;
 const giftSize = 45;
 const mapWidth = 900;
 const mapHeight = 900;
-const hintStart = 60000;
-const intervalDuration = 100;
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
 // hard-coded code for game over

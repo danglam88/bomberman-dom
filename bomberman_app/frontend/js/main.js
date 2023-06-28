@@ -397,6 +397,7 @@ const handleWebSocketMessage = (event) => {
     document.getElementById("chat-messages").appendChild(node);
   }
 
+  //movements of players
   if (msg.type === "game-update") {
     const player = players.find(player => player.name == msg.player);
     if (player !== undefined) {
@@ -406,6 +407,7 @@ const handleWebSocketMessage = (event) => {
       }
     }
 
+  //dropping a bomb 
   } else if (msg.type=== "game-update-bomb") {
       const player = players.find(player => player.name == msg.player);
       player.dropBomb()
@@ -413,6 +415,7 @@ const handleWebSocketMessage = (event) => {
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
       animateBomb(bomb);
 
+  //explosure of the bomb    
   } else if (msg.type  === "game-update-bomb-explode") {
       const player = players.find(player => player.name == msg.player);
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
