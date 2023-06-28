@@ -121,7 +121,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : waitingError !== "" ? waitingError : `Loading...`
+            : waitingError !== "" ? waitingError : `Loading... localStorage: ${localStorage.getItem("nickname")}, players: ${JSON.stringify(players)}, waitTime: ${waitTime}, timer: ${timer}`
         }
       </div>
     </div>
@@ -313,11 +313,7 @@ const openChat = () => {
         };
         socket.send(JSON.stringify(msg));
 
-      } else if (e.key == "Shift") {
-        const player = players.find(player => player.me)
-
-        if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
-          if (player.isMe()) {
+      } else if (e.key == "Shift" && player.isMe() && player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
             const msg = {
               Type: "game-update-bomb",
               X: player.getX(),
@@ -326,18 +322,6 @@ const openChat = () => {
               Player : player.getName(),
             };
             socket.send(JSON.stringify(msg));
-          }
-        }
-      }
-    };
-
-    const handleKeyOutput = (e) => {
-      if (e.keyCode >= 37 && e.keyCode <= 40) {
-        const msg = {
-          Type : "game-update",
-          Key : e.keyCode,
-        };
-        socket.send(JSON.stringify(msg));
       }
     };
 
@@ -473,12 +457,9 @@ const initEventListeners = (socket, handleKeyInput) => {
   });
 
   window.addEventListener("beforeunload", () => {
-    const nickname = localStorage.getItem("nickname");
-    const msg = { Type: "leave", nickname: nickname };
-    socket.send(JSON.stringify(msg));
-    localStorage.removeItem("websocketOpen");
-    localStorage.removeItem("nickname");
-    localStorage.removeItem("winner");
+    resetGame();
+    //redirect to root
+    window.location.hash = "#/";
   });
 }
 
@@ -496,9 +477,15 @@ function resetGame() {
   const msg = { Type: "leave", nickname: nickname };
   console.log("reset game: " + nickname);
   socket.send(JSON.stringify(msg));
+  //close websocket for client
+  socket.close();
   socket = undefined;
-  localStorage.setItem("websocketOpen", "false");
+
+
+
+  localStorage.removeItem("websocketOpen");
   localStorage.removeItem("nickname");
+  localStorage.removeItem("winner");
 }
 
 Router();
