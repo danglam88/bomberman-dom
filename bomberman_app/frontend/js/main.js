@@ -212,6 +212,7 @@ function Router() {
       if (localStorage.getItem("winner") && localStorage.getItem("winner").trim().length > 0 && Array.isArray(players) && players.length <= 1 && isGameOver) {
         MiniFramework.render(GameOver, container)
         resetGame();
+        //redirect to root after 5 seconds
       } else {
         console.log("from gameover to root");
         window.location.hash = "#/";
@@ -372,6 +373,8 @@ const handleWebSocketMessage = (event) => {
     if (players.length === 2) {
       timer = undefined;
       waitTime = undefined;
+
+      fetchPlayersRenderWaitingTimer();
     }
     if (!gameStarted) {
       fetchPlayersRenderWaitingTimer();

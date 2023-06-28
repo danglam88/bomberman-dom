@@ -46,8 +46,9 @@ var waitTime = 20
 var timer = 10
 
 type Manager struct {
-	clients ClientList
-	nextID  int
+	clients  ClientList
+	nextID   int
+	cancelCh chan struct{}
 	sync.RWMutex
 }
 
@@ -75,8 +76,9 @@ type GameUpdateBombMessage struct {
 
 func NewManager() *Manager {
 	return &Manager{
-		clients: make(ClientList),
-		nextID:  1, // Initialize the nextID to 1
+		clients:  make(ClientList),
+		nextID:   1, // Initialize the nextID to 1
+		cancelCh: make(chan struct{}),
 	}
 }
 
@@ -113,49 +115,65 @@ func (m *Manager) addClient(client *Client) {
 
 	m.clients[client] = true
 
+	fmt.Println("waiteTimeActivated: " + strconv.FormatBool(waitTimeActivated))
+	fmt.Println("timerActivated: " + strconv.FormatBool(timerActivated))
+	fmt.Println("waitTime: " + strconv.Itoa(waitTime))
+	fmt.Println("timer: " + strconv.Itoa(timer))
 	if (waitTimeActivated || timerActivated) && waitTime == 20 && timer == 10 {
+		m.cancelCh = make(chan struct{})
+		fmt.Println("Start countdown")
 		go m.countDown()
 	}
 }
 
 func (m *Manager) countDown() {
+	waitTimeTicker := time.NewTicker(1 * time.Second)
+	timerTicker := time.NewTicker(1 * time.Second)
 
-	for waitTimeActivated && waitTime >= 0 {
-		msg := Message{Type: WAITTIME_MSG}
-		msg.Message = strconv.Itoa(waitTime)
-		msgJson, err := json.Marshal(msg)
-		if err != nil {
-			log.Println(err)
-		} else {
-			for c := range m.clients {
-				c.egress <- msgJson
+	for {
+		select {
+		case <-waitTimeTicker.C:
+			if waitTimeActivated && waitTime >= 0 {
+				msg := Message{Type: WAITTIME_MSG}
+				msg.Message = strconv.Itoa(waitTime)
+				msgJson, err := json.Marshal(msg)
+				if err != nil {
+					log.Println(err)
+				} else {
+					for c := range m.clients {
+						c.egress <- msgJson
+					}
+				}
+				waitTime--
+				fmt.Println("waitTime: " + strconv.Itoa(waitTime))
+				if waitTime == -1 {
+					timerActivated = true
+					waitTimeActivated = false
+				}
 			}
-		}
-		time.Sleep(1 * time.Second)
-		waitTime--
-		if waitTime == -1 {
-			timerActivated = true
-			waitTimeActivated = false
-		}
-	}
-
-	for timerActivated && timer >= 0 {
-		msg := Message{Type: TIMER_MSG}
-		msg.Message = strconv.Itoa(timer)
-		msgJson, err := json.Marshal(msg)
-		if err != nil {
-			log.Println(err)
-		} else {
-			for c := range m.clients {
-				c.egress <- msgJson
+		case <-timerTicker.C:
+			if timerActivated && timer >= 0 {
+				msg := Message{Type: TIMER_MSG}
+				msg.Message = strconv.Itoa(timer)
+				msgJson, err := json.Marshal(msg)
+				if err != nil {
+					log.Println(err)
+				} else {
+					for c := range m.clients {
+						c.egress <- msgJson
+					}
+				}
+				timer--
+				if timer == -1 {
+					timerActivated = false
+					timer = 10
+					waitTime = 20
+				}
 			}
-		}
-		time.Sleep(1 * time.Second)
-		timer--
-		if timer == -1 {
-			timerActivated = false
-			timer = 10
-			waitTime = 20
+		case <-m.cancelCh:
+			waitTimeTicker.Stop()
+			timerTicker.Stop()
+			return
 		}
 	}
 }
@@ -169,14 +187,14 @@ func (m *Manager) removeClient(client *Client) {
 		client.connection.Close()
 		delete(m.clients, client)
 
-		// If only one player is left, stop the timer
 		if len(m.clients) <= 1 {
 			waitTimeActivated = false
 			timerActivated = false
 			waitTime = 20
 			timer = 10
+			m.cancelCh <- struct{}{}
+			fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 		}
-		fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 	}
 }
 
