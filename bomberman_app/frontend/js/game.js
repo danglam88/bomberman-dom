@@ -25,7 +25,7 @@ export const GameLogic = (players) => {
             // game over wip
             const winner = players.length === 1 ? players[0] : null
             gameOver(winner)
-            if (winner.isMe()) {
+            if (winner && winner.isMe()) {
                 removePlayerFromBackend(winner.getName())
             }
             return;
@@ -467,7 +467,7 @@ export const destroyObjects = (bombID, bomb, players) => {
                     }
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
-                        if (player.isMe() && players.length > 1) {
+                        if (player.isMe()) {
                             removePlayerFromBackend(player.name);
                         }
                         players.splice(players.indexOf(player), 1);
