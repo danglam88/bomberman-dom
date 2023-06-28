@@ -161,6 +161,7 @@ func (m *Manager) countDown() {
 }
 
 func (m *Manager) removeClient(client *Client) {
+	fmt.Println("removeClient")
 	m.Lock()
 	defer m.Unlock()
 
@@ -175,6 +176,7 @@ func (m *Manager) removeClient(client *Client) {
 			waitTime = 20
 			timer = 10
 		}
+		fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 	}
 }
 

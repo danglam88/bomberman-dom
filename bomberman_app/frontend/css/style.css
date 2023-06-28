@@ -581,7 +581,11 @@ form button {
     height: 45px;
     object-fit: contain;
     position: absolute;
-    background-repeat: no-repeat;
+    background-image: url("/img/bomb.png");
+}
+
+.bomb-animation {
+    animation: bombblink 1s infinite;
 }
 
 .ghost {
@@ -664,3 +668,18 @@ form button {
         background-image: url("/img/number1.png");
     }
 }
+
+@keyframes bombblink {
+    0% { 
+        background-position: 0px 0px;  
+    }
+    33% {
+        background-position: 45px 0px;  
+    }
+    67% {
+        background-position: 90px 0px;
+    }
+}
+
+/* background-image: url("/img/tomb.png"); 
+background-image: url("/img/gift.png");*/

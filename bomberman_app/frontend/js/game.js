@@ -333,15 +333,17 @@ const giftCheck = (player, giftElement) => {
 
 
 export function animateBomb(bomb){
+    console.log("animateBomb")
     bomb.setId(bomb.getX() + "-" + bomb.getY())
    
     let bombNode = document.createElement("div")
     bombNode.id = bomb.getId()
     bombNode.classList.add("bomb")
-    bombNode.style.backgroundImage = "url('img/bomb.png')"
+    bombNode.classList.add("bomb-animation")
+    //bombNode.style.backgroundImage = "url('img/bomb.png')"
     bombNode.style.top = bomb.getY() + "px"
     bombNode.style.left = bomb.getX() + "px"
-    bombNode.style.backgroundPosition = `0px 0px`
+    //bombNode.style.backgroundPosition = `0px 0px`
 
     let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)

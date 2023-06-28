@@ -390,7 +390,10 @@ const handleWebSocketMessage = (event) => {
     const node = document.createElement("div");
     const textnode = document.createTextNode(msg.nickname + " left the game");
     node.appendChild(textnode);
-    document.getElementById("chat-messages").appendChild(node);
+    let chatMessages = document.getElementById("chat-messages");
+    if (chatMessages !== null) {
+      chatMessages.appendChild(node);
+    }
   }
 
   if (msg.type === "game-update") {
@@ -460,6 +463,9 @@ const initEventListeners = (socket, handleKeyInput) => {
     const nickname = localStorage.getItem("nickname");
     const msg = { Type: "leave", nickname: nickname };
     socket.send(JSON.stringify(msg));
+    localStorage.removeItem("websocketOpen");
+    localStorage.removeItem("nickname");
+    localStorage.removeItem("winner");
   });
 }
 
@@ -473,10 +479,13 @@ function resetGame() {
   playersFetched = false;
   waitingError = undefined;
   canPlayerMove = true;
+  const nickname = localStorage.getItem("nickname");
+  const msg = { Type: "leave", nickname: nickname };
+  console.log("reset game: " + nickname);
+  socket.send(JSON.stringify(msg));
   socket = undefined;
-  localStorage.removeItem("websocketOpen");
+  localStorage.setItem("websocketOpen", "false");
   localStorage.removeItem("nickname");
-  localStorage.removeItem("winner");
 }
 
 Router();
