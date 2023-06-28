@@ -2,22 +2,13 @@
 export const GLOBAL_SPEED = 10
 export const flashDuration = 500
 
-//todo
 const playerSize = 45;
-const tileSize = 45;
 const brickSize = 45;
 const wallSize = 45;
-const tileDuration = 500;
-const stopDuration = 500;
-const appearDuration = 500;
-const screamDuration = 500;
-const bombDuration = 3000;
 const bombSize = 45;
 const giftSize = 45;
 const mapWidth = 900;
 const mapHeight = 900;
-const hintStart = 60000;
-const intervalDuration = 100;
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
 // hard-coded code for game over
@@ -65,17 +56,6 @@ export const GameLogic = (players) => {
 }
 
 export const movePlayer = (player) => {
-/*     hard-coded gameover for two players:
-    every 5 movements, a player looses a life */
-/*     movements--
-    if (movements == 0){
-        player.lives--
-        movements = 5
-        if (player.lives == 0){
-            isGameOver = true
-        }
-    } */
-    
     if (player.div !== null) {
 
         let currentTop = player.getY();
@@ -212,13 +192,6 @@ export const movePlayer = (player) => {
 const createLivesInfo = (player) => {
     let livesTop = player.getY() - livesInfoGapTop;
     let livesLeft = player.getX() + livesInfoGapLeft;
-    if (player.getColor() === "purple") {
-        livesLeft -= player.getIndex() * 10;
-    } else if (player.getColor() === "red") {
-        livesLeft -= player.getIndex() * 9;
-    } else if (player.getColor() === "dark") {
-        livesLeft -= player.getIndex() * 7;
-    }
 
     let livesInfo = document.getElementById("livesInfo-" + player.getColor());
     if (livesInfo !== null && player.getLives() <= 0) {

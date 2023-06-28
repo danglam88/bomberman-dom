@@ -121,7 +121,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : waitingError !== "" ? waitingError : `Counter is loading... localStorage: ${localStorage.getItem("nickname")}, players: ${JSON.stringify(players)}, waitTime: ${waitTime}, timer: ${timer}`
+            : waitingError !== "" ? waitingError : `Counter is loading...`
         }
       </div>
     </div>
@@ -156,14 +156,19 @@ export const Waiting = () => {
 };
 
 export const GameOver = () => {
+  let winnerPicture = "";
   const winner = JSON.parse(localStorage.getItem('winner'))
-  const winnerPicture = "img/" + winner.color + "-front0.png";
+  if (winner !== null) {
+    winnerPicture = "img/" + winner.color + "-front0.png";
+  }
   return `
   <MF>
     <div id="core-part" class="core-part">
       <div id="gameover" class="game">
-        <div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
-        <div><img class="winner-image" src="${winnerPicture}"></div>
+      ${winner !== null
+        ? `<div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
+          <div><img class="winner-image" src="${winnerPicture}"></div>`
+        : `<div id="gameover-text" style="color: white;"><h1>GAME OVER! No one won!</h1></div>`}
         </div>
     </div>
   </MF>
@@ -396,6 +401,7 @@ const handleWebSocketMessage = (event) => {
     }
   }
 
+  //movements of players
   if (msg.type === "game-update") {
     const player = players.find(player => player.name == msg.player);
     if (player !== undefined) {
@@ -405,15 +411,16 @@ const handleWebSocketMessage = (event) => {
       }
     }
 
+  //dropping a bomb 
   } else if (msg.type=== "game-update-bomb") {
       const player = players.find(player => player.name == msg.player);
       player.dropBomb()
 
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
-      animateBomb(bomb, players);
+      animateBomb(bomb);
 
+  //explosure of the bomb    
   } else if (msg.type  === "game-update-bomb-explode") {
-    
       const player = players.find(player => player.name == msg.player);
       const bomb = new Bomb(msg.x, msg.y, msg.range, player)
       

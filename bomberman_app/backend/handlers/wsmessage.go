@@ -343,7 +343,6 @@ func (c *Client) readMessages() {
 					return
 				}
 
-				//todo this part should be separate in the loop
 				for wsclient := range c.manager.clients {
 					wsclient.egress <- message //broadcast to all available clients
 				}

@@ -13,7 +13,7 @@ const (
 	multipleBombsGift = 8 //8
 	bombRangeGift     = 8 //9
 	speedGift         = 4 //10
-	lifeGift          = 2 //11
+	lifeGift          = 4 //11
 	bricksNo          = 100
 )
 
