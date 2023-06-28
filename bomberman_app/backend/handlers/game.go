@@ -13,7 +13,7 @@ const (
 	multipleBombsGift = 8 //8
 	bombRangeGift     = 8 //9
 	speedGift         = 4 //10
-	lifeGift          = 2 //11
+	lifeGift          = 4 //11
 	bricksNo          = 100
 )
 
@@ -156,7 +156,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 3 {
 				thisSpot := Spot{
-					Class: "player blue",
+					Class: "player blue moving",
 					Top:   i * tileSize,
 					Left:  j * tileSize,
 					Z:     2,
@@ -165,7 +165,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 5 {
 				thisSpot := Spot{
-					Class: "player purple",
+					Class: "player purple moving",
 					Top:   i * tileSize,
 					Left:  j * tileSize,
 					Z:     2,
@@ -174,7 +174,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 6 {
 				thisSpot := Spot{
-					Class: "player dark",
+					Class: "player dark moving",
 					Top:   i * tileSize,
 					Left:  j * tileSize,
 					Z:     2,
@@ -183,7 +183,7 @@ func gameIntoJSON(gameMap Level) []Spot {
 				filledMap = append(filledMap, thisSpot)
 			} else if gameMap.Data[i][j] == 7 {
 				thisSpot := Spot{
-					Class: "player red",
+					Class: "player red moving",
 					Top:   i * tileSize,
 					Left:  j * tileSize,
 					Z:     2,
