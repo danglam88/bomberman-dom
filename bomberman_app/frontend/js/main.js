@@ -161,15 +161,19 @@ export const GameOver = () => {
   if (winner !== null) {
     winnerPicture = "img/" + winner.color + "-front0.png";
   }
+
   return `
   <MF>
-    <div id="core-part" class="core-part">
-      <div id="gameover" class="game">
+  <div id="core-part" style="display: flex; align-items: center; flex-direction: column;">
+  <div id="gameover" class="game">
       ${winner !== null
         ? `<div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
           <div><img class="winner-image" src="${winnerPicture}"></div>`
         : `<div id="gameover-text" style="color: white;"><h1>GAME OVER! No one won!</h1></div>`}
         </div>
+      <div>
+        <a href="http://localhost:8080/" class="button">Play a new game</a>
+      </div>
     </div>
   </MF>
   `;

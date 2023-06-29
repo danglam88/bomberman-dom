@@ -11,8 +11,6 @@ const mapWidth = 900;
 const mapHeight = 900;
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
-// hard-coded code for game over
-// let movements = 5;
 export let isGameOver = false
 
 export const GameLogic = (players) => {
@@ -48,7 +46,6 @@ export const GameLogic = (players) => {
             gameLoop(timestamp, players);
         });
     }
-    
     
     players.forEach((player) => {
       player.addDiv();
@@ -551,6 +548,9 @@ export const removeFlashPieces = (bombID) => {
 
 const gameOver = (winner) => {
     document.getElementById('chat').remove()
+    let corePart = document.getElementById('core-part');
+    // corePart.style.display = "";
+    console.log(corePart);
     localStorage.setItem('winner', JSON.stringify(winner))
     window.location.hash = "#/gameover"
 }
