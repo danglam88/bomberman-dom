@@ -8,7 +8,6 @@ const mapHeight = 900;
 let givenMap;
 
 function createMap(players) {
-  console.log("createMap")
     fetch("/new_game")
     .then(response => response.json())
     .then(data => {

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -20,7 +19,6 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 	nickname := s["nickname"]
 	initialCheck := s["initialCheck"]
 
-	// Check if the nickname is already in use
 	if len(sessions) >= 4 {
 		w.WriteHeader(http.StatusTooManyRequests)
 	} else if !isNicknameAvailable(nickname, initialCheck) {
@@ -36,7 +34,6 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 		if len(sessions) == 1 {
 			createNewGame()
 		}
-		fmt.Println("Sessions: ", sessions)
 		w.WriteHeader(http.StatusOK)
 	}
 }

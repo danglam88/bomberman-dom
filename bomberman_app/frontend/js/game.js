@@ -207,7 +207,6 @@ const createLivesInfo = (player) => {
         livesElement.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
         livesElement.style.zIndex = 1;
         if (player.isMe()) {
-            console.log("I am", player.getColor());
             livesElement.style.color = "red";
         } else {
             livesElement.style.color = "blue";
@@ -306,17 +305,16 @@ const giftCheck = (player, giftElement) => {
 
 
 export function animateBomb(bomb){
-    console.log("animateBomb")
     bomb.setId(bomb.getX() + "-" + bomb.getY())
    
     let bombNode = document.createElement("div")
     bombNode.id = bomb.getId()
     bombNode.classList.add("bomb")
-    bombNode.classList.add("bomb-animation")
-    //bombNode.style.backgroundImage = "url('img/bomb.png')"
+    //bombNode.classList.add("bomb-animation")
+    bombNode.style.backgroundImage = "url('img/bomb.png')"
     bombNode.style.top = bomb.getY() + "px"
     bombNode.style.left = bomb.getX() + "px"
-    //bombNode.style.backgroundPosition = `0px 0px`
+    bombNode.style.backgroundPosition = `0px 0px`
 
     let map = document.getElementsByClassName("map")[0]
     map.appendChild(bombNode)
@@ -548,15 +546,11 @@ export const removeFlashPieces = (bombID) => {
 
 const gameOver = (winner) => {
     document.getElementById('chat').remove()
-    let corePart = document.getElementById('core-part');
-    // corePart.style.display = "";
-    console.log(corePart);
     localStorage.setItem('winner', JSON.stringify(winner))
     window.location.hash = "#/gameover"
 }
 
 function removePlayerFromBackend(playerName) {
-    console.log("remove player from backend", playerName)
     let options = {
         method: "POST",
         headers: {
@@ -567,7 +561,7 @@ function removePlayerFromBackend(playerName) {
     fetch('/players', options)
     .then((response) => {
         if (response.status === 200) {
-            console.log("player removed from backend")
+            console.log("player removed from backend: " + playerName)
         }
     })
     .catch(error => console.log(error))

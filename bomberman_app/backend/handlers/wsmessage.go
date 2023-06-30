@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -97,7 +96,6 @@ func (m *Manager) serveWS(w http.ResponseWriter, r *http.Request) {
 
 	pathString := strings.TrimPrefix(r.URL.Path, "/ws/")
 	nickname := strings.Split(pathString, "/")[0]
-	fmt.Println("Nickname: " + nickname)
 
 	client := NewClient(conn, m, id, nickname)
 	m.addClient(client)
@@ -113,12 +111,7 @@ func (m *Manager) addClient(client *Client) {
 
 	m.clients[client] = true
 
-	fmt.Println("waiteTimeActivated: " + strconv.FormatBool(waitTimeActivated))
-	fmt.Println("timerActivated: " + strconv.FormatBool(timerActivated))
-	fmt.Println("waitTime: " + strconv.Itoa(waitTime))
-	fmt.Println("timer: " + strconv.Itoa(timer))
 	if (waitTimeActivated || timerActivated) && waitTime == 20 && timer == 10 {
-		fmt.Println("Start countdown")
 		go m.countDown()
 	}
 }
@@ -148,7 +141,6 @@ func (m *Manager) countDown() {
 					}
 				}
 				waitTime--
-				fmt.Println("waitTime: " + strconv.Itoa(waitTime))
 				if waitTime == -1 {
 					timerActivated = true
 					waitTimeActivated = false
@@ -160,6 +152,7 @@ func (m *Manager) countDown() {
 				timerTicker.Stop()
 				return
 			}
+
 			if timerActivated && timer >= 0 {
 				msg := Message{Type: TIMER_MSG}
 				msg.Message = strconv.Itoa(timer)
@@ -183,7 +176,6 @@ func (m *Manager) countDown() {
 }
 
 func (m *Manager) removeClient(client *Client) {
-	fmt.Println("removeClient")
 	m.Lock()
 	defer m.Unlock()
 
@@ -196,23 +188,18 @@ func (m *Manager) removeClient(client *Client) {
 			timerActivated = false
 			waitTime = 20
 			timer = 10
-			fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 		}
 	}
 }
 
 func (m *Manager) FindClientByNickname(nickname string) {
-	fmt.Println("Nbr of clients: " + strconv.Itoa(len(m.clients)) + "Nickname: " + nickname)
 	m.Lock()
 	defer m.Unlock()
 
 	for client := range m.clients {
-		fmt.Println("Client nickname: " + client.Nickname)
 		if client.Nickname == nickname {
-			fmt.Println("Client found")
 			client.connection.Close()
 			delete(m.clients, client)
-			fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 		}
 	}
 }
@@ -286,8 +273,6 @@ func (c *Client) readMessages() {
 
 			resJson, err := json.Marshal(res)
 
-			//fmt.Println(resJson)
-
 			if err != nil {
 				log.Printf("error marshalling leave message: %v", err)
 				continue
@@ -316,9 +301,6 @@ func (c *Client) readMessages() {
 				log.Printf("error unmarshalling message: %v", err)
 				continue
 			}
-
-			//todo remove
-			//fmt.Println(data)
 
 			data.Player = c.Nickname
 
@@ -401,12 +383,9 @@ func (c *Client) readMessages() {
 				}
 
 				for wsclient := range c.manager.clients {
-
 					wsclient.egress <- message //broadcast to all available clients
-
 				}
 			}
-
 		}
 	}
 }

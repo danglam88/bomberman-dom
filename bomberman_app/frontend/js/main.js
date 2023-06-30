@@ -121,7 +121,7 @@ export const Counter = () => {
                 )
                 .map((player) => player.name)
                 .join(", ")}. Game will start in ${timer} seconds...`
-            : waitingError !== "" ? waitingError : `Loading... localStorage: ${localStorage.getItem("nickname")}, players: ${JSON.stringify(players)}, waitTime: ${waitTime}, timer: ${timer}`
+            : waitingError !== "" ? waitingError : `Loading...`
         }
       </div>
     </div>
@@ -202,14 +202,12 @@ function Router() {
           }
         }, 100);
       } else {
-        console.log("from waiting to root");
         window.location.hash = "#/";
       }
     } else if (window.location.hash === "#/gamestart") {
       if (localStorage.getItem("nickname") && localStorage.getItem("nickname").trim().length > 0 && Array.isArray(players) && players.length > 1 && players.length <=4 && gameStarted) {
         createMap(players);
       } else {
-        console.log("from gamestart to root");
         window.location.hash = "#/";
       }
     } else if (window.location.hash == "#/gameover"){
@@ -218,7 +216,6 @@ function Router() {
         resetGame();
         //redirect to root after 5 seconds
       } else {
-        console.log("from gameover to root");
         window.location.hash = "#/";
       }
     }
@@ -283,11 +280,9 @@ function fetchPlayersRenderWaitingTimer() {
     }
 
     data.players.forEach((player, i) => {
-      console.log("player: ", player)
       const isMe = player.name == localStorage.getItem("nickname")
       players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1, isMe))
     })
-    console.log("players: ", players)
 
     MiniFramework.updateState();
 
@@ -339,8 +334,6 @@ const openChat = () => {
   } else {
     chat.style.display = "";
     localStorage.setItem("websocketOpen", "false");
-    console.log("from chat to root");
-    //window.location.hash = "#/";
   }
 }
 
@@ -480,15 +473,14 @@ function resetGame() {
   playersFetched = false;
   waitingError = undefined;
   canPlayerMove = true;
+
   const nickname = localStorage.getItem("nickname");
   const msg = { Type: "leave", nickname: nickname };
-  console.log("reset game: " + nickname);
   socket.send(JSON.stringify(msg));
+
   //close websocket for client
   socket.close();
   socket = undefined;
-
-
 
   localStorage.removeItem("websocketOpen");
   localStorage.removeItem("nickname");
