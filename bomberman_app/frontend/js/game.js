@@ -550,7 +550,7 @@ const gameOver = (winner) => {
     window.location.hash = "#/gameover"
 }
 
-function removePlayerFromBackend(playerName) {
+export function removePlayerFromBackend(playerName) {
     let options = {
         method: "POST",
         headers: {

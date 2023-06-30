@@ -2,7 +2,7 @@ import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 
 import { Bomb, Player } from "./class.js";
-import { GLOBAL_SPEED, flashDuration, movePlayer, animateBomb, noBombPlaced, createFlashPieces, destroyObjects, removeFlashPieces, isGameOver } from "./game.js";
+import { GLOBAL_SPEED, flashDuration, movePlayer, animateBomb, noBombPlaced, createFlashPieces, destroyObjects, removeFlashPieces, isGameOver, removePlayerFromBackend } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -479,7 +479,7 @@ function resetGame() {
   const nickname = localStorage.getItem("nickname");
   const msg = { Type: "leave", nickname: nickname };
   socket.send(JSON.stringify(msg));
-
+  removePlayerFromBackend(nickname);
   //close websocket for client
   socket.close();
   socket = undefined;
