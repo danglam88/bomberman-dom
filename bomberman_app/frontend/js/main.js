@@ -378,10 +378,12 @@ const handleWebSocketMessage = (event) => {
     }
     if (gameStarted) {
       const player = players.find(player => player.name === msg.nickname);
-      player.remove();
-      players.splice(players.indexOf(player), 1);
+      if (player !== undefined) {
+        player.remove();
+        players.splice(players.indexOf(player), 1);
+      }
     }
-    
+
     const node = document.createElement("div");
     const textnode = document.createTextNode(msg.nickname + " left the game");
     node.appendChild(textnode);
