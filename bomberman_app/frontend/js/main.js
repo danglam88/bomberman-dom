@@ -165,7 +165,7 @@ export const GameOver = () => {
   return `
   <MF>
   <div id="core-part" style="display: flex; align-items: center; flex-direction: column;">
-  <div id="gameover" class="game">
+  <div id="gameover">
       ${winner !== null
         ? `<div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
           <div><img class="winner-image" src="${winnerPicture}"></div>`
