@@ -204,7 +204,9 @@ export class Bomb {
     }
 
     explode() {
-        this.owner.addBomb();
+        if (this.owner !== undefined) {
+            this.owner.addBomb();
+        }
     }
 
     setDiv(div) {
