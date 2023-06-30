@@ -23,7 +23,6 @@ export const GameLogic = (players) => {
   
         // Check if game over
         if (isGameOver) {
-            // game over wip
             const winner = players.length === 1 ? players[0] : null
             gameOver(winner)
             if (winner && winner.isMe()) {
@@ -56,7 +55,7 @@ export const GameLogic = (players) => {
 }
 
 export const movePlayer = (player) => {
-    if (player.div !== null) {
+    if (player.div) {
 
         let currentTop = player.getY();
         let currentLeft = player.getX();
@@ -462,6 +461,10 @@ export const destroyObjects = (bombID, bomb, players) => {
                     if (player.getLives() <= 0) {
                         if (player.isMe() && players.length > 1) {
                             removePlayerFromBackend(player.name);
+                            const chatElement = document.getElementById('chat')
+                            if (chatElement !== null) {
+                                chatElement.remove()
+                            }
                         }
                         players.splice(players.indexOf(player), 1);
                         playerElements[i].remove();
@@ -540,7 +543,10 @@ export const removeFlashPieces = (bombID) => {
 }
 
 const gameOver = (winner) => {
-    document.getElementById('chat').remove()
+    const chatElement = document.getElementById('chat')
+    if (chatElement !== null) {
+        chatElement.remove()
+    }
     localStorage.setItem('winner', JSON.stringify(winner))
     window.location.hash = "#/gameover"
 }
@@ -554,10 +560,5 @@ export function removePlayerFromBackend(playerName) {
         body: JSON.stringify( playerName ),
       };
     fetch('/players', options)
-    .then((response) => {
-        if (response.status === 200) {
-            console.log("player removed from backend: " + playerName)
-        }
-    })
     .catch(error => console.log(error))
 }

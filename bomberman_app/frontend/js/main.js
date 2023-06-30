@@ -214,7 +214,6 @@ function Router() {
       if (localStorage.getItem("winner") && localStorage.getItem("winner").trim().length > 0 && Array.isArray(players) && players.length <= 1 && isGameOver) {
         MiniFramework.render(GameOver, container)
         resetGame();
-        //redirect to root after 5 seconds
       } else {
         window.location.hash = "#/";
       }
@@ -345,15 +344,19 @@ const handleWebSocketMessage = (event) => {
   const msg = JSON.parse(event.data);
   if (msg.type === "message") {
     const player = players.find(player => player.name === msg.nickname);
-    const node = document.createElement("div");
-    const picture = document.createElement("img");
-    picture.src = "img/" + player.color + "-front0.png";
-    const textnode = document.createTextNode(msg.nickname + ": " + msg.message);
-    node.appendChild(picture);
-    node.appendChild(textnode);
-    const chatContainer = document.getElementById("chat-messages");
-    chatContainer.appendChild(node);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (player !== undefined) {
+      const node = document.createElement("div");
+      const picture = document.createElement("img");
+      picture.src = "img/" + player.getColor() + "-front0.png";
+      const textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+      node.appendChild(picture);
+      node.appendChild(textnode);
+      const chatContainer = document.getElementById("chat-messages");
+      if (chatContainer !== null) {
+        chatContainer.appendChild(node);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    }
   } 
 
   if (msg.type === "wait-time" || msg.type === "timer") {
@@ -390,6 +393,7 @@ const handleWebSocketMessage = (event) => {
     let chatMessages = document.getElementById("chat-messages");
     if (chatMessages !== null) {
       chatMessages.appendChild(node);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
     }
   }
 
@@ -437,9 +441,11 @@ const initEventListeners = (socket, handleKeyInput) => {
     e.preventDefault();
     const input = document.getElementById("input");
     const message = input.value;
-    input.value = "";
-    const msg = { Type: "message", Message: message };
-    socket.send(JSON.stringify(msg));
+    if (message.trim().length > 0) {
+      input.value = "";
+      const msg = { Type: "message", Message: message };
+      socket.send(JSON.stringify(msg));
+    }
   });
 
   window.addEventListener('keydown', (e) => {
@@ -482,7 +488,6 @@ function resetGame() {
   removePlayerFromBackend(nickname);
   //close websocket for client
   socket.close();
-  socket = undefined;
 
   localStorage.removeItem("websocketOpen");
   localStorage.removeItem("nickname");

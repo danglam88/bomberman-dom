@@ -22,7 +22,10 @@ export class Player {
     }
 
     remove() {
-        this.getDiv().remove();
+        const divElement = this.getDiv();
+        if (divElement) {
+            divElement.remove();
+        }
       
         const livesInfo = document.getElementById("livesInfo-" + this.getColor());
         if (livesInfo !== null) {

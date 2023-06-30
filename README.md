@@ -1,19 +1,12 @@
-# bomberman-dom
+## AUTHORS
 
-# Project Description
-Full description:
-https://github.com/01-edu/public/tree/master/subjects/bomberman-dom
+Danilo Cangucu, Dang Lam, Iuliia Chipsanova, Malin Oscarius, Johannes Eckerman
 
-Because performance is priority in this project we decided to render the game client side and only send keystrokes over websocket to backend for broadcasting.
+## DESCRIPTION
 
-We recognize this opens up for the possibility of the client to manipulate the game state, but expect it to work as expected during the normal use case.
+Engage in an explosive multiplayer battle of survival in Multiplayer Bomberman! Gather 2-4 players and embark on a fierce competition where the objective is to eliminate each other until only one remains standing. Strategically navigate the fixed map, communicate via the integrated chat system, and unleash your bombs to outwit and defeat opponents. Only the last player standing will claim victory in this adrenaline-fueled multiplayer adventure. Join now and prove your dominance in the ultimate battle for survival!
 
+## USAGE
 
-# Usage
-Go to backend and start server with go run .
-
-Then connect to localhost:8080 with your browser.
-
-Control with arrow keys and drop bomb on shift
-# Authors
-
+- Go to bomberman_app/backend then run "go run ."
+- Open web browsers to the following address: http://localhost:8080
