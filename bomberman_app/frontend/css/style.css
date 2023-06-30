@@ -85,6 +85,14 @@ form button {
     background-color: rgb(184, 221, 20);
 }
 
+#gameover {
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
 .button {
     display: inline-block;
     padding: 10px 20px;
@@ -93,18 +101,18 @@ form button {
     text-align: center;
     text-decoration: none;
     outline: none;
-    color: #fff;
-    background-color: #4CAF50;
+    color: black;
+    background-color: rgb(184, 221, 20);
     border: none;
     border-radius: 15px;
-    box-shadow: 0 9px #999;
+    box-shadow: 0 9px rgb(109, 131, 11);
 }
 
-.button:hover {background-color: #3e8e41}
+.button:hover {background-color: rgb(148, 177, 16);}
 
 .button:active {
-    background-color: #3e8e41;
-    box-shadow: 0 5px #666;
+    background-color: rgb(148, 177, 16);
+    box-shadow: 0 5px rgb(109, 131, 11);
     transform: translateY(4px);
 }
 
@@ -160,6 +168,27 @@ form button {
     display: flex;
     position: absolute;
     align-items: stretch;
+}
+
+.livesInfo {
+    position: absolute;
+    z-index: 1;
+}
+
+#livesInfo-blue {
+    color:#52c3fb;
+}
+
+#livesInfo-dark {
+    color:rgb(228, 169, 18);
+}
+
+#livesInfo-red {
+    color:rgb(246, 92, 138);
+}
+
+#livesInfo-purple {
+    color:rgb(192, 103, 237);
 }
 
 .start {

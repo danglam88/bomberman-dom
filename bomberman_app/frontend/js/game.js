@@ -203,14 +203,9 @@ const createLivesInfo = (player) => {
         let livesElement = document.createElement("div");
         livesElement.id = "livesInfo-" + player.getColor();
         livesElement.classList.add("moving");
+        livesElement.classList.add("livesInfo");
         livesElement.innerHTML = "<h5>" + player.getLives() + "</h5>";
         livesElement.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
-        livesElement.style.zIndex = 1;
-        if (player.isMe()) {
-            livesElement.style.color = "red";
-        } else {
-            livesElement.style.color = "blue";
-        }
         let map = document.getElementsByClassName("map")[0];
         map.appendChild(livesElement);
     }
