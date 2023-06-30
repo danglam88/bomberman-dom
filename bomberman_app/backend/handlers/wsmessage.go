@@ -46,9 +46,8 @@ var waitTime = 20
 var timer = 10
 
 type Manager struct {
-	clients  ClientList
-	nextID   int
-	cancelCh chan struct{}
+	clients ClientList
+	nextID  int
 	sync.RWMutex
 }
 
@@ -76,9 +75,8 @@ type GameUpdateBombMessage struct {
 
 func NewManager() *Manager {
 	return &Manager{
-		clients:  make(ClientList),
-		nextID:   1, // Initialize the nextID to 1
-		cancelCh: make(chan struct{}),
+		clients: make(ClientList),
+		nextID:  1, // Initialize the nextID to 1
 	}
 }
 
@@ -120,7 +118,6 @@ func (m *Manager) addClient(client *Client) {
 	fmt.Println("waitTime: " + strconv.Itoa(waitTime))
 	fmt.Println("timer: " + strconv.Itoa(timer))
 	if (waitTimeActivated || timerActivated) && waitTime == 20 && timer == 10 {
-		m.cancelCh = make(chan struct{})
 		fmt.Println("Start countdown")
 		go m.countDown()
 	}
@@ -133,6 +130,12 @@ func (m *Manager) countDown() {
 	for {
 		select {
 		case <-waitTimeTicker.C:
+			if len(m.clients) <= 1 {
+				waitTimeTicker.Stop()
+				timerTicker.Stop()
+				return
+			}
+
 			if waitTimeActivated && waitTime >= 0 {
 				msg := Message{Type: WAITTIME_MSG}
 				msg.Message = strconv.Itoa(waitTime)
@@ -152,6 +155,11 @@ func (m *Manager) countDown() {
 				}
 			}
 		case <-timerTicker.C:
+			if len(m.clients) <= 1 {
+				waitTimeTicker.Stop()
+				timerTicker.Stop()
+				return
+			}
 			if timerActivated && timer >= 0 {
 				msg := Message{Type: TIMER_MSG}
 				msg.Message = strconv.Itoa(timer)
@@ -170,10 +178,6 @@ func (m *Manager) countDown() {
 					waitTime = 20
 				}
 			}
-		case <-m.cancelCh:
-			waitTimeTicker.Stop()
-			timerTicker.Stop()
-			return
 		}
 	}
 }
@@ -192,7 +196,6 @@ func (m *Manager) removeClient(client *Client) {
 			timerActivated = false
 			waitTime = 20
 			timer = 10
-			m.cancelCh <- struct{}{}
 			fmt.Println("Client deleted, number of clients: " + strconv.Itoa(len(m.clients)))
 		}
 	}
