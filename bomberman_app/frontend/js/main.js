@@ -487,7 +487,6 @@ function resetGame() {
   const nickname = localStorage.getItem("nickname");
   const msg = { Type: "leave", nickname: nickname };
   socket.send(JSON.stringify(msg));
-  console.log("remove " + nickname + " at resetgame from backend");
   removePlayerFromBackend(nickname);
 
   //close websocket for client

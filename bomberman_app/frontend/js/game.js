@@ -22,12 +22,7 @@ export const GameLogic = (players) => {
   
         // Check if game over
         if (isGameOver) {
-            console.log("players at gameover: " + JSON.stringify(players))
             gameOver()
-            /*if (winner && winner.isMe()) {
-                console.log("remove winner " + winner.getName() + " from backend")
-                removePlayerFromBackend(winner.getName())
-            }*/
             return;
         }
       
@@ -460,7 +455,6 @@ export const destroyObjects = (bombID, bomb, players) => {
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
                         if (player.isMe() && players.length > 1) {
-                            console.log("remove loser " + player.name + " from backend");
                             removePlayerFromBackend(player.name);
                             const chatElement = document.getElementById('chat')
                             if (chatElement !== null) {
@@ -468,7 +462,6 @@ export const destroyObjects = (bombID, bomb, players) => {
                             }
                         }
                         players.splice(players.indexOf(player), 1);
-                        console.log("players after remove loser " + player.name + " from frontend: " + JSON.stringify(players));
                         playerElements[i].remove();
                     }
                     if (players.length <= 1) {
