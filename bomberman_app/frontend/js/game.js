@@ -1,4 +1,3 @@
-
 export const GLOBAL_SPEED = 10
 export const flashDuration = 500
 
@@ -23,11 +22,12 @@ export const GameLogic = (players) => {
   
         // Check if game over
         if (isGameOver) {
-            const winner = players.length === 1 ? players[0] : null
-            gameOver(winner)
-            if (winner && winner.isMe()) {
+            console.log("players at gameover: " + JSON.stringify(players))
+            gameOver()
+            /*if (winner && winner.isMe()) {
+                console.log("remove winner " + winner.getName() + " from backend")
                 removePlayerFromBackend(winner.getName())
-            }
+            }*/
             return;
         }
       
@@ -460,6 +460,7 @@ export const destroyObjects = (bombID, bomb, players) => {
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
                         if (player.isMe() && players.length > 1) {
+                            console.log("remove loser " + player.name + " from backend");
                             removePlayerFromBackend(player.name);
                             const chatElement = document.getElementById('chat')
                             if (chatElement !== null) {
@@ -467,9 +468,12 @@ export const destroyObjects = (bombID, bomb, players) => {
                             }
                         }
                         players.splice(players.indexOf(player), 1);
+                        console.log("players after remove loser " + player.name + " from frontend: " + JSON.stringify(players));
                         playerElements[i].remove();
                     }
                     if (players.length <= 1) {
+                        const winner = players.length === 1 ? players[0] : null;
+                        localStorage.setItem('winner', JSON.stringify(winner));
                         isGameOver = true;
                     }
                 }
@@ -542,12 +546,11 @@ export const removeFlashPieces = (bombID) => {
     }
 }
 
-const gameOver = (winner) => {
+const gameOver = () => {
     const chatElement = document.getElementById('chat')
     if (chatElement !== null) {
         chatElement.remove()
     }
-    localStorage.setItem('winner', JSON.stringify(winner))
     window.location.hash = "#/gameover"
 }
 
@@ -560,5 +563,10 @@ export function removePlayerFromBackend(playerName) {
         body: JSON.stringify( playerName ),
       };
     fetch('/players', options)
+    .then(response => {
+        if (response.status === 200) {
+            console.log('player ' + playerName + ' removed from backend')
+        }
+    })
     .catch(error => console.log(error))
 }

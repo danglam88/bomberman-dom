@@ -212,8 +212,10 @@ function Router() {
       }
     } else if (window.location.hash == "#/gameover"){
       if (localStorage.getItem("winner") && localStorage.getItem("winner").trim().length > 0 && Array.isArray(players) && players.length <= 1 && isGameOver) {
-        MiniFramework.render(GameOver, container)
-        resetGame();
+        MiniFramework.render(GameOver, container);
+        setTimeout(() => {
+          resetGame();
+        }, 100);
       } else {
         window.location.hash = "#/";
       }
@@ -485,7 +487,9 @@ function resetGame() {
   const nickname = localStorage.getItem("nickname");
   const msg = { Type: "leave", nickname: nickname };
   socket.send(JSON.stringify(msg));
+  console.log("remove " + nickname + " at resetgame from backend");
   removePlayerFromBackend(nickname);
+
   //close websocket for client
   socket.close();
 
