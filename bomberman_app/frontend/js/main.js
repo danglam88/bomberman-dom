@@ -169,7 +169,7 @@ export const GameOver = () => {
   <div id="core-part" style="display: flex; align-items: center; flex-direction: column;">
   <div id="gameover">
       ${winner !== null
-        ? `<div id="gameover-text" style="color: white;"><h1>GAME OVER! ${winner.name} won!</h1></div>
+        ? `<div id="gameover-text" style="color: white;">GAME OVER!<br>${winner.name} was the winner</div>
           <div><img class="winner-image" src="${winnerPicture}"></div>`
         : `<div id="gameover-text" style="color: white;"><h1>GAME OVER! No one won!</h1></div>`}
         </div>
