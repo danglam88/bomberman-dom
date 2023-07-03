@@ -2,7 +2,7 @@ import MiniFramework from "../mini_framework/mini-framework.js";
 import { createMap } from "./map.js";
 
 import { Bomb, Player } from "./class.js";
-import { GLOBAL_SPEED, flashDuration, movePlayer, animateBomb, noBombPlaced, createFlashPieces, destroyObjects, removeFlashPieces, isGameOver, removePlayerFromBackend } from "./game.js";
+import { GLOBAL_SPEED, flashDuration, movePlayer, animateBomb, noBombPlaced, createFlashPieces, destroyObjects, removeFlashPieces, isGameOver, setGameOver, removePlayerFromBackend } from "./game.js";
 
 const regex = /^[a-zA-Z0-9]+$/;
 let validateError = "";
@@ -386,6 +386,11 @@ const handleWebSocketMessage = (event) => {
       if (player !== undefined) {
         player.remove();
         players.splice(players.indexOf(player), 1);
+        if (players.length <= 1) {
+          const winner = players.length === 1 ? players[0] : null;
+          localStorage.setItem('winner', JSON.stringify(winner));
+          setGameOver(true);
+        }
       }
     }
 

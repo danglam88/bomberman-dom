@@ -12,6 +12,10 @@ const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
 export let isGameOver = false
 
+export const setGameOver = (value) => {
+    isGameOver = value
+}
+
 export const GameLogic = (players) => {
     let previousTimeStamp = 0
   
@@ -22,7 +26,11 @@ export const GameLogic = (players) => {
   
         // Check if game over
         if (isGameOver) {
-            gameOver()
+            const chatElement = document.getElementById('chat')
+            if (chatElement !== null) {
+                chatElement.remove()
+            }
+            window.location.hash = "#/gameover"
             return;
         }
       
@@ -537,14 +545,6 @@ export const removeFlashPieces = (bombID) => {
             flashPieces[i].remove();
         }
     }
-}
-
-const gameOver = () => {
-    const chatElement = document.getElementById('chat')
-    if (chatElement !== null) {
-        chatElement.remove()
-    }
-    window.location.hash = "#/gameover"
 }
 
 export function removePlayerFromBackend(playerName) {
