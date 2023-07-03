@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -301,7 +300,6 @@ func (c *Client) readMessages() {
 		}
 
 		if msgType.Type == GAMEOVER_MSG {
-			fmt.Println("GAME OVER")
 
 			var data GameOverMessage
 			err = json.Unmarshal(payload, &data)
@@ -316,8 +314,6 @@ func (c *Client) readMessages() {
 				log.Println(err)
 				return
 			}
-
-			fmt.Println("GAME OVER MESSAGE: ", string(message))
 
 			for wsclient := range c.manager.clients {
 				wsclient.egress <- message //broadcast to all available clients

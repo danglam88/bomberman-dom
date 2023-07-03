@@ -513,7 +513,6 @@ export const destroyObjects = (bombID, bomb, players) => {
                         const nickname = players.length === 1 ? players[0].getName() : "";
                         const color = players.length === 1 ? players[0].getColor() : "";
                         const msg = { type: "gameover", nickname: nickname, color: color };
-                        console.log("send gameover message when bomb: ", JSON.stringify(msg));
                         socket.send(JSON.stringify(msg));
                     }
                 }
@@ -764,7 +763,6 @@ export const openChat = () => {
             const nickname = players.length === 1 ? players[0].getName() : "";
             const color = players.length === 1 ? players[0].getColor() : "";
             const msg = { type: "gameover", nickname: nickname, color: color };
-            console.log("send gameover message when bomb: ", JSON.stringify(msg));
             socket.send(JSON.stringify(msg));
           }
         }
@@ -781,7 +779,6 @@ export const openChat = () => {
     }
   
     if (msg.type === "gameover") {
-      console.log("receive gameover message: ", JSON.stringify(msg));
       localStorage.setItem("winner", msg.nickname);
       localStorage.setItem("winnerColor", msg.color);
       isGameOver = true;
