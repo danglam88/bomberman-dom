@@ -36,11 +36,11 @@ h5 {
     text-align: center;
 }
 
-p {
+/* p {
     color: black; 
     font-size: 1.5em;
     margin-top: 10px;
-}
+} */
 
 .green {
     color: rgb(165, 224, 15) !important
@@ -79,6 +79,10 @@ form {
     width: 250px;
     display: flex;
     flex-direction: row;
+}
+
+#input {
+    flex: 1;
 }
 
 form button {
@@ -175,19 +179,19 @@ form button {
     z-index: 1;
 }
 
-#livesInfo-blue {
+#livesInfo-blue, .player-name-blue {
     color:#52c3fb;
 }
 
-#livesInfo-dark {
+#livesInfo-dark, .player-name-dark {
     color:rgb(228, 169, 18);
 }
 
-#livesInfo-red {
+#livesInfo-red, .player-name-red {
     color:rgb(246, 92, 138);
 }
 
-#livesInfo-purple {
+#livesInfo-purple, .player-name-purple {
     color:rgb(192, 103, 237);
 }
 
@@ -293,6 +297,13 @@ form button {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: flex-start;
+}
+
+.chat-messages p {
+    margin: 0px;
+    margin-right: 5px;
+    font-weight: bolder;
 }
 
 .chat-messages img {

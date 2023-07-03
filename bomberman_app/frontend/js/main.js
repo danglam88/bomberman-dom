@@ -40,6 +40,8 @@ export const Naming = () => {
   const validateInput = (event) => {
     if (!regex.test(event.key) && event.key !== "Enter") {
       event.preventDefault();
+    }else if (event.target.value.length >= 10 && event.key !== "Enter") {
+      event.preventDefault();
     } else if (event.key === "Enter" && event.target.value !== "") {
       checkPlayerAlreadyExists(event.target.value, "false");
     }
@@ -60,7 +62,7 @@ export const Naming = () => {
     : `
     <div class="naming" style="background: url(&quot;img/story.png&quot;); height: 900px; width: 900px;">
       <div class="textfield" style="align-self: center;">Type in your nickname, then press ENTER</div>
-      <input class="playername" id="nameplayer" maxlength="15" placeholder="add nickname here..." onkeypress="validateInput">
+      <input class="playername" id="nameplayer" maxlength="10" placeholder="add nickname here..." onkeypress="validateInput">
       <div class="invalidnotice" style="align-self: center;">Only letters and numbers are allowed</div>
       ${
         validateError !== ""
@@ -349,9 +351,14 @@ const handleWebSocketMessage = (event) => {
     if (player !== undefined) {
       const node = document.createElement("div");
       const picture = document.createElement("img");
+      const playerName = document.createElement("p");
+      playerName.className = "player-name-" + player.getColor();
+      playerName.innerHTML = msg.nickname + ":";
+
       picture.src = "img/" + player.getColor() + "-front0.png";
-      const textnode = document.createTextNode(msg.nickname + ": " + msg.message);
+      const textnode = document.createTextNode(msg.message);
       node.appendChild(picture);
+      node.appendChild(playerName);
       node.appendChild(textnode);
       const chatContainer = document.getElementById("chat-messages");
       if (chatContainer !== null) {
