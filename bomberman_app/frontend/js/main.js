@@ -443,7 +443,10 @@ const handleWebSocketMessage = (event) => {
       setTimeout(() => {
           removeFlashPieces(bomb.getId());
 
-          bomb.getDiv().remove();
+          const bombDiv = bomb.getDiv()
+          if (bombDiv !== null) {
+              bombDiv.remove();
+          }
           bomb.explode();
 
       }, flashDuration)

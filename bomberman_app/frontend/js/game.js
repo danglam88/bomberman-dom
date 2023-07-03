@@ -209,7 +209,7 @@ const createLivesInfo = (player) => {
         livesElement.innerHTML = "<h5>" + player.getLives() + "</h5>";
         livesElement.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
         let map = document.getElementsByClassName("map")[0];
-        if (map !== null) {
+        if (map !== undefined) {
             map.appendChild(livesElement);
         }
     }
@@ -316,7 +316,9 @@ export function animateBomb(bomb){
     bombNode.style.backgroundPosition = `0px 0px`
 
     let map = document.getElementsByClassName("map")[0]
-    map.appendChild(bombNode)
+    if (map !== undefined) {
+        map.appendChild(bombNode)
+    }
 
     bomb.setDiv(bombNode)
 
