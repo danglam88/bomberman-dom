@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -20,6 +21,7 @@ const (
 	LEAVE_MSG                = "leave"
 	WAITTIME_MSG             = "wait-time"
 	TIMER_MSG                = "timer"
+	GAMEOVER_MSG             = "gameover"
 )
 
 // Set the timeout duration
@@ -70,6 +72,12 @@ type GameUpdateBombMessage struct {
 	Y      int    `json:"y"`
 	Range  int    `json:"range"`
 	Player string `json:"player"`
+}
+
+type GameOverMessage struct {
+	Type     string `json:"type"`
+	Nickname string `json:"nickname"`
+	Color    string `json:"color"`
 }
 
 func NewManager() *Manager {
@@ -290,6 +298,30 @@ func (c *Client) readMessages() {
 			}
 
 			continue
+		}
+
+		if msgType.Type == GAMEOVER_MSG {
+			fmt.Println("GAME OVER")
+
+			var data GameOverMessage
+			err = json.Unmarshal(payload, &data)
+
+			if err != nil {
+				log.Printf("error unmarshalling message: %v", err)
+				continue
+			}
+
+			message, err := json.Marshal(data)
+			if err != nil {
+				log.Println(err)
+				return
+			}
+
+			fmt.Println("GAME OVER MESSAGE: ", string(message))
+
+			for wsclient := range c.manager.clients {
+				wsclient.egress <- message //broadcast to all available clients
+			}
 		}
 
 		if msgType.Type == GAME_UPDATE {

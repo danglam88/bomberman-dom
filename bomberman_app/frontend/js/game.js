@@ -1,3 +1,6 @@
+import MiniFramework from "../mini_framework/mini-framework.js";
+import { Player, Bomb } from "./class.js";
+
 export const GLOBAL_SPEED = 10
 export const flashDuration = 500
 
@@ -10,11 +13,43 @@ const mapWidth = 900;
 const mapHeight = 900;
 const livesInfoGapTop = 70;
 const livesInfoGapLeft = 20;
-export let isGameOver = false
+let canPlayerMove = true;
 
-export const setGameOver = (value) => {
-    isGameOver = value
-}
+export let waitTime = undefined;
+export let timer = undefined;
+export let isGameOver = false
+export let socket;
+export let players = [];
+export let playersFetched = false;
+export let waitingError = "";
+export let gameStarted = false;
+export let validateError = "";
+export let playerChecked = false;
+
+export function resetGame() {
+    validateError = "";
+    playerChecked = false;
+    players = [];
+    gameStarted = false;
+    timer = undefined;
+    waitTime = undefined;
+    playersFetched = false;
+    waitingError = undefined;
+    canPlayerMove = true;
+  
+    const nickname = localStorage.getItem("nickname");
+    const msg = { Type: "leave", nickname: nickname };
+    socket.send(JSON.stringify(msg));
+    removePlayerFromBackend(nickname);
+  
+    //close websocket for client
+    socket.close();
+  
+    localStorage.removeItem("websocketOpen");
+    localStorage.removeItem("nickname");
+    localStorage.removeItem("winner");
+    localStorage.removeItem("winnerColor");
+  }
 
 export const GameLogic = (players) => {
     let previousTimeStamp = 0
@@ -30,7 +65,6 @@ export const GameLogic = (players) => {
             if (chatElement !== null) {
                 chatElement.remove()
             }
-            window.location.hash = "#/gameover"
             return;
         }
       
@@ -466,8 +500,7 @@ export const destroyObjects = (bombID, bomb, players) => {
                     }
                     createLivesInfo(player);
                     if (player.getLives() <= 0) {
-                        if (player.isMe() && players.length > 1) {
-                            removePlayerFromBackend(player.name);
+                        if (player.isMe()) {
                             const chatElement = document.getElementById('chat')
                             if (chatElement !== null) {
                                 chatElement.remove()
@@ -477,9 +510,11 @@ export const destroyObjects = (bombID, bomb, players) => {
                         playerElements[i].remove();
                     }
                     if (players.length <= 1) {
-                        const winner = players.length === 1 ? players[0] : null;
-                        localStorage.setItem('winner', JSON.stringify(winner));
-                        isGameOver = true;
+                        const nickname = players.length === 1 ? players[0].getName() : "";
+                        const color = players.length === 1 ? players[0].getColor() : "";
+                        const msg = { type: "gameover", nickname: nickname, color: color };
+                        console.log("send gameover message when bomb: ", JSON.stringify(msg));
+                        socket.send(JSON.stringify(msg));
                     }
                 }
             }
@@ -567,3 +602,265 @@ export function removePlayerFromBackend(playerName) {
     })
     .catch(error => console.log(error))
 }
+
+export function checkPlayerAlreadyExists(nickname, initialCheck) {
+    let options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nickname, initialCheck }),
+    };
+  
+    fetch("/validate", options)
+      .then((response) => {
+        playerChecked = true;
+  
+        if (response.status === 200 && initialCheck === "false") {
+          localStorage.setItem("nickname", nickname);
+          window.location.hash = "#/waiting";
+        } else if (response.status === 423) {
+          validateError =
+            "Game has already started, please try again later";
+          MiniFramework.updateState();
+        } else if (response.status === 429) {
+          validateError =
+            "There are already 4 players in the game, please try again later";
+          MiniFramework.updateState();
+        } else if (response.status === 409) {
+          validateError =
+            "Nickname was already taken, please choose another one";
+          MiniFramework.updateState();
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
+
+export function fetchPlayersRenderWaitingTimer() {
+    fetch("/players")
+    .then((response) => response.json())
+    .then((data) => {
+      playersFetched = true;
+      players = []
+  
+      if (data.started) {
+        waitingError = "Game is not available at the moment. Please try again later..."
+      }
+  
+      data.players.forEach((player, i) => {
+        const isMe = player.name == localStorage.getItem("nickname")
+        players.push(new Player(player.name, player.x, player.y, player.color, GLOBAL_SPEED, i+1, isMe))
+      })
+  
+      MiniFramework.updateState();
+  
+      if (timer === 0) {
+        gameStarted = true;
+        window.location.hash = "#/gamestart";
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
+export const openChat = () => {
+    const chat = document.getElementById("chat");
+    chat.style.display = "";
+    const nickname = localStorage.getItem("nickname");
+    const isWebSocketOpen = localStorage.getItem("websocketOpen") === "true";
+  
+    if (!isWebSocketOpen) {
+      socket = initWebSocket(nickname);
+  
+      const handleKeyInput = (e, player) => {
+        if (e.keyCode >= 37 && e.keyCode <= 40) {
+          const msg = {
+            Type: "game-update",
+            Key: e.keyCode,
+          };
+          socket.send(JSON.stringify(msg));
+  
+        } else if (e.key == "Shift" && player.isMe() && player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
+              const msg = {
+                Type: "game-update-bomb",
+                X: player.getX(),
+                Y: player.getY(),
+                Range: player.getRange(),
+                Player : player.getName(),
+              };
+              socket.send(JSON.stringify(msg));
+        }
+      };
+  
+      socket.onopen = () => localStorage.setItem("websocketOpen", "true");
+      socket.onclose = () => localStorage.setItem("websocketOpen", "false");
+      socket.onerror = (error) => console.log("WebSocket error: " + error);
+      socket.onmessage = (event) => handleWebSocketMessage(event, socket);
+  
+      initEventListeners(socket, handleKeyInput);
+    } else {
+      chat.style.display = "";
+      localStorage.setItem("websocketOpen", "false");
+    }
+  }
+  
+  const initWebSocket = (nickname) => {
+    return new WebSocket("ws://localhost:8080/ws/" + nickname);
+  }
+  
+  const handleWebSocketMessage = (event) => {
+    const msg = JSON.parse(event.data);
+    if (msg.type === "message") {
+      const player = players.find(player => player.name === msg.nickname);
+      if (player !== undefined) {
+        const node = document.createElement("div");
+        const picture = document.createElement("img");
+        const playerName = document.createElement("p");
+        playerName.className = "player-name-" + player.getColor();
+        playerName.innerHTML = msg.nickname + ":";
+  
+        picture.src = "img/" + player.getColor() + "-front0.png";
+        const textnode = document.createTextNode(msg.message);
+        node.appendChild(picture);
+        node.appendChild(playerName);
+        node.appendChild(textnode);
+        const chatContainer = document.getElementById("chat-messages");
+        if (chatContainer !== null) {
+          chatContainer.appendChild(node);
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+      }
+    } 
+  
+    if (msg.type === "wait-time" || msg.type === "timer") {
+      if (msg.type === "wait-time") {
+        waitTime = parseInt(msg.message);
+      } else if (msg.type === "timer") {
+        timer = parseInt(msg.message);
+        waitTime = undefined;
+      }
+      fetchPlayersRenderWaitingTimer();
+    }
+  
+    if (msg.type === "leave") {
+      if (players.length === 2) {
+        timer = undefined;
+        waitTime = undefined;
+  
+        fetchPlayersRenderWaitingTimer();
+      }
+      if (!gameStarted) {
+        fetchPlayersRenderWaitingTimer();
+      }
+      if (gameStarted) {
+        const player = players.find(player => player.name === msg.nickname);
+        if (player !== undefined) {
+          player.remove();
+          players.splice(players.indexOf(player), 1);
+          if (players.length <= 1) {
+            const nickname = players.length === 1 ? players[0].getName() : "";
+            const color = players.length === 1 ? players[0].getColor() : "";
+            const msg = { type: "gameover", nickname: nickname, color: color };
+            console.log("send gameover message when bomb: ", JSON.stringify(msg));
+            socket.send(JSON.stringify(msg));
+          }
+        }
+      }
+  
+      const node = document.createElement("div");
+      const textnode = document.createTextNode(msg.nickname + " left the game");
+      node.appendChild(textnode);
+      let chatMessages = document.getElementById("chat-messages");
+      if (chatMessages !== null) {
+        chatMessages.appendChild(node);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+    }
+  
+    if (msg.type === "gameover") {
+      console.log("receive gameover message: ", JSON.stringify(msg));
+      localStorage.setItem("winner", msg.nickname);
+      localStorage.setItem("winnerColor", msg.color);
+      isGameOver = true;
+      window.location.hash = "#/gameover";
+    }
+  
+    //movements of players
+    if (msg.type === "game-update") {
+      const player = players.find(player => player.name == msg.player);
+      if (player !== undefined) {
+        if (msg.key >= 37 && msg.key <= 40) {
+            player.setDirection(msg.key);
+            movePlayer(player);
+        }
+      }
+  
+    //dropping a bomb 
+    } else if (msg.type=== "game-update-bomb") {
+        const player = players.find(player => player.name == msg.player);
+        player.dropBomb()
+  
+        const bomb = new Bomb(msg.x, msg.y, msg.range, player)
+        animateBomb(bomb);
+  
+    //explosure of the bomb    
+    } else if (msg.type  === "game-update-bomb-explode") {
+        const player = players.find(player => player.name == msg.player);
+        const bomb = new Bomb(msg.x, msg.y, msg.range, player)
+        
+        bomb.setId(msg.x + "-" +msg.y)
+        bomb.setDiv(document.getElementById(bomb.getId()))
+  
+        createFlashPieces(bomb.getId(), bomb);
+        destroyObjects(bomb.getId(), bomb, players);
+  
+        setTimeout(() => {
+            removeFlashPieces(bomb.getId());
+  
+            const bombDiv = bomb.getDiv()
+            if (bombDiv !== null) {
+              bombDiv.remove();
+            }
+            bomb.explode();
+  
+        }, flashDuration)
+    }
+  };
+  
+  const initEventListeners = (socket, handleKeyInput) => {
+    document.getElementById("form").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const input = document.getElementById("input");
+      const message = input.value;
+      if (message.trim().length > 0) {
+        input.value = "";
+        const msg = { Type: "message", Message: message };
+        socket.send(JSON.stringify(msg));
+      }
+    });
+  
+    window.addEventListener('keydown', (e) => {
+      if (e.key.startsWith("Arrow")) {
+        e.preventDefault();
+      }
+  
+      const player = players.find(player => player.me)
+  
+      if (player !== undefined && player.getLives() > 0 && canPlayerMove) {
+        handleKeyInput(e, player);
+        canPlayerMove = false
+        setTimeout(() => {
+          canPlayerMove = true
+        }, 50)
+      }
+    });
+  
+    window.addEventListener("beforeunload", () => {
+      resetGame();
+      //redirect to root
+      window.location.hash = "#/";
+    });
+  }
