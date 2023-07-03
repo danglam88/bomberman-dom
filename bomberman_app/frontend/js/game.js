@@ -209,7 +209,9 @@ const createLivesInfo = (player) => {
         livesElement.innerHTML = "<h5>" + player.getLives() + "</h5>";
         livesElement.style.transform = "translate(" + livesLeft + "px, " + livesTop + "px)";
         let map = document.getElementsByClassName("map")[0];
-        map.appendChild(livesElement);
+        if (map !== null) {
+            map.appendChild(livesElement);
+        }
     }
 }
 
