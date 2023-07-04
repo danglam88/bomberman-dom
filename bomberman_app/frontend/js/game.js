@@ -839,7 +839,10 @@ export const openChat = () => {
       }
     });
   
+    let keys = {};
+  
     window.addEventListener('keydown', (e) => {
+      keys[e.key] = true;  // Key pressed
       if (e.key.startsWith("Arrow")) {
         e.preventDefault();
       }
@@ -847,7 +850,20 @@ export const openChat = () => {
       const player = players.find(player => player.me)
   
       if (player !== undefined && player.getLives() > 0 && canPlayerMove) {
-        handleKeyInput(e, player);
+        if (keys["Shift"] && (keys["ArrowUp"] || keys["ArrowDown"] || keys["ArrowLeft"] || keys["ArrowRight"])) {
+          if (player.getBomb() > 0 && noBombPlaced(player.getX(), player.getY())) {
+            const msg = {
+              Type: "game-update-bomb",
+              X: player.getX(),
+              Y: player.getY(),
+              Range: player.getRange(),
+              Player : player.getName(),
+            };
+            socket.send(JSON.stringify(msg));
+          }
+        } else if (keys["ArrowUp"] || keys["ArrowDown"] || keys["ArrowLeft"] || keys["ArrowRight"]) {
+          handleKeyInput(e, player);
+        }
         canPlayerMove = false
         setTimeout(() => {
           canPlayerMove = true
@@ -855,9 +871,8 @@ export const openChat = () => {
       }
     });
   
-    window.addEventListener("beforeunload", () => {
-      resetGame();
-      //redirect to root
-      window.location.hash = "#/";
+    window.addEventListener('keyup', (e) => {
+      keys[e.key] = false; // Key released
     });
   }
+  
