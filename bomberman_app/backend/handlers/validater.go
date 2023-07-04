@@ -19,7 +19,9 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 	nickname := s["nickname"]
 	initialCheck := s["initialCheck"]
 
-	if len(sessions) >= 4 {
+	if timerActivated || gameStarted {
+		w.WriteHeader(http.StatusLocked)
+	} else if len(sessions) >= 4 {
 		w.WriteHeader(http.StatusTooManyRequests)
 	} else if !isNicknameAvailable(nickname, initialCheck) {
 		if initialCheck == "true" {
@@ -27,8 +29,6 @@ func ValidateNickname(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(http.StatusConflict)
 		}
-	} else if gameStarted {
-		w.WriteHeader(http.StatusLocked)
 	} else if initialCheck == "false" {
 		sessions = append(sessions, nickname)
 		if len(sessions) == 1 {
